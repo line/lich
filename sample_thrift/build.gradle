@@ -1,0 +1,7 @@
+apply plugin: 'java-library'
+
+dependencies {
+    compileOnly("org.apache.thrift:libthrift:${versions.thrift}") {
+        exclude group: 'org.apache.httpcomponents'
+    }
+}

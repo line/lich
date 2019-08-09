@@ -1,0 +1,37 @@
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+
+version = VERSION_NAME_COMPONENT
+ext.publicationType = 'aar'
+
+android {
+    compileSdkVersion versions.compileSdk
+
+    defaultConfig {
+        minSdkVersion versions.minSdk
+        targetSdkVersion versions.targetSdk
+        consumerProguardFiles 'proguard-rules.pro'
+    }
+
+    testOptions {
+        unitTests {
+            // For Robolectric. See: http://robolectric.org/getting-started/
+            includeAndroidResources = true
+        }
+    }
+}
+
+dependencies {
+    implementation project(':component')
+    implementation project(':component-debug')
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:${versions.kotlin}"
+    implementation "androidx.test:core:${versions.androidxTestCore}"
+    compileOnly "com.nhaarman.mockitokotlin2:mockito-kotlin:${versions.mockitoKotlin}"
+
+    testImplementation "org.jetbrains.kotlin:kotlin-test-junit:${versions.kotlin}"
+    testImplementation "androidx.test:runner:${versions.androidxTestRunner}"
+    testImplementation "androidx.test.ext:junit:${versions.androidxTestJunit}"
+    testImplementation "org.mockito:mockito-inline:${versions.mockito}"
+    testImplementation "com.nhaarman.mockitokotlin2:mockito-kotlin:${versions.mockitoKotlin}"
+    testImplementation "org.robolectric:robolectric:${versions.robolectric}"
+}

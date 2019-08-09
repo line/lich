@@ -1,0 +1,10 @@
+apply plugin: 'kotlin'
+
+version = VERSION_NAME_OKHTTP
+ext.publicationType = 'jar'
+
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:${versions.kotlin}"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:${versions.kotlinCoroutines}"
+    implementation "com.squareup.okhttp3:okhttp:${versions.okhttp}"
+}

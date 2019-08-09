@@ -1,0 +1,33 @@
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+
+version = VERSION_NAME_LIFECYCLE
+ext.publicationType = 'aar'
+
+android {
+    compileSdkVersion versions.compileSdk
+
+    defaultConfig {
+        minSdkVersion versions.minSdk
+        targetSdkVersion versions.targetSdk
+        testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
+
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:${versions.kotlin}"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:${versions.kotlinCoroutines}"
+    implementation "androidx.lifecycle:lifecycle-common-java8:${versions.androidxLifecycle}"
+
+    androidTestImplementation "androidx.fragment:fragment:${versions.androidxFragment}"
+    androidTestImplementation "org.jetbrains.kotlin:kotlin-test-junit:${versions.kotlin}"
+    androidTestImplementation "androidx.test:runner:${versions.androidxTestRunner}"
+    androidTestImplementation "androidx.test.ext:junit:${versions.androidxTestJunit}"
+    androidTestImplementation "org.mockito:mockito-android:${versions.mockito}"
+    androidTestImplementation "com.nhaarman.mockitokotlin2:mockito-kotlin:${versions.mockitoKotlin}"
+}
