@@ -1,5 +1,7 @@
 # Lich Component
 
+[ ![Download](https://api.bintray.com/packages/line/lich/component/images/download.svg) ](https://bintray.com/line/lich/component/_latestVersion)
+
 Lightweight framework for managing singleton components on Android apps.
 
 This is **NOT** a DI (Dependency Injection) framework.

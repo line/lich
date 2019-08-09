@@ -1,5 +1,7 @@
 # Lich Lifecycle
 
+[ ![Download](https://api.bintray.com/packages/line/lich/lifecycle/images/download.svg) ](https://bintray.com/line/lich/lifecycle/_latestVersion)
+
 A small library for Android Jetpack Lifecycle.
 
 ```groovy

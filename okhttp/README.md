@@ -1,5 +1,7 @@
 # Lich OkHttp
 
+[ ![Download](https://api.bintray.com/packages/line/lich/okhttp/images/download.svg) ](https://bintray.com/line/lich/okhttp/_latestVersion)
+
 A small library for [OkHttp](https://square.github.io/okhttp/).
 
 ```groovy

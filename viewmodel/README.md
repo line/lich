@@ -1,5 +1,7 @@
 # Lich ViewModel
 
+[ ![Download](https://api.bintray.com/packages/line/lich/viewmodel/images/download.svg) ](https://bintray.com/line/lich/viewmodel/_latestVersion)
+
 Lightweight framework for managing ViewModels in the same way as [Lich Component](../component).
 
 This library is very similar to

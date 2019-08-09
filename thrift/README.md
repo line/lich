@@ -1,5 +1,7 @@
 # Lich Thrift
 
+[ ![Download](https://api.bintray.com/packages/line/lich/thrift/images/download.svg) ](https://bintray.com/line/lich/thrift/_latestVersion)
+
 A small library for [Apache Thrift](https://thrift.apache.org/).
 
 ```groovy
