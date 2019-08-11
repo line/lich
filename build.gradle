@@ -88,8 +88,6 @@ def configurePublication(project, type) {
                 }
             }
         }
-
-        apply plugin: 'com.jfrog.bintray'
         bintray {
             user = findProperty('bintrayUser') ?: ''
             key = findProperty('bintrayApiKey') ?: ''
