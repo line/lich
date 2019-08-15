@@ -37,10 +37,7 @@ import androidx.fragment.app.Fragment
  * @see ComponentFactory
  */
 fun <T : Any> Context.component(factory: ComponentFactory<T>): Lazy<T> =
-    object : ComponentLazy<T>(factory) {
-        override val context: Context
-            get() = this@component
-    }
+    componentLazy(factory) { this }
 
 /**
  * Creates a new instance of a [Lazy] that returns a singleton instance of component created from
@@ -61,14 +58,24 @@ fun <T : Any> Context.component(factory: ComponentFactory<T>): Lazy<T> =
  * @see ComponentFactory
  */
 fun <T : Any> Fragment.component(factory: ComponentFactory<T>): Lazy<T> =
-    object : ComponentLazy<T>(factory) {
-        override val context: Context
-            get() = requireContext()
-    }
+    componentLazy(factory) { requireContext() }
 
-private abstract class ComponentLazy<T : Any>(
-    private val factory: ComponentFactory<T>
-) : Lazy<T> {
+/**
+ * Creates a new instance of a [Lazy] that returns a singleton instance of component created from
+ * [factory].
+ *
+ * If possible, prefer to use [Context.component] or [Fragment.component] instead.
+ */
+inline fun <T : Any> componentLazy(
+    factory: ComponentFactory<T>,
+    crossinline contextProducer: () -> Context
+): Lazy<T> = object : ComponentLazy<T>(factory) {
+    override val context: Context
+        get() = contextProducer()
+}
+
+@PublishedApi
+internal abstract class ComponentLazy<T : Any>(private val factory: ComponentFactory<T>) : Lazy<T> {
     @Volatile
     private var component: T? = null
 
