@@ -13,16 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.linecorp.lich.sample.feature.foo
+package com.linecorp.lich.component
 
-import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
-import com.linecorp.lich.sample.feature.R
+import android.content.Context
 
-class FooFeatureActivity : AppCompatActivity() {
+class DelegateToServiceLoaderComponent2Impl2 : DelegateToServiceLoaderComponent2,
+    ServiceLoaderComponent {
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.foo_feature_activity)
+    override val loadPriority: Int
+        get() = 1
+
+    private lateinit var componentX: ComponentX
+
+    override fun init(context: Context) {
+        componentX = context.getComponent(ComponentX)
     }
+
+    override fun askToOther(): String =
+        "componentX.name is ${componentX.name}."
 }

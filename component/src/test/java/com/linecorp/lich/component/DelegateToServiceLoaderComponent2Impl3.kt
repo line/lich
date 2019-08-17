@@ -13,16 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.linecorp.lich.sample.feature.foo
+package com.linecorp.lich.component
 
-import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
-import com.linecorp.lich.sample.feature.R
+import android.content.Context
 
-class FooFeatureActivity : AppCompatActivity() {
+class DelegateToServiceLoaderComponent2Impl3 : DelegateToServiceLoaderComponent2,
+    ServiceLoaderComponent {
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.foo_feature_activity)
+    override fun init(context: Context) {
+        // This class should not be selected.
+        throw UnsupportedOperationException()
+    }
+
+    override fun askToOther(): String {
+        // This class should not be selected.
+        throw UnsupportedOperationException()
     }
 }

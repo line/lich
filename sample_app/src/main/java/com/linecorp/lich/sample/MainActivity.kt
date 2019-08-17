@@ -20,6 +20,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.linecorp.lich.component.component
+import com.linecorp.lich.sample.feature.bar.BarFeatureFacade
 import com.linecorp.lich.sample.feature.foo.FooFeatureFacade
 import com.linecorp.lich.sample.mvvm.MvvmSampleActivity
 import com.linecorp.lich.sample.simplecoroutine.SimpleCoroutineActivity
@@ -27,6 +28,8 @@ import com.linecorp.lich.sample.simplecoroutine.SimpleCoroutineActivity
 class MainActivity : AppCompatActivity() {
 
     private val fooFeatureFacade by component(FooFeatureFacade)
+
+    private val barFeatureFacade by component(BarFeatureFacade)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,5 +46,9 @@ class MainActivity : AppCompatActivity() {
 
     fun launchFooFeatureActivity(@Suppress("UNUSED_PARAMETER") view: View) {
         fooFeatureFacade.launchFooFeatureActivity()
+    }
+
+    fun launchBarFeatureActivity(@Suppress("UNUSED_PARAMETER") view: View) {
+        barFeatureFacade.launchBarFeatureActivity()
     }
 }

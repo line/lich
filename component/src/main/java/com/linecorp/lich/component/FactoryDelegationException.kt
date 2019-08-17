@@ -19,5 +19,10 @@ package com.linecorp.lich.component
  * Exception that indicates it failed to delegate the creation of a component.
  *
  * @see ComponentFactory.delegateCreation
+ * @see ComponentFactory.delegateToServiceLoader
  */
-class FactoryDelegationException(cause: Throwable) : RuntimeException(cause)
+class FactoryDelegationException(message: String, cause: Throwable?) :
+    RuntimeException(message, cause) {
+    constructor(message: String) : this(message, null)
+    constructor(cause: Throwable) : this(cause.toString(), cause)
+}

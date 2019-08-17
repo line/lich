@@ -13,16 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.linecorp.lich.sample.feature.foo
+package com.linecorp.lich.sample.feature.bar
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.linecorp.lich.sample.feature.R
 
-class FooFeatureActivity : AppCompatActivity() {
+class BarFeatureActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.foo_feature_activity)
+        setContentView(R.layout.bar_feature_activity)
     }
 }
