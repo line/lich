@@ -59,8 +59,9 @@ internal class DebugComponentProviderImpl(private val creator: ComponentCreator)
         currentComponentHolder.set(previousHolder)
         previousHolder?.resetDependingHolder()
 
-        if (result.isFailure) {
+        result.onFailure { e ->
             components.remove(factory)
+            Log.e("DebugComponentProvider", "Failed to create a component for $factory.", e)
         }
 
         return result.getOrThrow()
