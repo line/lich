@@ -42,4 +42,16 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/launch_mvvm_sample" />
 
+    <Button
+        android:id="@+id/launch_bar_feature"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="16dp"
+        android:onClick="launchBarFeatureActivity"
+        android:text="@string/launch_barfeature"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/launch_foo_feature" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

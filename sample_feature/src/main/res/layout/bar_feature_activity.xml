@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".foo.FooFeatureActivity">
+    tools:context=".bar.BarFeatureActivity">
 
     <TextView
         android:layout_width="wrap_content"
@@ -12,7 +12,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
         android:layout_marginTop="16dp"
-        android:text="@string/foo_activity_message"
+        android:text="@string/bar_activity_message"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
