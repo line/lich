@@ -16,6 +16,7 @@
 package com.linecorp.lich.component
 
 import android.content.Context
+import java.util.ServiceLoader
 
 /**
  * A class to declare a factory of a "component".
@@ -60,8 +61,11 @@ abstract class ComponentFactory<T : Any> {
 
     /**
      * Delegates the creation of a component to a [DelegatedComponentFactory] specified by name.
-     * This function can be used to divide dependencies in a multi-module project.
      *
+     * This function instantiates the class specified by [delegatedFactoryClassName], and calls
+     * its [DelegatedComponentFactory.createComponent] function, then returns the result.
+     *
+     * You can use this function to divide dependencies in a multi-module project.
      * Assumes that there are two modules "base" and "foo" such that "foo" depends on "base".
      * If you want to call some function of "foo" from "base", implement like this:
      * ```
@@ -97,31 +101,105 @@ abstract class ComponentFactory<T : Any> {
      * ```
      *
      * @param context the application context.
-     * @param delegatedFactoryClassName the fully-qualified name of a class that inherits
+     * @param delegatedFactoryClassName the binary name of a class that inherits
      * [DelegatedComponentFactory].
-     * @throws FactoryDelegationException If it failed to find or instantiate the class for
+     * @throws FactoryDelegationException if it failed to find or instantiate the class for
      * [delegatedFactoryClassName].
      * @see DelegatedComponentFactory
      */
     protected fun delegateCreation(context: Context, delegatedFactoryClassName: String): T {
-        val delegatedFactoryClass = try {
-            Class.forName(delegatedFactoryClassName, true, javaClass.classLoader)
-        } catch (e: ClassNotFoundException) {
-            throw FactoryDelegationException(e)
-        }
-
         val delegatedFactory = try {
             @Suppress("UNCHECKED_CAST")
-            delegatedFactoryClass.newInstance() as DelegatedComponentFactory<out T>
-        } catch (e: IllegalAccessException) {
-            throw FactoryDelegationException(e)
-        } catch (e: InstantiationException) {
-            throw FactoryDelegationException(e)
-        } catch (e: ClassCastException) {
+            Class.forName(delegatedFactoryClassName, true, javaClass.classLoader).newInstance()
+                as DelegatedComponentFactory<out T>
+        } catch (e: Throwable) {
             throw FactoryDelegationException(e)
         }
 
         return delegatedFactory.create(context)
+    }
+
+    /**
+     * Delegates the creation of a component to [ServiceLoader].
+     *
+     * This function instantiates a class specified in the `META-INF/services/<binary name of T>`
+     * Java resource file, and calls its `init(context)` function if it implements
+     * [ServiceLoaderComponent] interface, then returns it.
+     * If multiple class names are specified in the resource file, the class with the largest
+     * [ServiceLoaderComponent.loadPriority] value is selected.
+     *
+     * You can use this function to divide dependencies in a multi-module project.
+     * Assumes that there are two modules "base" and "foo" such that "foo" depends on "base".
+     * If you want to call some function of "foo" from "base", implement like this:
+     * ```
+     * // "base" module
+     * package module.base.facades
+     *
+     * interface FooModuleFacade {
+     *
+     *     fun launchFooActivity()
+     *
+     *     companion object : ComponentFactory<FooModuleFacade>() {
+     *         override fun createComponent(context: Context): FooModuleFacade =
+     *             delegateToServiceLoader(context)
+     *     }
+     * }
+     * ```
+     *
+     * ```
+     * // "foo" module
+     * package module.foo
+     *
+     * class FooModuleFacadeImpl : FooModuleFacade, ServiceLoaderComponent {
+     *
+     *     private lateinit var context: Context
+     *
+     *     override fun init(context: Context) {
+     *         this.context = context
+     *     }
+     *
+     *     override fun launchFooActivity() {
+     *         // snip...
+     *     }
+     * }
+     * ```
+     *
+     * ```
+     * # META-INF/services/module.base.facades.FooModuleFacade
+     * module.foo.FooModuleFacadeImpl
+     * ```
+     *
+     * @param T the interface or abstract class of the component.
+     * @param context the application context.
+     * @throws FactoryDelegationException if it failed to load or instantiate the concrete class(es)
+     * for [T].
+     * @see ServiceLoaderComponent
+     */
+    protected inline fun <reified T : Any> delegateToServiceLoader(context: Context): T {
+        val candidates = Sequence {
+            // R8 (in AGP 3.5.0 or later) will rewrite the line below as follows:
+            //   Arrays.asList(new T[] { new T1(), new T2(), ..., new Tn() }).iterator()
+            // where T1, T2, ... Tn are specified in "META-INF/services/<binary name of T>".
+            ServiceLoader.load(T::class.java, T::class.java.classLoader).iterator()
+        }
+        return loadServiceLoaderComponent(context, candidates)
+    }
+
+    @PublishedApi
+    internal fun <T : Any> loadServiceLoaderComponent(
+        context: Context,
+        candidates: Sequence<T>
+    ): T {
+        val component = try {
+            candidates.maxBy { (it as? ServiceLoaderComponent)?.loadPriority ?: Int.MIN_VALUE }
+        } catch (e: Throwable) {
+            throw FactoryDelegationException(e)
+        } ?: throw FactoryDelegationException("Service implementation is not found.")
+
+        if (component is ServiceLoaderComponent) {
+            component.init(context)
+        }
+        return component
     }
 
     internal fun create(context: Context): T = createComponent(context)
