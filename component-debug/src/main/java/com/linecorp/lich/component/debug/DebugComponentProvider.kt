@@ -13,6 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+@file:JvmName("DebugComponentProviders")
+
 package com.linecorp.lich.component.debug
 
 import android.content.Context
@@ -87,6 +89,7 @@ interface DebugComponentProvider : ComponentProvider {
  * So, the above `initFooComponentForDebug(context)` should be called prior to any acquisition of
  * `FooComponent`.
  */
+@get:JvmName("from")
 val Context.debugComponentProvider: DebugComponentProvider
     get() {
         val providerOwner = applicationContext as? ComponentProviderOwner
