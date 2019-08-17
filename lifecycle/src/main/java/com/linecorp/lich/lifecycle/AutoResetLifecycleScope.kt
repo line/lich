@@ -65,11 +65,12 @@ import kotlin.coroutines.CoroutineContext
  * }
  * ```
  */
-class AutoResetLifecycleScope @MainThread constructor(
+class AutoResetLifecycleScope @JvmOverloads @MainThread constructor(
     lifecycle: Lifecycle,
     resetPolicy: ResetPolicy = ResetPolicy.ON_STOP
 ) : CoroutineScope {
 
+    @JvmOverloads
     @MainThread
     constructor(
         lifecycleOwner: LifecycleOwner,
