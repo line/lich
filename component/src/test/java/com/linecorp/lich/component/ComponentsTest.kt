@@ -75,4 +75,16 @@ class ComponentsTest {
         val component = context.getComponent(DelegationByNameComponent)
         assertEquals("I am DelegationByNameComponent.", component.greeting())
     }
+
+    @Test
+    fun delegateToServiceLoader1() {
+        val component = context.getComponent(DelegateToServiceLoaderComponent1)
+        assertEquals("I am DelegateToServiceLoaderComponent1Impl.", component.greeting())
+    }
+
+    @Test
+    fun delegateToServiceLoader2() {
+        val component = context.getComponent(DelegateToServiceLoaderComponent2)
+        assertEquals("componentX.name is X.", component.askToOther())
+    }
 }
