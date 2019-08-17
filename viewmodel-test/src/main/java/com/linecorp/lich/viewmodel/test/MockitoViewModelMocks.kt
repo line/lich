@@ -31,7 +31,7 @@ import com.nhaarman.mockitokotlin2.spy
  */
 inline fun <reified T : AbstractViewModel> mockViewModel(
     factory: ViewModelFactory<T>,
-    noinline stubbing: KStubbing<T>.(T) -> Unit = {}
+    crossinline stubbing: KStubbing<T>.(T) -> Unit = {}
 ): MockViewModelHandle<T> =
     MockViewModelHandle {
         mock(stubbing = stubbing)
@@ -47,7 +47,7 @@ inline fun <reified T : AbstractViewModel> mockViewModel(
  */
 inline fun <reified T : AbstractViewModel> spyViewModel(
     factory: ViewModelFactory<T>,
-    noinline stubbing: KStubbing<T>.(T) -> Unit = {}
+    crossinline stubbing: KStubbing<T>.(T) -> Unit = {}
 ): MockViewModelHandle<T> =
     MockViewModelHandle {
         spy(value = createRealViewModel(factory), stubbing = stubbing)
