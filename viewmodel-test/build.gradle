@@ -17,7 +17,7 @@ android {
 }
 
 dependencies {
-    implementation project(':viewmodel')
+    api project(':viewmodel')
     implementation "org.jetbrains.kotlin:kotlin-stdlib:${versions.kotlin}"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:${versions.kotlinCoroutines}"
     implementation "androidx.lifecycle:lifecycle-viewmodel:${versions.androidxLifecycle}"

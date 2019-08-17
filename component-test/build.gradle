@@ -23,8 +23,8 @@ android {
 }
 
 dependencies {
-    implementation project(':component')
-    implementation project(':component-debug')
+    api project(':component')
+    api project(':component-debug')
     implementation "org.jetbrains.kotlin:kotlin-stdlib:${versions.kotlin}"
     implementation "androidx.test:core:${versions.androidxTestCore}"
     compileOnly "com.nhaarman.mockitokotlin2:mockito-kotlin:${versions.mockitoKotlin}"

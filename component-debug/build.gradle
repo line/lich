@@ -23,7 +23,7 @@ android {
 }
 
 dependencies {
-    implementation project(':component')
+    api project(':component')
     implementation "org.jetbrains.kotlin:kotlin-stdlib:${versions.kotlin}"
 
     testImplementation "org.jetbrains.kotlin:kotlin-test-junit:${versions.kotlin}"
