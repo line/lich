@@ -102,9 +102,7 @@ fun <T : AbstractViewModel> Fragment.getViewModel(factory: ViewModelFactory<T>):
  */
 @MainThread
 fun <T : AbstractViewModel> Fragment.getActivityViewModel(factory: ViewModelFactory<T>): T =
-    requireActivity().let { activity ->
-        activity.getViewModel(activity, factory)
-    }
+    requireActivity().getViewModel(factory)
 
 private fun <T : AbstractViewModel> Context.getViewModel(
     viewModelStoreOwner: ViewModelStoreOwner,
