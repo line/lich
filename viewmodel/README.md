@@ -90,12 +90,12 @@ class FooViewModel(private val context: Context) : AbstractViewModel() {
 ```
 
 You can obtain an instance of the ViewModel using
-[FragmentActivity.viewModel](src/main/java/com/linecorp/lich/viewmodel/ViewModelLazy.kt)
+[ComponentActivity.viewModel](src/main/java/com/linecorp/lich/viewmodel/ViewModelLazy.kt)
 or
 [Fragment.viewModel](src/main/java/com/linecorp/lich/viewmodel/ViewModelLazy.kt) like this:
 
 ```kotlin
-class FooActivity : FragmentActivity() {
+class FooActivity : AppCompatActivity() {
 
     // An instance of FooViewModel associated with FooActivity.
     private val fooViewModel by viewModel(FooViewModel)

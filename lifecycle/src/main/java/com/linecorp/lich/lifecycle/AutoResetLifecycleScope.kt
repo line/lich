@@ -41,7 +41,7 @@ import kotlin.coroutines.CoroutineContext
  *
  * Example of use:
  * ```
- * class FooActivity : FragmentActivity() {
+ * class FooActivity : AppCompatActivity() {
  *
  *     // This coroutineScope is automatically reset ON_STOP, and cancelled ON_DESTROY.
  *     private val coroutineScope: CoroutineScope = AutoResetLifecycleScope(this)

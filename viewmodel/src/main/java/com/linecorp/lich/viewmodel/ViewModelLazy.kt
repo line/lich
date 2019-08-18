@@ -26,7 +26,7 @@ import androidx.fragment.app.FragmentActivity
  *
  * This is a sample code:
  * ```
- * class FooActivity : FragmentActivity() {
+ * class FooActivity : AppCompatActivity() {
  *
  *     // An instance of FooViewModel associated with FooActivity.
  *     private val fooViewModel by viewModel(FooViewModel)
@@ -47,7 +47,7 @@ fun <T : AbstractViewModel> ComponentActivity.viewModel(factory: ViewModelFactor
  *
  * This is a sample code:
  * ```
- * class FooActivity : FragmentActivity() {
+ * class FooActivity : AppCompatActivity() {
  *
  *     // An instance of FooViewModel associated with FooActivity.
  *     private val fooViewModel by viewModel(FooViewModel)

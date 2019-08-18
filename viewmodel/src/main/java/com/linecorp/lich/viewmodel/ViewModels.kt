@@ -32,7 +32,7 @@ import com.linecorp.lich.viewmodel.internal.lichViewModelProvider
  *
  * This is a sample code:
  * ```
- * class FooActivity : FragmentActivity() {
+ * class FooActivity : AppCompatActivity() {
  *
  *     private lateinit var fooViewModel: FooViewModel
  *
@@ -58,7 +58,7 @@ fun <T : AbstractViewModel> ComponentActivity.getViewModel(factory: ViewModelFac
  *
  * This is a sample code:
  * ```
- * class FooActivity : FragmentActivity() {
+ * class FooActivity : AppCompatActivity() {
  *
  *     private lateinit var fooViewModel: FooViewModel
  *
