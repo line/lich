@@ -23,19 +23,6 @@ dependencies {
 
     // Optional: Enables debugging features for debug builds.
     debugImplementation 'com.linecorp.lich:component-debug:x.x.x'
-
-    testImplementation 'com.linecorp.lich:component-test:x.x.x'
-    testImplementation 'androidx.test:runner:x.x.x'
-    testImplementation 'androidx.test.ext:junit:x.x.x'
-    testImplementation 'org.mockito:mockito-inline:x.x.x'
-    testImplementation 'com.nhaarman.mockitokotlin2:mockito-kotlin:x.x.x'
-    testImplementation 'org.robolectric:robolectric:x.x'
-
-    androidTestImplementation 'com.linecorp.lich:component-test:x.x.x'
-    androidTestImplementation 'androidx.test:runner:x.x.x'
-    androidTestImplementation 'androidx.test.ext:junit:x.x.x'
-    androidTestImplementation 'org.mockito:mockito-android:x.x.x'
-    androidTestImplementation 'com.nhaarman.mockitokotlin2:mockito-kotlin:x.x.x'
 }
 ```
 
@@ -61,6 +48,30 @@ class MyApplication : Application(), ComponentProviderOwner {
     override val componentProvider: ComponentProvider = ComponentProvider()
 
     // snip...
+}
+```
+
+### for testing
+
+The `component-test` module provides [AndroidX Test](https://developer.android.com/training/testing/set-up-project)
+support. (For Robolectric, see also [this document](http://robolectric.org/androidx_test/).)
+And, it also provides helper functions to work with [Mockito-Kotlin](https://github.com/nhaarman/mockito-kotlin).
+To use these features, please add the following dependencies:
+
+```groovy
+dependencies {
+    testImplementation 'com.linecorp.lich:component-test:x.x.x'
+    testImplementation 'androidx.test:runner:x.x.x'
+    testImplementation 'androidx.test.ext:junit:x.x.x'
+    testImplementation 'org.mockito:mockito-inline:x.x.x'
+    testImplementation 'com.nhaarman.mockitokotlin2:mockito-kotlin:x.x.x'
+    testImplementation 'org.robolectric:robolectric:x.x'
+
+    androidTestImplementation 'com.linecorp.lich:component-test:x.x.x'
+    androidTestImplementation 'androidx.test:runner:x.x.x'
+    androidTestImplementation 'androidx.test.ext:junit:x.x.x'
+    androidTestImplementation 'org.mockito:mockito-android:x.x.x'
+    androidTestImplementation 'com.nhaarman.mockitokotlin2:mockito-kotlin:x.x.x'
 }
 ```
 
@@ -285,7 +296,10 @@ for the actual code.
 The `component-debug` module provides some useful features for debugging.
 
 ```groovy
-debugImplementation 'com.linecorp.lich:component-debug:x.x.x'
+dependencies {
+    implementation 'com.linecorp.lich:component:x.x.x'
+    debugImplementation 'com.linecorp.lich:component-debug:x.x.x'
+}
 ```
 
 If there is the `component-debug` module in the runtime classpath, this library outputs some
