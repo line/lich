@@ -352,3 +352,55 @@ Note that the modification to
 don't affect already acquired components.
 So, the above `initFooComponentForDebug(context)` should be called prior to any acquisition of
 `FooComponent`.
+
+## FAQ
+
+**Q.** Why doesn't this library support creation or mocking of non-singleton objects?
+
+**A.** You can use *default arguments* instead.
+
+```kotlin
+class FooController(
+    context: Context,
+    private val barHelper: BarHelper = BarHelper(context)
+) {
+    private val bazComponent by context.component(BazComponent)
+
+    // ...
+}
+
+class BarHelper(private val context: Context) {
+    // ...
+}
+```
+
+For the above code, you can mock `barHelper` and `bazComponent` with the following code:
+
+```kotlin
+@RunWith(AndroidJUnit4::class)
+class FooControllerTest {
+
+    private lateinit var context: Context
+
+    private lateinit var barHelper: BarHelper
+
+    private lateinit var bazComponent: BazComponent
+
+    private lateinit var fooController: FooController
+
+    @Before
+    fun setUp() {
+        context = ApplicationProvider.getApplicationContext()
+
+        barHelper = mock()
+        bazComponent = mockComponent(BazComponent)
+
+        fooController = FooController(context, barHelper)
+    }
+
+    @Test
+    fun testFoo() {
+        // ...
+    }
+}
+```
