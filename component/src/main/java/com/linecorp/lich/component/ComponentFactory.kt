@@ -87,6 +87,7 @@ abstract class ComponentFactory<T : Any> {
      * // "foo" module
      * package module.foo
      *
+     * // The class inheriting DelegatedComponentFactory must have a public empty constructor.
      * class FooModuleFacadeFactory: DelegatedComponentFactory<FooModuleFacade>() {
      *     override fun createComponent(context: Context): FooModuleFacade =
      *         FooModuleFacadeImpl(context)
@@ -125,8 +126,6 @@ abstract class ComponentFactory<T : Any> {
      * This function instantiates a class specified in the `META-INF/services/<binary name of T>`
      * Java resource file, and calls its `init(context)` function if it implements
      * [ServiceLoaderComponent] interface, then returns it.
-     * If multiple class names are specified in the resource file, the class with the largest
-     * [ServiceLoaderComponent.loadPriority] value is selected.
      *
      * You can use this function to divide dependencies in a multi-module project.
      * Assumes that there are two modules "base" and "foo" such that "foo" depends on "base".
@@ -150,6 +149,7 @@ abstract class ComponentFactory<T : Any> {
      * // "foo" module
      * package module.foo
      *
+     * // The class instantiated by ServiceLoader must have a public empty constructor.
      * class FooModuleFacadeImpl : FooModuleFacade, ServiceLoaderComponent {
      *
      *     private lateinit var context: Context
@@ -168,6 +168,15 @@ abstract class ComponentFactory<T : Any> {
      * # META-INF/services/module.base.facades.FooModuleFacade
      * module.foo.FooModuleFacadeImpl
      * ```
+     *
+     * You can place ServiceLoader resource files with different implementation classes in multiple
+     * modules. In such a case, the class with the largest [ServiceLoaderComponent.loadPriority]
+     * value is selected as the actual implementation class of [T]. This is useful when you want to
+     * switch features depending on the project configuration.
+     *
+     * If you are using R8 (included in Android Gradle Plugin 3.5.0+) with code shrinking and
+     * optimizations enabled, the R8 optimization gets rid of reflection entirely in the final byte
+     * code.
      *
      * @param T the interface or abstract class of the component.
      * @param context the application context.

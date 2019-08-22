@@ -237,51 +237,78 @@ See also
 
 ## Multi-module support
 
-You can *delegate* the creation of a component to a
-[DelegatedComponentFactory](src/main/java/com/linecorp/lich/component/DelegatedComponentFactory.kt)
-specified by name. It can be used to divide dependencies in a multi-module project.
+This library provides two methods for splitting dependencies in multi-module projects.
 
-Assumes that there are two modules "base" and "foo" such that "foo" depends on "base".
-If you want to call some function of "foo" from "base", implement like this:
+First, we assume that there are two modules "base" and "foo" such that "foo" depends on "base".
+If you want to call some function of "foo" from "base", define a Facade interface like this:
 
 ```kotlin
 // "base" module
-package sample.feature.foo
+package module.base.facades
 
 /**
- * The Facade of the "foo" feature.
+ * The Facade of the "foo" module.
  * https://en.wikipedia.org/wiki/Facade_pattern
  *
- * This component defines the API of the "foo" feature.
+ * This component defines the API of the "foo" module.
  */
-interface FooFeatureFacade {
-    /**
-     * Launches `FooFeatureActivity`.
-     */
-    fun launchFooFeatureActivity()
+interface FooModuleFacade {
 
-    companion object : ComponentFactory<FooFeatureFacade>() {
-        override fun createComponent(context: Context): FooFeatureFacade =
-            delegateCreation(context, "sample.feature.foo.FooFeatureFacadeFactory")
+    fun launchFooActivity()
+
+    companion object : ComponentFactory<FooModuleFacade>() {
+        override fun createComponent(context: Context): FooModuleFacade =
+            TODO("Create the implementation of FooModuleFacade.")
+    }
+}
+```
+
+```kotlin
+// Call some feature of the "foo" module.
+val fooModuleFacade = context.getComponent(FooModuleFacade)
+fooModuleFacade.launchFooActivity()
+```
+
+Then, use one of the following two methods to create the implementation of `FooModuleFacade`.
+
+### delegateCreation()
+
+[ComponentFactory.delegateCreation](src/main/java/com/linecorp/lich/component/ComponentFactory.kt)
+delegates the creation of a component to a
+[DelegatedComponentFactory](src/main/java/com/linecorp/lich/component/DelegatedComponentFactory.kt)
+specified by name.
+
+Implement a subclass of `DelegatedComponentFactory` in the "foo" module. Then, specify the class
+name to `delegateCreation()` like this:
+
+```kotlin
+// "base" module
+package module.base.facades
+
+interface FooModuleFacade {
+
+    fun launchFooActivity()
+
+    companion object : ComponentFactory<FooModuleFacade>() {
+        override fun createComponent(context: Context): FooModuleFacade =
+            delegateCreation(context, "module.foo.FooModuleFacadeFactory")
     }
 }
 ```
 
 ```kotlin
 // "foo" module
-package sample.feature.foo
+package module.foo
 
-class FooFeatureFacadeFactory : DelegatedComponentFactory<FooFeatureFacade>() {
-    override fun createComponent(context: Context): FooFeatureFacade =
-        FooFeatureFacadeImpl(context)
+// The class inheriting DelegatedComponentFactory must have a public empty constructor.
+class FooModuleFacadeFactory: DelegatedComponentFactory<FooModuleFacade>() {
+    override fun createComponent(context: Context): FooModuleFacade =
+        FooModuleFacadeImpl(context)
 }
 
-/**
- * The implementation of `FooFeatureFacade`.
- */
-internal class FooFeatureFacadeImpl(private val context: Context) : FooFeatureFacade {
+internal class FooModuleFacadeImpl(private val context: Context) : FooModuleFacade {
 
-    override fun launchFooFeatureActivity() {
+    override fun launchFooActivity() {
         // snip...
     }
 }
@@ -289,6 +316,68 @@ internal class FooFeatureFacadeImpl(private val context: Context) : FooFeatureFa
 
 See [FooFeatureFacade](../sample_app/src/main/java/com/linecorp/lich/sample/feature/foo/FooFeatureFacade.kt)
 and [FooFeatureFacadeFactory](../sample_feature/src/main/java/com/linecorp/lich/sample/feature/foo/FooFeatureFacadeFactory.kt)
+for the actual code.
+
+### delegateToServiceLoader()
+
+[ComponentFactory.delegateToServiceLoader](src/main/java/com/linecorp/lich/component/ComponentFactory.kt)
+delegates the creation of a component to [ServiceLoader](https://developer.android.com/reference/java/util/ServiceLoader).
+
+`ServiceLoader` instantiates a class specified in the `META-INF/services/<binary name of the component class>`
+Java resource file. Then, `delegateToServiceLoader()` calls its `init(context)` function if it implements
+[ServiceLoaderComponent](src/main/java/com/linecorp/lich/component/ServiceLoaderComponent.kt) interface.
+
+```kotlin
+// "base" module
+package module.base.facades
+
+interface FooModuleFacade {
+
+    fun launchFooActivity()
+
+    companion object : ComponentFactory<FooModuleFacade>() {
+        override fun createComponent(context: Context): FooModuleFacade =
+            delegateToServiceLoader(context)
+    }
+}
+```
+
+```kotlin
+// "foo" module
+package module.foo
+
+// The class instantiated by ServiceLoader must have a public empty constructor.
+class FooModuleFacadeImpl : FooModuleFacade, ServiceLoaderComponent {
+
+    private lateinit var context: Context
+
+    override fun init(context: Context) {
+        this.context = context
+    }
+
+    override fun launchFooActivity() {
+        // snip...
+    }
+}
+```
+
+```text
+# META-INF/services/module.base.facades.FooModuleFacade
+module.foo.FooModuleFacadeImpl
+```
+
+You can place ServiceLoader resource files with different implementation classes in multiple
+modules. In such a case, the class with the largest `ServiceLoaderComponent.loadPriority` value is
+selected as the actual implementation class of the component. This is useful when you want to
+switch features depending on the project configuration.
+
+If you are using R8 (included in Android Gradle Plugin 3.5.0+) with code shrinking and optimizations
+enabled, the R8 optimization gets rid of reflection entirely in the final byte code. For details,
+please refer [this article](https://medium.com/androiddevelopers/patterns-for-accessing-code-from-dynamic-feature-modules-7e5dca6f9123).
+
+See [BarFeatureFacade](../sample_app/src/main/java/com/linecorp/lich/sample/feature/bar/BarFeatureFacade.kt),
+[BarFeatureFacadeImpl](../sample_feature/src/main/java/com/linecorp/lich/sample/feature/bar/BarFeatureFacadeImpl.kt)
+and [the resource file](../sample_feature/src/main/resources/META-INF/services/com.linecorp.lich.sample.feature.bar.BarFeatureFacade)
 for the actual code.
 
 ## Debugging features
