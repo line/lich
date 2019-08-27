@@ -46,21 +46,22 @@ internal class DebugComponentProviderImpl(private val creator: ComponentCreator)
             return it.await()
         }
 
-        val previousHolder = newHolder.setCurrentThreadIsDependingOnThis()
-        currentComponentHolder.set(newHolder)
+        val previousHolder = currentComponentHolder.getAndSet(newHolder)
         val result = runCatching {
+            previousHolder?.setDependingHolderThenCheckGraph(newHolder)
+
             val startTime = SystemClock.elapsedRealtime()
             val component = creator.create(context, factory)
             val creationTime = SystemClock.elapsedRealtime() - startTime
             Log.i("DebugComponentProvider", "Created $component in $creationTime ms.")
             component
         }
-        newHolder.setResult(result)
-        currentComponentHolder.set(previousHolder)
         previousHolder?.resetDependingHolder()
+        currentComponentHolder.set(previousHolder)
+        newHolder.setResult(result)
 
         result.onFailure { e ->
-            components.remove(factory)
+            components.remove(factory, newHolder)
             Log.e("DebugComponentProvider", "Failed to create a component for $factory.", e)
         }
 
@@ -69,8 +70,8 @@ internal class DebugComponentProviderImpl(private val creator: ComponentCreator)
 
     override fun <T : Any> setComponent(factory: ComponentFactory<T>, component: T) {
         val newHolder = DebugComponentHolder(factory)
-        components[factory] = newHolder
         newHolder.setResult(Result.success(component))
+        components[factory] = newHolder
     }
 
     override fun <T : Any> clearComponent(factory: ComponentFactory<T>) {
@@ -103,31 +104,25 @@ internal class DebugComponentProviderImpl(private val creator: ComponentCreator)
         private var dependingHolder: DebugComponentHolder? = null
 
         /**
-         * Marks [currentComponentHolder] as now depending on this ComponentHolder.
+         * Marks the given [depending] as now depended by this ComponentHolder.
          * Then, checks the dependency graph.
-         *
-         * @return if not null, the caller must call [resetDependingHolder] for it later.
+         * If circular dependency is detected, throws IllegalStateException.
          */
-        fun setCurrentThreadIsDependingOnThis(): DebugComponentHolder? {
-            val currentHolder = currentComponentHolder.get() ?: return null
-            currentHolder.dependingHolder = this
+        fun setDependingHolderThenCheckGraph(depending: DebugComponentHolder) {
+            dependingHolder = depending
 
-            val dependencyList: MutableList<DebugComponentHolder> = mutableListOf(this)
-            var dependencyCheckingHolder: DebugComponentHolder = this
+            var nextHolder: DebugComponentHolder = depending.dependingHolder ?: return
+            val dependencyList: MutableList<DebugComponentHolder> = mutableListOf(depending)
             while (true) {
-                val nextHolder = dependencyCheckingHolder.dependingHolder ?: break
-                if (dependencyList.contains(nextHolder)) {
+                if (nextHolder in dependencyList) {
                     // Detected circular dependency!
-                    currentHolder.resetDependingHolder()
                     val dependencyGraph =
                         dependencyList.apply { add(nextHolder) }.map { it.factory }.toString()
                     throw IllegalStateException("Detected circular dependency!: $dependencyGraph")
                 }
-                dependencyList.add(nextHolder)
-                dependencyCheckingHolder = nextHolder
+                dependencyList += nextHolder
+                nextHolder = nextHolder.dependingHolder ?: break
             }
-
-            return currentHolder
         }
 
         fun resetDependingHolder() {
@@ -141,8 +136,10 @@ internal class DebugComponentProviderImpl(private val creator: ComponentCreator)
                 return c1.getOrThrow() as T
             }
 
-            val currentHolder = setCurrentThreadIsDependingOnThis()
+            val currentHolder = currentComponentHolder.get()
             try {
+                currentHolder?.setDependingHolderThenCheckGraph(this)
+
                 if (Thread.currentThread() === Looper.getMainLooper().thread) {
                     mainThreadIsBlockedSince = SystemClock.elapsedRealtime()
                 }
@@ -170,6 +167,12 @@ internal class DebugComponentProviderImpl(private val creator: ComponentCreator)
                 )
             }
         }
+    }
+
+    private fun <T> ThreadLocal<T>.getAndSet(newValue: T): T? {
+        val prevValue = get()
+        set(newValue)
+        return prevValue
     }
 
     companion object {
