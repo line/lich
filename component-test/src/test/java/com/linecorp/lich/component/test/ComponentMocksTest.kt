@@ -24,13 +24,11 @@ import com.nhaarman.mockitokotlin2.verify
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.robolectric.annotation.Config
 import kotlin.test.assertEquals
 import kotlin.test.assertNotSame
 import kotlin.test.assertSame
 
 @RunWith(AndroidJUnit4::class)
-@Config(application = TestApplication::class)
 class ComponentMocksTest {
 
     private lateinit var context: Context

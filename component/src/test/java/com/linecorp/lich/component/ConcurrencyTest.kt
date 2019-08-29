@@ -22,7 +22,6 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.robolectric.annotation.Config
 import java.util.concurrent.Callable
 import java.util.concurrent.CyclicBarrier
 import java.util.concurrent.ExecutorService
@@ -30,7 +29,6 @@ import java.util.concurrent.Executors
 import kotlin.test.assertSame
 
 @RunWith(AndroidJUnit4::class)
-@Config(application = TestApplication::class)
 class ConcurrencyTest {
 
     private lateinit var context: Context
@@ -50,7 +48,7 @@ class ConcurrencyTest {
 
     @Test
     fun concurrentGet() {
-        getComponentInParallel(ComponentX)
+        getComponentInParallel(ParallelComponent)
     }
 
     @Test

@@ -22,13 +22,11 @@ import com.linecorp.lich.component.getComponent
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.robolectric.annotation.Config
 import kotlin.test.assertFailsWith
 import kotlin.test.assertSame
 import kotlin.test.assertTrue
 
 @RunWith(AndroidJUnit4::class)
-@Config(application = TestApplication::class)
 class CircularDependencyTest {
 
     private lateinit var context: Context

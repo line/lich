@@ -13,12 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.linecorp.lich.component.test
+package com.linecorp.lich.component
 
-import android.app.Application
-import com.linecorp.lich.component.provider.ComponentProvider
-import com.linecorp.lich.component.provider.ComponentProviderOwner
+import android.content.Context
 
-class TestApplication : Application(), ComponentProviderOwner {
-    override val componentProvider: ComponentProvider = ComponentProvider()
+class ComponentZ private constructor(context: Context, val name: String) {
+
+    val componentY by context.component(ComponentY)
+
+    companion object : ComponentFactory<ComponentZ>() {
+        override fun createComponent(context: Context): ComponentZ =
+            ComponentZ(context, "Z")
+    }
 }
