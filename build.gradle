@@ -92,6 +92,7 @@ def configurePublication(project, type) {
             user = findProperty('bintrayUser') ?: ''
             key = findProperty('bintrayApiKey') ?: ''
             publications = ['myPublication']
+            publish = true
             pkg {
                 userOrg = 'line'
                 repo = 'lich'
