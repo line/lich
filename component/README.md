@@ -17,6 +17,7 @@ By using this framework, you can gain the following benefits:
 ## Set up
 
 First, add the following entries to your `build.gradle` file.
+
 ```groovy
 dependencies {
     implementation 'com.linecorp.lich:component:x.x.x'
@@ -26,37 +27,10 @@ dependencies {
 }
 ```
 
-Then, make your `Application` class implement
-[ComponentProviderOwner](src/main/java/com/linecorp/lich/component/provider/ComponentProviderOwner.kt)
-like this:
-```xml
-<!-- AndroidManifest.xml -->
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.app">
-
-    <application android:name=".MyApplication">
-        <!-- snip... -->
-    </application>
-
-</manifest>
-```
-```kotlin
-package com.example.app
-
-class MyApplication : Application(), ComponentProviderOwner {
-
-    override val componentProvider: ComponentProvider = ComponentProvider()
-
-    // snip...
-}
-```
-
-### for testing
-
-The `component-test` module provides [AndroidX Test](https://developer.android.com/training/testing/set-up-project)
+For unit-testing, the `component-test` module provides [AndroidX Test](https://developer.android.com/training/testing/set-up-project)
 support. (For Robolectric, see also [this document](http://robolectric.org/androidx_test/).)
 And, it also provides helper functions to work with [Mockito-Kotlin](https://github.com/nhaarman/mockito-kotlin).
-To use these features, please add the following dependencies:
+To use these features, add the following dependencies:
 
 ```groovy
 dependencies {
@@ -195,9 +169,15 @@ class SaveFooUseCase(context: Context) {
 
 ## Testing
 
-You can mock components using
+If the `component-test` module is in the runtime classpath, every component is tied to an
+`applicationContext`. And, a different instance of component is created for each `applicationContext`.
+This is useful for Robolectric tests, because Robolectric recreates `applicationContext` for each test.
+It means all components are automatically reset for every Robolectric test.
+
+The `component-test` module also provides APIs to mock components for tests.
+Here is an example of
 [mockComponent](../component-test/src/main/java/com/linecorp/lich/component/test/MockitoComponentMocks.kt)
-function. Here is an example for testing the above `SaveFooUseCase`.
+function for testing the above `SaveFooUseCase`.
 
 ```kotlin
 @RunWith(AndroidJUnit4::class)
@@ -208,13 +188,6 @@ class SaveFooUseCaseTest {
     @Before
     fun setUp() {
         context = ApplicationProvider.getApplicationContext()
-    }
-
-    @After
-    fun tearDown() {
-        // You can omit this in Robolectric tests, because Robolectric recreates
-        // `applicationContext` for each test.
-        clearAllComponents()
     }
 
     @Test
@@ -239,7 +212,7 @@ See also
 
 This library provides two methods for splitting dependencies in multi-module projects.
 
-First, we assume that there are two modules "base" and "foo" such that "foo" depends on "base".
+We assume that there are two modules "base" and "foo" such that "foo" depends on "base".
 If you want to call some function of "foo" from "base", define a Facade interface like this:
 
 ```kotlin
@@ -258,7 +231,7 @@ interface FooModuleFacade {
 
     companion object : ComponentFactory<FooModuleFacade>() {
         override fun createComponent(context: Context): FooModuleFacade =
-            TODO("Create the implementation of FooModuleFacade.")
+            TODO()
     }
 }
 ```
@@ -399,8 +372,8 @@ I/DebugComponentProvider: Created com.example.app.FooComponent@8488aeb in 20 ms.
 ```
 
 In addition, you can use
-[DebugComponentProvider](../component-debug/src/main/java/com/linecorp/lich/component/debug/DebugComponentProvider.kt)
-to modify components in the provider.
+[DebugComponentManager](../component-debug/src/main/java/com/linecorp/lich/component/debug/DebugComponentManager.kt)
+to modify components directly.
 
 ```kotlin
 interface FooComponent {
@@ -409,7 +382,7 @@ interface FooComponent {
 
     companion object : ComponentFactory<FooComponent>() {
         override fun createComponent(context: Context): FooComponent =
-            TODO("Create FooComponentImpl.")
+            // snip...
     }
 }
 ```
@@ -420,7 +393,7 @@ fun initFooComponentForDebug(context: Context) {
     if (baseFoo is FooComponentForDebug) {
         throw IllegalStateException("FooComponentForDebug is already set.")
     }
-    context.debugComponentProvider.setComponent(FooComponent, FooComponentForDebug(baseFoo))
+    context.debugComponentManager.setComponent(FooComponent, FooComponentForDebug(baseFoo))
 }
 
 private class FooComponentForDebug(private val baseFoo: FooComponent) : FooComponent {
@@ -436,8 +409,8 @@ private class FooComponentForDebug(private val baseFoo: FooComponent) : FooCompo
 }
 ```
 
-Note that the modification to
-[DebugComponentProvider](../component-debug/src/main/java/com/linecorp/lich/component/debug/DebugComponentProvider.kt)
+Note that modifications to
+[DebugComponentManager](../component-debug/src/main/java/com/linecorp/lich/component/debug/DebugComponentManager.kt)
 don't affect already acquired components.
 So, the above `initFooComponentForDebug(context)` should be called prior to any acquisition of
 `FooComponent`.
