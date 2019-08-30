@@ -17,14 +17,10 @@ package com.linecorp.lich.sample
 
 import android.app.Application
 import android.os.StrictMode
-import com.linecorp.lich.component.provider.ComponentProvider
-import com.linecorp.lich.component.provider.ComponentProviderOwner
 import com.linecorp.lich.viewmodel.provider.BridgeViewModelProvider
 import com.linecorp.lich.viewmodel.provider.BridgeViewModelProviderOwner
 
-class MyApplication : Application(), ComponentProviderOwner, BridgeViewModelProviderOwner {
-
-    override val componentProvider: ComponentProvider = ComponentProvider()
+class MyApplication : Application(), BridgeViewModelProviderOwner {
 
     override val bridgeViewModelProvider: BridgeViewModelProvider = BridgeViewModelProvider()
 

@@ -15,10 +15,12 @@
  */
 package com.linecorp.lich.component
 
-import android.app.Application
-import com.linecorp.lich.component.provider.ComponentProvider
-import com.linecorp.lich.component.provider.ComponentProviderOwner
+import android.content.Context
 
-class TestApplication : Application(), ComponentProviderOwner {
-    override val componentProvider: ComponentProvider = ComponentProvider()
+class OtherComponent private constructor(val context: Context, val name: String) {
+
+    companion object : ComponentFactory<OtherComponent>() {
+        override fun createComponent(context: Context): OtherComponent =
+            OtherComponent(context, "foo")
+    }
 }

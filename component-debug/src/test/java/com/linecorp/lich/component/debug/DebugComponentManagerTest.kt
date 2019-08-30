@@ -19,16 +19,17 @@ import android.content.Context
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.linecorp.lich.component.getComponent
+import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.robolectric.annotation.Config
 import kotlin.test.assertEquals
 import kotlin.test.assertNotSame
+import kotlin.test.assertNull
+import kotlin.test.assertSame
 
 @RunWith(AndroidJUnit4::class)
-@Config(application = TestApplication::class)
-class DebugComponentProviderTest {
+class DebugComponentManagerTest {
 
     private lateinit var context: Context
 
@@ -37,12 +38,17 @@ class DebugComponentProviderTest {
         context = ApplicationProvider.getApplicationContext()
     }
 
+    @After
+    fun tearDown() {
+        context.debugComponentManager.clearComponent(FooComponent)
+    }
+
     @Test
     fun setComponent() {
         val foo1 = context.getComponent(FooComponent)
         assertEquals("I am FooComponent.", foo1.sayHello())
 
-        context.debugComponentProvider.setComponent(FooComponent, DebugFooComponent())
+        context.debugComponentManager.setComponent(FooComponent, DebugFooComponent())
 
         val foo2 = context.getComponent(FooComponent)
         assertEquals("I am DebugFooComponent.", foo2.sayHello())
@@ -53,12 +59,28 @@ class DebugComponentProviderTest {
         val foo1 = context.getComponent(FooComponent)
         assertEquals("I am FooComponent.", foo1.sayHello())
 
-        context.debugComponentProvider.clearComponent(FooComponent)
+        context.debugComponentManager.clearComponent(FooComponent)
 
         val foo2 = context.getComponent(FooComponent)
         assertEquals("I am FooComponent.", foo2.sayHello())
 
         assertNotSame(foo1, foo2)
+    }
+
+    @Test
+    fun getComponentIfAlreadyCreated() {
+        assertNull(context.debugComponentManager.getComponentIfAlreadyCreated(FooComponent))
+
+        val foo1 = context.getComponent(FooComponent)
+        assertEquals("I am FooComponent.", foo1.sayHello())
+
+        val foo2 = context.debugComponentManager.getComponentIfAlreadyCreated(FooComponent)
+
+        assertSame(foo1, foo2)
+
+        context.debugComponentManager.clearComponent(FooComponent)
+
+        assertNull(context.debugComponentManager.getComponentIfAlreadyCreated(FooComponent))
     }
 
     private class DebugFooComponent : FooComponent {

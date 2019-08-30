@@ -17,10 +17,10 @@ package com.linecorp.lich.component
 
 import android.content.Context
 
-class ComponentX private constructor(val name: String) {
+class ComponentX private constructor(val context: Context, val name: String) {
 
     companion object : ComponentFactory<ComponentX>() {
         override fun createComponent(context: Context): ComponentX =
-            ComponentX("X")
+            ComponentX(context, "X")
     }
 }

@@ -23,12 +23,12 @@ class DelegateToServiceLoaderComponent2Impl2 : DelegateToServiceLoaderComponent2
     override val loadPriority: Int
         get() = 1
 
-    private lateinit var componentX: ComponentX
+    private lateinit var otherComponent: OtherComponent
 
     override fun init(context: Context) {
-        componentX = context.getComponent(ComponentX)
+        otherComponent = context.getComponent(OtherComponent)
     }
 
     override fun askToOther(): String =
-        "componentX.name is ${componentX.name}."
+        "otherComponent.name is ${otherComponent.name}."
 }

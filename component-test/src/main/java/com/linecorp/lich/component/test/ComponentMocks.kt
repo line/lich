@@ -17,54 +17,39 @@
 
 package com.linecorp.lich.component.test
 
-import android.content.Context
-import androidx.test.core.app.ApplicationProvider
 import com.linecorp.lich.component.ComponentFactory
-import com.linecorp.lich.component.test.internal.mockComponentProvider
 
 /**
  * Sets [mock] as a mock component for [factory].
- * After calling this method, `Context.getComponent(factory)` will return the [mock] for [factory].
+ *
+ * After calling this method, `context.getComponent(factory)` will return the [mock] for [factory].
  */
 fun <T : Any> setMockComponent(factory: ComponentFactory<T>, mock: T) {
-    mockComponentProvider.setMockComponent(factory, mock)
+    getMockComponentManager().setMockComponent(factory, mock)
 }
 
 /**
  * Clears the mock component that was previously set via [setMockComponent].
- * After calling this method, `Context.getComponent(factory)` will return the real component for
+ *
+ * After calling this method, `context.getComponent(factory)` will return the real component for
  * [factory].
  */
 fun <T : Any> clearMockComponent(factory: ComponentFactory<T>) {
-    mockComponentProvider.clearMockComponent(factory)
+    getMockComponentManager().clearMockComponent(factory)
 }
 
 /**
- * Gets a singleton instance of component for the given [factory].
- * This function returns a "real" instance of the component regardless of [setMockComponent].
+ * Gets a component for the given [factory] ignoring mocks.
  *
+ * This function returns a "real" instance of the component regardless of [setMockComponent].
  * For example, you can use this function for "spying" a real component.
  */
-fun <T : Any> getRealComponent(factory: ComponentFactory<T>): T {
-    val context: Context = ApplicationProvider.getApplicationContext()
-    return mockComponentProvider.getRealComponent(context, factory)
-}
+fun <T : Any> getRealComponent(factory: ComponentFactory<T>): T =
+    getMockComponentManager().getRealComponent(factory)
 
 /**
  * Clears all real/mock components.
- *
- * In Android instrumentation tests, `applicationContext` is shared between test methods.
- * So, you should clear all components after each test like this:
- * ```
- * @After
- * fun tearDown() {
- *     clearAllComponents()
- * }
- * ```
- *
- * You don't need to call this function in Robolectric tests, because Robolectric recreates
- * `applicationContext` for each test.
  */
 fun clearAllComponents() {
-    mockComponentProvider.clearAllComponents()
+    getMockComponentManager().clearAllComponents()
 }

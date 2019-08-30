@@ -21,14 +21,12 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.robolectric.annotation.Config
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 import kotlin.test.assertNotSame
 import kotlin.test.assertSame
 
 @RunWith(AndroidJUnit4::class)
-@Config(application = TestApplication::class)
 class ComponentsTest {
 
     private lateinit var context: Context
@@ -42,6 +40,7 @@ class ComponentsTest {
     fun sameInstance() {
         val componentX1 = context.getComponent(ComponentX)
         assertEquals("X", componentX1.name)
+        assertSame(context, componentX1.context)
 
         val componentX2 = context.getComponent(ComponentX)
         assertSame(componentX1, componentX2)
@@ -51,10 +50,11 @@ class ComponentsTest {
     fun dependency() {
         val componentY = context.getComponent(ComponentY)
         assertEquals("Y", componentY.name)
-        assertEquals("X", componentY.componentX.name)
+        assertEquals("Z", componentY.componentZ.name)
 
-        val componentX = context.getComponent(ComponentX)
-        assertSame(componentY.componentX, componentX)
+        val componentZ = context.getComponent(ComponentZ)
+        assertSame(componentY.componentZ, componentZ)
+        assertSame(componentY, componentZ.componentY)
     }
 
     @Test
@@ -85,6 +85,6 @@ class ComponentsTest {
     @Test
     fun delegateToServiceLoader2() {
         val component = context.getComponent(DelegateToServiceLoaderComponent2)
-        assertEquals("componentX.name is X.", component.askToOther())
+        assertEquals("otherComponent.name is foo.", component.askToOther())
     }
 }

@@ -13,44 +13,46 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-@file:JvmName("DebugComponentProviders")
+@file:JvmName("DebugComponentManagers")
 
 package com.linecorp.lich.component.debug
 
 import android.content.Context
 import com.linecorp.lich.component.ComponentFactory
-import com.linecorp.lich.component.provider.ComponentProvider
-import com.linecorp.lich.component.provider.ComponentProviderOwner
+import com.linecorp.lich.component.internal.getComponentManager
 
 /**
- * A [ComponentProvider] that supports several methods useful for debugging.
+ * An API to modify components directly.
  *
- * Note that the modification to this provider don't affect already acquired components.
+ * The modification to this manager will affect subsequent calls of `context.getComponent(factory)`.
  */
-interface DebugComponentProvider : ComponentProvider {
+interface DebugComponentManager {
     /**
      * Sets the given instance as a component for the [factory].
      *
-     * If already there is another component for the [factory] in this provider,
-     * it will be replaced.
+     * If already there is another component for the [factory], it will be replaced.
      */
     fun <T : Any> setComponent(factory: ComponentFactory<T>, component: T)
 
     /**
-     * Removes the component for the [factory] from this provider, if any.
+     * Removes a component for the [factory], if any.
+     *
+     * It means the next call of `context.getComponent(factory)` will create a new instance of the
+     * component.
      */
     fun <T : Any> clearComponent(factory: ComponentFactory<T>)
 
     /**
-     * Clears all components in this provider.
+     * Returns a component instance for the [factory] only if it is already created.
+     * Otherwise, returns null.
      */
-    fun clearAllComponents()
+    fun <T : Any> getComponentIfAlreadyCreated(factory: ComponentFactory<T>): T?
 }
 
 /**
- * Obtains the [DebugComponentProvider] from a [Context].
+ * Obtains a [DebugComponentManager] from a [Context].
  *
- * For example, you can use [DebugComponentProvider] to replace components.
+ * For example, you can use [DebugComponentManager] to replace components.
  * ```
  * interface FooComponent {
  *
@@ -58,7 +60,7 @@ interface DebugComponentProvider : ComponentProvider {
  *
  *     companion object : ComponentFactory<FooComponent>() {
  *         override fun createComponent(context: Context): FooComponent =
- *             TODO("Create FooComponentImpl.")
+ *             // snip...
  *     }
  * }
  * ```
@@ -69,7 +71,7 @@ interface DebugComponentProvider : ComponentProvider {
  *     if (baseFoo is FooComponentForDebug) {
  *         throw IllegalStateException("FooComponentForDebug is already set.")
  *     }
- *     context.debugComponentProvider.setComponent(FooComponent, FooComponentForDebug(baseFoo))
+ *     context.debugComponentManager.setComponent(FooComponent, FooComponentForDebug(baseFoo))
  * }
  *
  * private class FooComponentForDebug(private val baseFoo: FooComponent) : FooComponent {
@@ -85,21 +87,10 @@ interface DebugComponentProvider : ComponentProvider {
  * }
  * ```
  *
- * Note that the modification to [DebugComponentProvider] don't affect already acquired components.
+ * Note that modifications to [DebugComponentManager] don't affect already acquired components.
  * So, the above `initFooComponentForDebug(context)` should be called prior to any acquisition of
  * `FooComponent`.
  */
 @get:JvmName("from")
-val Context.debugComponentProvider: DebugComponentProvider
-    get() {
-        val providerOwner = applicationContext as? ComponentProviderOwner
-            ?: throw RuntimeException(
-                "The applicationContext isn't implementing ComponentProviderOwner. " +
-                    "Please refer to the document of ComponentProviderOwner."
-            )
-        return providerOwner.componentProvider as? DebugComponentProvider
-            ?: throw RuntimeException(
-                "The componentProvider isn't DebugComponentProvider. " +
-                    "Please ensure that the componentProvider is properly initialized."
-            )
-    }
+val Context.debugComponentManager: DebugComponentManager
+    get() = getComponentManager(applicationContext) as DebugComponentManager

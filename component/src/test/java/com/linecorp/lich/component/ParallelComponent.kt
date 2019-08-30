@@ -13,21 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.linecorp.lich.component.provider
+package com.linecorp.lich.component
 
-/**
- * A class that owns a [ComponentProvider].
- *
- * Your Application class must implement this interface like this:
- * ```
- * class YourApplication : Application(), ComponentProviderOwner {
- *
- *     override val componentProvider: ComponentProvider = ComponentProvider()
- *
- *     // snip...
- * }
- * ```
- */
-interface ComponentProviderOwner {
-    val componentProvider: ComponentProvider
+import android.content.Context
+
+class ParallelComponent private constructor() {
+
+    companion object : ComponentFactory<ParallelComponent>() {
+        override fun createComponent(context: Context): ParallelComponent =
+            ParallelComponent()
+    }
 }

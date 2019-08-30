@@ -13,12 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.linecorp.lich.component.test.internal
+package com.linecorp.lich.component
 
-import com.linecorp.lich.component.debug.DebugComponentProvider
-import com.linecorp.lich.component.debug.internal.ComponentProviderDecorator
+import android.content.Context
 
-class MockComponentProviderDecorator : ComponentProviderDecorator {
-    override fun decorate(componentProvider: DebugComponentProvider): DebugComponentProvider =
-        MockComponentProvider(componentProvider)
+class ComponentZ private constructor(context: Context, val name: String) {
+
+    val componentY by context.component(ComponentY)
+
+    companion object : ComponentFactory<ComponentZ>() {
+        override fun createComponent(context: Context): ComponentZ =
+            ComponentZ(context, "Z")
+    }
 }

@@ -18,7 +18,7 @@
 package com.linecorp.lich.component
 
 import android.content.Context
-import com.linecorp.lich.component.provider.ComponentProviderOwner
+import com.linecorp.lich.component.internal.componentProvider
 
 /**
  * Gets a singleton instance of component created from [factory].
@@ -29,11 +29,6 @@ import com.linecorp.lich.component.provider.ComponentProviderOwner
  * @see Context.component
  * @see ComponentFactory
  */
-fun <T : Any> Context.getComponent(factory: ComponentFactory<T>): T {
-    val providerOwner = applicationContext as? ComponentProviderOwner
-        ?: throw RuntimeException(
-            "The applicationContext isn't implementing ComponentProviderOwner. " +
-                "Please refer to the document of ComponentProviderOwner."
-        )
-    return providerOwner.componentProvider.getComponent(this, factory)
-}
+@JvmName("get")
+fun <T : Any> Context.getComponent(factory: ComponentFactory<T>): T =
+    componentProvider.getComponent(this, factory)

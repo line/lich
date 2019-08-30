@@ -16,7 +16,9 @@
 package com.linecorp.lich.component
 
 import android.content.Context
+import com.linecorp.lich.component.internal.ComponentAccessor
 import java.util.ServiceLoader
+import java.util.concurrent.atomic.AtomicReferenceFieldUpdater
 
 /**
  * A class to declare a factory of a "component".
@@ -211,5 +213,33 @@ abstract class ComponentFactory<T : Any> {
         return component
     }
 
-    internal fun create(context: Context): T = createComponent(context)
+    @Volatile
+    private var component: Any? = null
+
+    internal companion object {
+        private val fieldUpdater = AtomicReferenceFieldUpdater.newUpdater(
+            ComponentFactory::class.java,
+            Any::class.java,
+            "component"
+        )
+
+        internal val accessor: ComponentAccessor = object : ComponentAccessor {
+            override fun <T : Any> createComponent(
+                factory: ComponentFactory<T>,
+                applicationContext: Context
+            ): T = factory.createComponent(applicationContext)
+
+            override fun getComponent(factory: ComponentFactory<*>): Any? = factory.component
+
+            override fun setComponent(factory: ComponentFactory<*>, component: Any?) {
+                factory.component = component
+            }
+
+            override fun compareAndSetComponent(
+                factory: ComponentFactory<*>,
+                expect: Any?,
+                update: Any?
+            ): Boolean = fieldUpdater.compareAndSet(factory, expect, update)
+        }
+    }
 }
