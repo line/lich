@@ -13,12 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.linecorp.lich.viewmodel.test.internal
+package com.linecorp.lich.viewmodel.internal
 
-import com.linecorp.lich.viewmodel.provider.BridgeViewModelProvider
-import com.linecorp.lich.viewmodel.provider.internal.BridgeViewModelProviderFactory
+import androidx.annotation.MainThread
+import androidx.lifecycle.ViewModel
+import com.linecorp.lich.viewmodel.AbstractViewModel
 
-class MockBridgeViewModelProviderFactory : BridgeViewModelProviderFactory {
-    override fun newBridgeViewModelProvider(): BridgeViewModelProvider =
-        MockBridgeViewModelProvider()
+/**
+ * A class that bridges a [ViewModel] of Android Architecture Components and our [AbstractViewModel].
+ */
+@MainThread
+internal class BridgeViewModel : ViewModel() {
+
+    internal var viewModel: AbstractViewModel? = null
+
+    override fun onCleared() {
+        viewModel?.clear()
+        viewModel = null
+    }
 }

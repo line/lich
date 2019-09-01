@@ -15,19 +15,8 @@
  */
 package com.linecorp.lich.viewmodel.provider
 
-/**
- * A class that owns a [BridgeViewModelProvider].
- *
- * Your Application class must implement this interface like this:
- * ```
- * class YourApplication : Application(), BridgeViewModelProviderOwner {
- *
- *     override val bridgeViewModelProvider: BridgeViewModelProvider = BridgeViewModelProvider()
- *
- *     // snip...
- * }
- * ```
- */
+@Deprecated("Will be removed in 1.2.0")
 interface BridgeViewModelProviderOwner {
+    @Deprecated("Will be removed in 1.2.0")
     val bridgeViewModelProvider: BridgeViewModelProvider
 }

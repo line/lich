@@ -65,8 +65,12 @@ class MockViewModelHandle<T : AbstractViewModel>(private val mockProducer: () ->
      *
      * @see setMockViewModel
      */
-    fun setAsMockViewModelFor(factory: ViewModelFactory<T>): MockViewModelHandle<T> {
-        setMockViewModel(factory, this::createMock)
+    @JvmOverloads
+    fun setAsMockViewModelFor(
+        factory: ViewModelFactory<T>,
+        mockViewModelManager: MockViewModelManager = getMockViewModelManager()
+    ): MockViewModelHandle<T> {
+        mockViewModelManager.setMockViewModel(factory, this::createMock)
         return this
     }
 }

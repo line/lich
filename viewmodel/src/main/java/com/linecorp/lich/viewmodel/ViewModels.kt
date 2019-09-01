@@ -22,7 +22,7 @@ import androidx.annotation.MainThread
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelStoreOwner
-import com.linecorp.lich.viewmodel.provider.BridgeViewModelProviderOwner
+import com.linecorp.lich.viewmodel.internal.lichViewModelProvider
 
 /**
  * Returns an existing ViewModel or creates a new one, associated with this Activity.
@@ -106,16 +106,5 @@ fun <T : AbstractViewModel> Fragment.getActivityViewModel(factory: ViewModelFact
 
 private fun <T : AbstractViewModel> Context.getViewModel(
     viewModelStoreOwner: ViewModelStoreOwner,
-    viewModelFactory: ViewModelFactory<T>
-): T {
-    val providerOwner = applicationContext as? BridgeViewModelProviderOwner
-        ?: throw RuntimeException(
-            "The applicationContext isn't implementing BridgeViewModelProviderOwner. " +
-                "Please refer to the document of BridgeViewModelProviderOwner."
-        )
-    return providerOwner.bridgeViewModelProvider.getViewModel(
-        this,
-        viewModelStoreOwner,
-        viewModelFactory
-    )
-}
+    factory: ViewModelFactory<T>
+): T = lichViewModelProvider.getViewModel(this, viewModelStoreOwner, factory)

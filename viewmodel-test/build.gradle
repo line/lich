@@ -12,7 +12,6 @@ android {
         minSdkVersion versions.minSdk
         targetSdkVersion versions.targetSdk
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
-        consumerProguardFiles 'proguard-rules.pro'
     }
 }
 
