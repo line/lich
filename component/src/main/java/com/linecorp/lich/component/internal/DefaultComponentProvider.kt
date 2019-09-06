@@ -31,7 +31,7 @@ internal class DefaultComponentProvider : ComponentProvider {
     override fun init(accessor: ComponentAccessor) = Unit
 
     override fun <T : Any> getComponent(context: Context, factory: ComponentFactory<T>): T {
-        val accessor = ComponentFactory.accessor
+        val accessor = ComponentFactory.Accessor
         accessor.getComponent(factory)?.let {
             @Suppress("UNCHECKED_CAST")
             return if (it is Creating) it.await() else it as T
