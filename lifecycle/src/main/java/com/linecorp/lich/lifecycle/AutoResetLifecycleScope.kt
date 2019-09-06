@@ -16,8 +16,8 @@
 package com.linecorp.lich.lifecycle
 
 import androidx.annotation.MainThread
-import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -127,25 +127,19 @@ class AutoResetLifecycleScope @JvmOverloads @MainThread constructor(
     }
 
     private inner class AutoResetObserver(private val resetPolicy: ResetPolicy) :
-        DefaultLifecycleObserver {
+        LifecycleEventObserver {
 
-        override fun onPause(owner: LifecycleOwner) {
-            if (resetPolicy == ResetPolicy.ON_PAUSE) {
+        override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
+            if (event == Lifecycle.Event.ON_PAUSE && resetPolicy == ResetPolicy.ON_PAUSE ||
+                event == Lifecycle.Event.ON_STOP && resetPolicy == ResetPolicy.ON_STOP
+            ) {
                 resetContext()
+            } else if (event == Lifecycle.Event.ON_DESTROY) {
+                // Regardless of `resetPolicy`, AutoResetLifecycleScope is always cancelled
+                // when Lifecycle.Event.ON_DESTROY event occurred.
+                cancelContext()
+                source.lifecycle.removeObserver(this)
             }
-        }
-
-        override fun onStop(owner: LifecycleOwner) {
-            if (resetPolicy == ResetPolicy.ON_STOP) {
-                resetContext()
-            }
-        }
-
-        override fun onDestroy(owner: LifecycleOwner) {
-            // Regardless of `resetPolicy`, AutoResetLifecycleScope is always cancelled
-            // when Lifecycle.Event.ON_DESTROY event occurred.
-            cancelContext()
-            owner.lifecycle.removeObserver(this)
         }
     }
 }
