@@ -216,30 +216,28 @@ abstract class ComponentFactory<T : Any> {
     @Volatile
     private var component: Any? = null
 
-    internal companion object {
+    internal object Accessor : ComponentAccessor {
         private val fieldUpdater = AtomicReferenceFieldUpdater.newUpdater(
             ComponentFactory::class.java,
             Any::class.java,
             "component"
         )
 
-        internal val accessor: ComponentAccessor = object : ComponentAccessor {
-            override fun <T : Any> createComponent(
-                factory: ComponentFactory<T>,
-                applicationContext: Context
-            ): T = factory.createComponent(applicationContext)
+        override fun <T : Any> createComponent(
+            factory: ComponentFactory<T>,
+            applicationContext: Context
+        ): T = factory.createComponent(applicationContext)
 
-            override fun getComponent(factory: ComponentFactory<*>): Any? = factory.component
+        override fun getComponent(factory: ComponentFactory<*>): Any? = factory.component
 
-            override fun setComponent(factory: ComponentFactory<*>, component: Any?) {
-                factory.component = component
-            }
-
-            override fun compareAndSetComponent(
-                factory: ComponentFactory<*>,
-                expect: Any?,
-                update: Any?
-            ): Boolean = fieldUpdater.compareAndSet(factory, expect, update)
+        override fun setComponent(factory: ComponentFactory<*>, component: Any?) {
+            factory.component = component
         }
+
+        override fun compareAndSetComponent(
+            factory: ComponentFactory<*>,
+            expect: Any?,
+            update: Any?
+        ): Boolean = fieldUpdater.compareAndSet(factory, expect, update)
     }
 }

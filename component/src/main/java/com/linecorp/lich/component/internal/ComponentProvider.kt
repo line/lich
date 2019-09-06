@@ -47,7 +47,7 @@ internal val componentProvider: ComponentProvider =
             ComponentProvider::class.java,
             ComponentProvider::class.java.classLoader
         ).iterator()
-    }.maxBy { it.loadPriority }?.apply { init(ComponentFactory.accessor) }
+    }.maxBy { it.loadPriority }?.apply { init(ComponentFactory.Accessor) }
         ?: throw Error("Failed to load ComponentProvider.")
 
 fun getComponentManager(applicationContext: Context): Any =
