@@ -53,7 +53,7 @@ dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:${versions.kotlinCoroutines}"
     implementation "androidx.appcompat:appcompat:${versions.androidxAppcompat}"
     implementation "androidx.constraintlayout:constraintlayout:${versions.androidxConstraintlayout}"
-    implementation "androidx.lifecycle:lifecycle-livedata-ktx:2.1.0-rc01" // TODO
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:${versions.androidxLifecycle}"
     implementation "androidx.room:room-ktx:${versions.androidxRoom}"
     kapt "androidx.room:room-compiler:${versions.androidxRoom}"
     implementation "com.squareup.okhttp3:okhttp:${versions.okhttp}"
