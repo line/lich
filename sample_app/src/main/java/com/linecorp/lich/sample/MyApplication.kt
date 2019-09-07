@@ -17,12 +17,8 @@ package com.linecorp.lich.sample
 
 import android.app.Application
 import android.os.StrictMode
-import com.linecorp.lich.viewmodel.provider.BridgeViewModelProvider
-import com.linecorp.lich.viewmodel.provider.BridgeViewModelProviderOwner
 
-class MyApplication : Application(), BridgeViewModelProviderOwner {
-
-    override val bridgeViewModelProvider: BridgeViewModelProvider = BridgeViewModelProvider()
+class MyApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()

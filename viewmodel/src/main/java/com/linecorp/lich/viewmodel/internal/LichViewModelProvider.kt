@@ -13,31 +13,36 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.linecorp.lich.viewmodel.provider
+package com.linecorp.lich.viewmodel.internal
 
 import android.content.Context
+import androidx.annotation.MainThread
 import androidx.lifecycle.ViewModelStoreOwner
 import com.linecorp.lich.viewmodel.AbstractViewModel
 import com.linecorp.lich.viewmodel.ViewModelFactory
-import com.linecorp.lich.viewmodel.internal.lichViewModelProvider
+import java.util.ServiceLoader
 
-@Deprecated("Will be removed in 1.2.0")
-interface BridgeViewModelProvider {
-    @Deprecated("Will be removed in 1.2.0")
+interface LichViewModelProvider {
+
+    val loadPriority: Int
+
+    @MainThread
     fun <T : AbstractViewModel> getViewModel(
         context: Context,
         viewModelStoreOwner: ViewModelStoreOwner,
         factory: ViewModelFactory<T>
     ): T
+
+    fun getManager(applicationContext: Context): Any
 }
 
-@Suppress("FunctionName") // factory function
-@Deprecated("Will be removed in 1.2.0")
-fun BridgeViewModelProvider(): BridgeViewModelProvider =
-    object : BridgeViewModelProvider {
-        override fun <T : AbstractViewModel> getViewModel(
-            context: Context,
-            viewModelStoreOwner: ViewModelStoreOwner,
-            factory: ViewModelFactory<T>
-        ): T = lichViewModelProvider.getViewModel(context, viewModelStoreOwner, factory)
-    }
+internal val lichViewModelProvider: LichViewModelProvider =
+    Sequence {
+        ServiceLoader.load(
+            LichViewModelProvider::class.java,
+            LichViewModelProvider::class.java.classLoader
+        ).iterator()
+    }.maxBy { it.loadPriority } ?: throw Error("Failed to load LichViewModelProvider.")
+
+fun getViewModelManager(applicationContext: Context): Any =
+    lichViewModelProvider.getManager(applicationContext)

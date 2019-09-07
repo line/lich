@@ -17,12 +17,9 @@
 
 package com.linecorp.lich.viewmodel.test
 
-import android.content.Context
 import androidx.lifecycle.ViewModelStoreOwner
-import androidx.test.core.app.ApplicationProvider
 import com.linecorp.lich.viewmodel.AbstractViewModel
 import com.linecorp.lich.viewmodel.ViewModelFactory
-import com.linecorp.lich.viewmodel.test.internal.mockBridgeViewModelProvider
 
 /**
  * Sets [mockFactory] as a factory function of mock ViewModels for [factory].
@@ -33,13 +30,12 @@ import com.linecorp.lich.viewmodel.test.internal.mockBridgeViewModelProvider
  *
  * @param factory a [ViewModelFactory] to be mocked.
  * @param mockFactory a function that returns a mock ViewModel for the given [ViewModelStoreOwner].
- * @see MockViewModelHandle
  */
 fun <T : AbstractViewModel> setMockViewModel(
     factory: ViewModelFactory<T>,
     mockFactory: (ViewModelStoreOwner) -> T
 ) {
-    mockBridgeViewModelProvider.setMockViewModel(factory, mockFactory)
+    getMockViewModelManager().setMockViewModel(factory, mockFactory)
 }
 
 /**
@@ -48,7 +44,7 @@ fun <T : AbstractViewModel> setMockViewModel(
  * @param factory a [ViewModelFactory] that will be no longer mocked.
  */
 fun <T : AbstractViewModel> clearMockViewModel(factory: ViewModelFactory<T>) {
-    mockBridgeViewModelProvider.clearMockViewModel(factory)
+    getMockViewModelManager().clearMockViewModel(factory)
 }
 
 /**
@@ -58,27 +54,14 @@ fun <T : AbstractViewModel> clearMockViewModel(factory: ViewModelFactory<T>) {
  * For example, a `mockFactory` of [setMockViewModel] may use this function for "spying" a real
  * ViewModel.
  */
-fun <T : AbstractViewModel> createRealViewModel(factory: ViewModelFactory<T>): T {
-    val context: Context = ApplicationProvider.getApplicationContext()
-    return mockBridgeViewModelProvider.createRealViewModel(context, factory)
-}
+fun <T : AbstractViewModel> createRealViewModel(factory: ViewModelFactory<T>): T =
+    getMockViewModelManager().createRealViewModel(factory)
 
 /**
- * Clears all mocks that were previously set via [setMockViewModel].
+ * Clears all mock factories that were previously set via [setMockViewModel].
+ *
  * Note that this function doesn't clear ViewModels that are already in `ViewModelStore`.
- *
- * In Android instrumentation tests, `applicationContext` is shared between test methods.
- * So, you should clear all mock ViewModel factories after each test like this:
- * ```
- * @After
- * fun tearDown() {
- *     clearAllMockViewModels()
- * }
- * ```
- *
- * You don't need to call this function in Robolectric tests, because Robolectric recreates
- * `applicationContext` for each test.
  */
 fun clearAllMockViewModels() {
-    mockBridgeViewModelProvider.clearAllMockViewModels()
+    getMockViewModelManager().clearAllMockViewModels()
 }

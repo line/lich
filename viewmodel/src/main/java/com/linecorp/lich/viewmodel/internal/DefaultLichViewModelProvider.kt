@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.linecorp.lich.viewmodel.provider.internal
+package com.linecorp.lich.viewmodel.internal
 
 import android.content.Context
 import androidx.lifecycle.ViewModel
@@ -21,12 +21,14 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelStoreOwner
 import com.linecorp.lich.viewmodel.AbstractViewModel
 import com.linecorp.lich.viewmodel.ViewModelFactory
-import com.linecorp.lich.viewmodel.provider.BridgeViewModelProvider
 
 /**
- * The default implementation of [BridgeViewModelProvider].
+ * The default implementation of [LichViewModelProvider].
  */
-open class DefaultBridgeViewModelProvider : BridgeViewModelProvider {
+open class DefaultLichViewModelProvider : LichViewModelProvider {
+
+    override val loadPriority: Int
+        get() = 0
 
     private val bridgeViewModelFactory: ViewModelProvider.Factory =
         object : ViewModelProvider.Factory {
@@ -38,10 +40,10 @@ open class DefaultBridgeViewModelProvider : BridgeViewModelProvider {
     final override fun <T : AbstractViewModel> getViewModel(
         context: Context,
         viewModelStoreOwner: ViewModelStoreOwner,
-        viewModelFactory: ViewModelFactory<T>
+        factory: ViewModelFactory<T>
     ): T {
         // The key to use to identify the BridgeViewModel in a ViewModelStore.
-        val key = viewModelFactory.javaClass.name
+        val key = factory.javaClass.name
 
         // We always create a BridgeViewModel object for ViewModelStores of Android Architecture Components.
         val viewModelProvider = ViewModelProvider(viewModelStoreOwner, bridgeViewModelFactory)
@@ -52,25 +54,27 @@ open class DefaultBridgeViewModelProvider : BridgeViewModelProvider {
             @Suppress("UNCHECKED_CAST")
             return viewModel as T
         }
-        return newViewModelFor(context, viewModelStoreOwner, viewModelFactory).also { viewModel ->
+        return newViewModelFor(
+            factory,
+            context.applicationContext,
+            viewModelStoreOwner
+        ).also { viewModel ->
             bridgeViewModel.viewModel = viewModel
         }
     }
 
-    // MockBridgeViewModelProvider will override this function.
+    // TestLichViewModelProvider will override this function.
     protected open fun <T : AbstractViewModel> newViewModelFor(
-        context: Context,
-        viewModelStoreOwner: ViewModelStoreOwner,
-        viewModelFactory: ViewModelFactory<T>
-    ): T = createViewModel(context, viewModelFactory)
+        factory: ViewModelFactory<T>,
+        applicationContext: Context,
+        viewModelStoreOwner: ViewModelStoreOwner
+    ): T = createViewModel(factory, applicationContext)
 
     protected fun <T : AbstractViewModel> createViewModel(
-        context: Context,
-        factory: ViewModelFactory<T>
-    ): T = factory.create(context.applicationContext)
+        factory: ViewModelFactory<T>,
+        applicationContext: Context
+    ): T = factory.create(applicationContext)
 
-    companion object : BridgeViewModelProviderFactory {
-        override fun newBridgeViewModelProvider(): BridgeViewModelProvider =
-            DefaultBridgeViewModelProvider()
-    }
+    override fun getManager(applicationContext: Context): Any =
+        throw UnsupportedOperationException()
 }
