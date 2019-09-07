@@ -31,7 +31,7 @@ but it is canceled only when its `Lifecycle` is destroyed.
 
 Example of use:
 ```kotlin
-class FooActivity : FragmentActivity() {
+class FooActivity : AppCompatActivity() {
 
     private val coroutineScope: CoroutineScope = AutoResetLifecycleScope(this)
 

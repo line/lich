@@ -16,9 +16,9 @@
 package com.linecorp.lich.viewmodel
 
 import android.content.Context
+import androidx.activity.ComponentActivity
 import androidx.annotation.MainThread
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentActivity
 
 /**
  * A class to declare a factory of a ViewModel.
@@ -37,11 +37,11 @@ import androidx.fragment.app.FragmentActivity
  * }
  * ```
  *
- * Then, you can obtain an instance of this ViewModel using [FragmentActivity.viewModel] or
+ * Then, you can obtain an instance of this ViewModel using [ComponentActivity.viewModel] or
  * [Fragment.viewModel] like this:
  *
  * ```
- * class FooActivity : FragmentActivity() {
+ * class FooActivity : AppCompatActivity() {
  *
  *     // An instance of FooViewModel associated with FooActivity.
  *     private val fooViewModel by viewModel(FooViewModel)
