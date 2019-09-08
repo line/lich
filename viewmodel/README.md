@@ -14,43 +14,17 @@ but it has the following advantages:
 ## Set up
 
 First, add the following entry to your `build.gradle` file.
+
 ```groovy
 dependencies {
     implementation 'com.linecorp.lich:viewmodel:x.x.x'
 }
 ```
 
-Then, make your `Application` class implement
-[BridgeViewModelProviderOwner](src/main/java/com/linecorp/lich/viewmodel/provider/BridgeViewModelProviderOwner.kt)
-like this:
-```xml
-<!-- AndroidManifest.xml -->
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.app">
-
-    <application android:name=".MyApplication">
-        <!-- snip... -->
-    </application>
-
-</manifest>
-```
-```kotlin
-package com.example.app
-
-class MyApplication : Application(), BridgeViewModelProviderOwner {
-
-    override val bridgeViewModelProvider: BridgeViewModelProvider = BridgeViewModelProvider()
-
-    // snip...
-}
-```
-
-### for testing
-
-The `viewmodel-test` module provides [AndroidX Test](https://developer.android.com/training/testing/set-up-project)
+For unit-testing, the `viewmodel-test` module provides [AndroidX Test](https://developer.android.com/training/testing/set-up-project)
 support. (For Robolectric, see also [this document](http://robolectric.org/androidx_test/).)
 And, it also provides helper functions to work with [Mockito-Kotlin](https://github.com/nhaarman/mockito-kotlin).
-To use these features, please add the following dependencies:
+To use these features, add the following dependencies:
 
 ```groovy
 dependencies {
@@ -164,7 +138,10 @@ except that it is implemented as an extension property.
 
 ## Testing
 
-You can mock ViewModels using
+The `viewmodel-test` module provides APIs to mock ViewModels for tests.
+With these APIs, you can replace instances created for a `ViewModelFactory`.
+
+Here is an example of
 [mockViewModel](../viewmodel-test/src/main/java/com/linecorp/lich/viewmodel/test/MockitoViewModelMocks.kt)
 function.
 
@@ -174,8 +151,8 @@ class FooActivityTest {
 
     @After
     fun tearDown() {
-        // You can omit this in Robolectric tests, because Robolectric recreates
-        // `applicationContext` for each test.
+        // You can omit this in Robolectric tests.
+        // All ViewModel mocks are automatically cleared for every Robolectric test.
         clearAllMockViewModels()
     }
 
