@@ -17,11 +17,13 @@ package com.linecorp.lich.sample.feature.bar
 
 import android.content.Context
 import android.content.Intent
+import com.google.auto.service.AutoService
 import com.linecorp.lich.component.ServiceLoaderComponent
 
 /**
  * The implementation of [BarFeatureFacade].
  */
+@AutoService(BarFeatureFacade::class)
 class BarFeatureFacadeImpl : BarFeatureFacade, ServiceLoaderComponent {
 
     private lateinit var context: Context
