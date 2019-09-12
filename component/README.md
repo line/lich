@@ -348,9 +348,10 @@ If you are using R8 (included in Android Gradle Plugin 3.5.0+) with code shrinki
 enabled, the R8 optimization gets rid of reflection entirely in the final byte code. For details,
 please refer [this article](https://medium.com/androiddevelopers/patterns-for-accessing-code-from-dynamic-feature-modules-7e5dca6f9123).
 
-See [BarFeatureFacade](../sample_app/src/main/java/com/linecorp/lich/sample/feature/bar/BarFeatureFacade.kt),
-[BarFeatureFacadeImpl](../sample_feature/src/main/java/com/linecorp/lich/sample/feature/bar/BarFeatureFacadeImpl.kt)
-and [the resource file](../sample_feature/src/main/resources/META-INF/services/com.linecorp.lich.sample.feature.bar.BarFeatureFacade)
+You can also use [AutoService](https://github.com/google/auto/tree/master/service) to generate
+ServiceLoader resource files. See
+[BarFeatureFacade](../sample_app/src/main/java/com/linecorp/lich/sample/feature/bar/BarFeatureFacade.kt)
+and [BarFeatureFacadeImpl](../sample_feature/src/main/java/com/linecorp/lich/sample/feature/bar/BarFeatureFacadeImpl.kt)
 for the actual code.
 
 ## Debugging features
