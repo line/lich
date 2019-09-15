@@ -27,7 +27,7 @@ import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.linecorp.lich.sample.R
 import com.linecorp.lich.viewmodel.test.MockViewModelHandle
-import com.linecorp.lich.viewmodel.test.mockViewModel
+import com.linecorp.lich.viewmodel.test.mockitokotlin.mockViewModel
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.never
 import com.nhaarman.mockitokotlin2.times

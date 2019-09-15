@@ -13,10 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.linecorp.lich.viewmodel.test
+package com.linecorp.lich.viewmodel.test.mockitokotlin
 
 import com.linecorp.lich.viewmodel.AbstractViewModel
 import com.linecorp.lich.viewmodel.ViewModelFactory
+import com.linecorp.lich.viewmodel.test.MockViewModelHandle
+import com.linecorp.lich.viewmodel.test.createRealViewModel
 import com.nhaarman.mockitokotlin2.KStubbing
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.spy
