@@ -22,16 +22,12 @@ android {
 }
 
 dependencies {
-    api project(':component')
     api project(':component-debug')
     implementation "org.jetbrains.kotlin:kotlin-stdlib:${versions.kotlin}"
     implementation "androidx.test:core:${versions.androidxTestCore}"
-    compileOnly "com.nhaarman.mockitokotlin2:mockito-kotlin:${versions.mockitoKotlin}"
 
     testImplementation "org.jetbrains.kotlin:kotlin-test-junit:${versions.kotlin}"
     testImplementation "androidx.test:runner:${versions.androidxTestRunner}"
     testImplementation "androidx.test.ext:junit:${versions.androidxTestJunit}"
-    testImplementation "org.mockito:mockito-inline:${versions.mockito}"
-    testImplementation "com.nhaarman.mockitokotlin2:mockito-kotlin:${versions.mockitoKotlin}"
     testImplementation "org.robolectric:robolectric:${versions.robolectric}"
 }
