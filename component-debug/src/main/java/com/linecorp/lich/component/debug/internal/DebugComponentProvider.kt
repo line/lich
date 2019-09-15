@@ -181,9 +181,9 @@ open class DebugComponentProvider : ComponentProvider {
     }
 
     override fun getManager(applicationContext: Context): Any =
-        debugComponentManager
+        DebugComponentManagerImpl()
 
-    private val debugComponentManager = object : DebugComponentManager {
+    private inner class DebugComponentManagerImpl : DebugComponentManager {
 
         override fun <T : Any> setComponent(factory: ComponentFactory<T>, component: T) {
             defaultAccessor.setComponent(factory, component)
