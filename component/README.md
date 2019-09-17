@@ -22,8 +22,8 @@ First, add the following entries to your `build.gradle` file.
 dependencies {
     implementation 'com.linecorp.lich:component:x.x.x'
 
-    // Optional: Enables debugging features for debug builds.
-    debugImplementation 'com.linecorp.lich:component-debug:x.x.x'
+    // Optional: Log diagnostic messages for debug builds.
+    debugRuntimeOnly 'com.linecorp.lich:component-debug:x.x.x'
 }
 ```
 
