@@ -467,3 +467,29 @@ class FooControllerTest {
     }
 }
 ```
+
+**Q.** Why is `getComponent(factory)` implemented as an extension of `Context`?
+Is there any way to get a Component without a `Context`?
+
+**A.** In order to force the correct use of `Context`, it is forbidden to get a Component without a `Context`.
+
+Generally, there are two types of Android Context: UI and Non-UI. You should use these Contexts properly.
+(cf. [Mastering Android context](https://www.freecodecamp.org/news/mastering-android-context-7055c8478a22/))
+
+Suppose `getComponent(factory)` was implemented as a top-level function.
+In that case, you can easily access the Application Context from **anywhere** like this:
+
+```kotlin
+class LeakContextComponent(val context: Context) {
+
+    companion object : ComponentFactory<LeakContextComponent>() {
+        override fun createComponent(context: Context): LeakContextComponent =
+            LeakContextComponent(context)
+    }
+}
+
+val context = getComponent(LeakContextComponent).context
+```
+
+As a result, it causes mistakes that the Application Context is wrongly used where UI Contexts should be used.
+Therefore, to prevent such mistakes, `getComponent(factory)` is implemented as an extension of `Context`.
