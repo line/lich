@@ -104,6 +104,34 @@ class FooFragment : Fragment() {
 }
 ```
 
+### Declare a 3rd-party class as a component
+
+If you want to declare a 3rd-party class as a "component", implement a top-level object instead of
+a companion object.
+
+For example, you should share a single [OkHttpClient](https://square.github.io/okhttp/4.x/okhttp/okhttp3/-ok-http-client/)
+instance across the app because each `OkHttpClient` instance holds its own connection pool and thread pools.
+The application-wide singleton of `OkHttpClient` can be declared as follows:
+
+```kotlin
+object GlobalOkHttpClient : ComponentFactory<OkHttpClient>() {
+    override fun createComponent(context: Context): OkHttpClient {
+        val builder = OkHttpClient.Builder()
+        // Apply custom settings.
+        builder.addInterceptor(LoggingInterceptor())
+        return builder.build()
+    }
+}
+```
+
+Then, you can get the singleton like this:
+
+```kotlin
+val okHttpClient = context.getComponent(GlobalOkHttpClient)
+```
+
+See also [the sample code](../sample_app/src/main/java/com/linecorp/lich/sample/GlobalOkHttpClient.kt).
+
 ## Example
 
 This is a sample code to declare a

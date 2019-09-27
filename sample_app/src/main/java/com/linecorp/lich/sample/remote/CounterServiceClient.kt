@@ -18,14 +18,18 @@ package com.linecorp.lich.sample.remote
 import android.content.Context
 import android.util.Log
 import com.linecorp.lich.component.ComponentFactory
-import com.linecorp.lich.component.getComponent
-import com.linecorp.lich.sample.HttpClient
+import com.linecorp.lich.component.component
+import com.linecorp.lich.okhttp.call
+import com.linecorp.lich.sample.GlobalOkHttpClient
 import okhttp3.Request
 import org.json.JSONArray
 import org.json.JSONException
 import java.io.IOException
 
-class CounterServiceClient private constructor(private val httpClient: HttpClient) {
+class CounterServiceClient private constructor(context: Context) {
+
+    private val okHttpClient by context.component(GlobalOkHttpClient)
+
     /**
      * Query the server for the initial value of the given `Counter`.
      *
@@ -40,7 +44,7 @@ class CounterServiceClient private constructor(private val httpClient: HttpClien
         // In this function, we use the number of the entries for FAKE_SERVICE_URL as the counter's
         // initial value.
         val request = Request.Builder().url(FAKE_SERVICE_URL).build()
-        return httpClient.call(request) { response ->
+        return okHttpClient.call(request) { response ->
             if (!response.isSuccessful) {
                 throw IOException("HTTP Response code: ${response.code()}")
             }
@@ -54,10 +58,8 @@ class CounterServiceClient private constructor(private val httpClient: HttpClien
     }
 
     companion object : ComponentFactory<CounterServiceClient>() {
-        override fun createComponent(context: Context): CounterServiceClient {
-            val httpClient = context.getComponent(HttpClient)
-            return CounterServiceClient(httpClient)
-        }
+        override fun createComponent(context: Context): CounterServiceClient =
+            CounterServiceClient(context)
 
         private const val FAKE_SERVICE_URL = "https://jsonplaceholder.typicode.com/photos?albumId=1"
     }
