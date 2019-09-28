@@ -13,15 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.linecorp.lich.viewmodel.test
+package com.linecorp.lich.viewmodel.test.mockk
 
-import android.content.Context
-import com.linecorp.lich.viewmodel.AbstractViewModel
-import com.linecorp.lich.viewmodel.ViewModelFactory
+import androidx.fragment.app.FragmentActivity
+import com.linecorp.lich.viewmodel.viewModel
 
-class ViewModelX(val message: String) : AbstractViewModel() {
-    companion object : ViewModelFactory<ViewModelX>() {
-        override fun createViewModel(context: Context): ViewModelX =
-            ViewModelX("I am ViewModelX.")
+class TestActivity : FragmentActivity() {
+
+    val fooViewModel by viewModel(FooViewModel)
+
+    val barViewModel by viewModel(BarViewModel)
+
+    override fun onStart() {
+        super.onStart()
+        println("TestActivity.onStart: ${fooViewModel.greeting()}")
+        println("TestActivity.onStart: ${barViewModel.greeting()}")
     }
 }

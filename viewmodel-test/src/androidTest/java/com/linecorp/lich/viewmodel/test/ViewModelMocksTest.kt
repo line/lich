@@ -17,18 +17,12 @@ package com.linecorp.lich.viewmodel.test
 
 import androidx.test.core.app.ActivityScenario
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.nhaarman.mockitokotlin2.doReturn
-import com.nhaarman.mockitokotlin2.mock
-import com.nhaarman.mockitokotlin2.verify
 import org.junit.After
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.internal.util.MockUtil
 import kotlin.test.assertEquals
-import kotlin.test.assertFalse
 import kotlin.test.assertNotSame
 import kotlin.test.assertSame
-import kotlin.test.assertTrue
 
 @RunWith(AndroidJUnit4::class)
 class ViewModelMocksTest {
@@ -40,28 +34,21 @@ class ViewModelMocksTest {
 
     @Test
     fun simpleMocking() {
-        val mockHandleX = mockViewModel(ViewModelX) {
-            on { greeting() } doReturn "Hello mock!"
+        setMockViewModel(ViewModelX) {
+            ViewModelX("Mocked X.")
         }
-        val mockHandleY = mockViewModel(ViewModelY) {
-            on { askName() } doReturn "MockY"
+        setMockViewModel(ViewModelY) {
+            ViewModelY("Mocked Y.")
         }
 
         ActivityScenario.launch(TestActivity::class.java).use { scenario ->
             scenario.onActivity { activity ->
-                assertTrue(mockHandleX.isCreated)
-                assertTrue(mockHandleY.isCreated)
-
                 assertNotSame(activity.viewModelX, activity.testFragment.viewModelX)
                 assertSame(activity.viewModelX, activity.testFragment.activityViewModelX)
 
-                assertSame(mockHandleY.mock, activity.viewModelY)
-
-                assertSame(mockHandleY.viewModelStoreOwner, activity)
-
-                assertEquals("Hello mock!", activity.viewModelX.greeting())
-                assertEquals("Hello mock!", activity.testFragment.viewModelX.greeting())
-                assertEquals("MockY", activity.viewModelY.askName())
+                assertEquals("Mocked X.", activity.viewModelX.message)
+                assertEquals("Mocked X.", activity.testFragment.viewModelX.message)
+                assertEquals("Mocked Y.", activity.viewModelY.message)
             }
         }
     }
@@ -70,14 +57,7 @@ class ViewModelMocksTest {
     fun mockingForEachViewModelStoreOwner() {
         setMockViewModel(ViewModelX) { viewModelStoreOwner ->
             when (viewModelStoreOwner) {
-                is TestActivity ->
-                    mock {
-                        on { greeting() } doReturn "I am TestActivity's ViewModel."
-                    }
-                is TestFragment ->
-                    mock {
-                        on { greeting() } doReturn "I am TestFragment's ViewModel."
-                    }
+                is TestActivity -> ViewModelX("Mocked for TestActivity.")
                 else -> createRealViewModel(ViewModelX)
             }
         }
@@ -87,49 +67,26 @@ class ViewModelMocksTest {
                 assertNotSame(activity.viewModelX, activity.testFragment.viewModelX)
                 assertSame(activity.viewModelX, activity.testFragment.activityViewModelX)
 
-                assertEquals("I am TestActivity's ViewModel.", activity.viewModelX.greeting())
-                assertEquals(
-                    "I am TestFragment's ViewModel.",
-                    activity.testFragment.viewModelX.greeting()
-                )
-                assertEquals(
-                    "I am TestActivity's ViewModel.",
-                    activity.testFragment.activityViewModelX.greeting()
-                )
-            }
-        }
-    }
-
-    @Test
-    fun spying() {
-        val spyHandleY = spyViewModel(ViewModelY)
-
-        ActivityScenario.launch(TestActivity::class.java).use { scenario ->
-            scenario.onActivity { activity ->
-                assertTrue(spyHandleY.isCreated)
-
-                assertEquals("My name is Y.", activity.viewModelY.askName())
-
-                verify(spyHandleY.mock) {
-                    // viewModelY.askName() was also called from TestActivity.onStart().
-                    2 * { askName() }
-                }
+                assertEquals("Mocked for TestActivity.", activity.viewModelX.message)
+                assertEquals("I am ViewModelX.", activity.testFragment.viewModelX.message)
             }
         }
     }
 
     @Test
     fun clearMock() {
-        mockViewModel(ViewModelX)
-        val mockHandleY = mockViewModel(ViewModelY)
+        setMockViewModel(ViewModelX) {
+            ViewModelX("Mocked X.")
+        }
+        setMockViewModel(ViewModelY) {
+            ViewModelY("Mocked Y.")
+        }
 
         ActivityScenario.launch(TestActivity::class.java).use { scenario ->
             scenario.onActivity { activity ->
-                assertTrue(MockUtil.isMock(activity.viewModelX))
-                assertTrue(MockUtil.isMock(activity.testFragment.viewModelX))
-                assertTrue(MockUtil.isMock(activity.testFragment.activityViewModelX))
-
-                assertSame(mockHandleY.mock, activity.viewModelY)
+                assertEquals("Mocked X.", activity.viewModelX.message)
+                assertEquals("Mocked X.", activity.testFragment.viewModelX.message)
+                assertEquals("Mocked Y.", activity.viewModelY.message)
             }
         }
 
@@ -137,11 +94,37 @@ class ViewModelMocksTest {
 
         ActivityScenario.launch(TestActivity::class.java).use { scenario ->
             scenario.onActivity { activity ->
-                assertFalse(MockUtil.isMock(activity.viewModelX))
-                assertFalse(MockUtil.isMock(activity.testFragment.viewModelX))
-                assertFalse(MockUtil.isMock(activity.testFragment.activityViewModelX))
+                assertEquals("I am ViewModelX.", activity.viewModelX.message)
+                assertEquals("I am ViewModelX.", activity.testFragment.viewModelX.message)
+                assertEquals("Mocked Y.", activity.viewModelY.message)
+            }
+        }
+    }
 
-                assertSame(mockHandleY.mock, activity.viewModelY)
+    @Test
+    fun clearAll() {
+        setMockViewModel(ViewModelX) {
+            ViewModelX("Mocked X.")
+        }
+        setMockViewModel(ViewModelY) {
+            ViewModelY("Mocked Y.")
+        }
+
+        ActivityScenario.launch(TestActivity::class.java).use { scenario ->
+            scenario.onActivity { activity ->
+                assertEquals("Mocked X.", activity.viewModelX.message)
+                assertEquals("Mocked X.", activity.testFragment.viewModelX.message)
+                assertEquals("Mocked Y.", activity.viewModelY.message)
+            }
+        }
+
+        clearAllMockViewModels()
+
+        ActivityScenario.launch(TestActivity::class.java).use { scenario ->
+            scenario.onActivity { activity ->
+                assertEquals("I am ViewModelX.", activity.viewModelX.message)
+                assertEquals("I am ViewModelX.", activity.testFragment.viewModelX.message)
+                assertEquals("I am ViewModelY.", activity.viewModelY.message)
             }
         }
     }

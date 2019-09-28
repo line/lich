@@ -40,8 +40,8 @@ class TestActivity : FragmentActivity() {
 
     override fun onStart() {
         super.onStart()
-        println("TestActivity.onStart: viewModelX ${viewModelX.greeting()}")
-        println("TestActivity.onStart: viewModelY ${viewModelY.askName()}")
+        println("TestActivity.onStart: viewModelX ${viewModelX.message}")
+        println("TestActivity.onStart: viewModelY ${viewModelY.message}")
     }
 
     companion object {

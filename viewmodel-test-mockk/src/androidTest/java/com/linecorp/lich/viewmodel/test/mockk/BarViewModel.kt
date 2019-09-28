@@ -13,15 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.linecorp.lich.viewmodel.test
+package com.linecorp.lich.viewmodel.test.mockk
 
 import android.content.Context
 import com.linecorp.lich.viewmodel.AbstractViewModel
 import com.linecorp.lich.viewmodel.ViewModelFactory
 
-class ViewModelX(val message: String) : AbstractViewModel() {
-    companion object : ViewModelFactory<ViewModelX>() {
-        override fun createViewModel(context: Context): ViewModelX =
-            ViewModelX("I am ViewModelX.")
+// Mocking of final classes is only supported for Android P or later.
+// https://mockk.io/ANDROID.html
+class BarViewModel : AbstractViewModel() {
+
+    fun greeting(): String {
+        return "Hello, I'm Bar."
+    }
+
+    fun countItem(): Int {
+        return 20
+    }
+
+    companion object : ViewModelFactory<BarViewModel>() {
+        override fun createViewModel(context: Context): BarViewModel = BarViewModel()
     }
 }

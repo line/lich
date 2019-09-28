@@ -13,13 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.linecorp.lich.viewmodel.test
+package com.linecorp.lich.viewmodel.test.mockk
 
 import com.linecorp.lich.viewmodel.AbstractViewModel
 import com.linecorp.lich.viewmodel.ViewModelFactory
-import com.nhaarman.mockitokotlin2.KStubbing
-import com.nhaarman.mockitokotlin2.mock
-import com.nhaarman.mockitokotlin2.spy
+import com.linecorp.lich.viewmodel.test.MockViewModelHandle
+import com.linecorp.lich.viewmodel.test.createRealViewModel
+import io.mockk.every
+import io.mockk.mockk
+import io.mockk.spyk
+import kotlinx.coroutines.MainScope
 
 /**
  * Sets mock ViewModel factory for [factory]. The mock factory supports immediate stubbing.
@@ -27,14 +30,26 @@ import com.nhaarman.mockitokotlin2.spy
  * After a mock ViewModel instance is actually created, you can obtain the mock instance via
  * [MockViewModelHandle].
  *
+ * @param factory a ViewModel to be mocked.
+ * @param relaxed allows creation with no specific behaviour.
+ * @param block block to execute after mock is created with mock as a receiver.
  * @return the handle to access created mock instances.
  */
 inline fun <reified T : AbstractViewModel> mockViewModel(
     factory: ViewModelFactory<T>,
-    crossinline stubbing: KStubbing<T>.(T) -> Unit = {}
+    relaxed: Boolean = false,
+    crossinline block: T.() -> Unit = {}
 ): MockViewModelHandle<T> =
     MockViewModelHandle {
-        mock(stubbing = stubbing)
+        // To mock `AbstractViewModel.clear()`, relaxUnitFun is always true.
+        mockk<T>(relaxed = relaxed, relaxUnitFun = true) {
+            // We need to mock `AbstractViewModel.coroutineContext` explicitly because MockK cannot
+            // mock `AbstractViewModel.clear()` prior to Android P.
+            val mainScope = MainScope()
+            every { coroutineContext } returns mainScope.coroutineContext
+
+            block()
+        }
     }.setAsMockViewModelFor(factory)
 
 /**
@@ -43,12 +58,20 @@ inline fun <reified T : AbstractViewModel> mockViewModel(
  * After a spy ViewModel instance is actually created, you can obtain the spy instance via
  * [MockViewModelHandle].
  *
+ * @param factory a ViewModel to be spied.
+ * @param recordPrivateCalls allows this spy to record any private calls, enabling a verification.
+ * @param block block to execute after a spy is created with the spy as a receiver.
  * @return the handle to access created spy instances.
  */
 inline fun <reified T : AbstractViewModel> spyViewModel(
     factory: ViewModelFactory<T>,
-    crossinline stubbing: KStubbing<T>.(T) -> Unit = {}
+    recordPrivateCalls: Boolean = false,
+    crossinline block: T.() -> Unit = {}
 ): MockViewModelHandle<T> =
     MockViewModelHandle {
-        spy(value = createRealViewModel(factory), stubbing = stubbing)
+        spyk(
+            objToCopy = createRealViewModel(factory),
+            recordPrivateCalls = recordPrivateCalls,
+            block = block
+        )
     }.setAsMockViewModelFor(factory)

@@ -19,15 +19,9 @@ import android.content.Context
 import com.linecorp.lich.viewmodel.AbstractViewModel
 import com.linecorp.lich.viewmodel.ViewModelFactory
 
-// Since Mockito's inline mocking doesn't work on Android instrumentation tests,
-// mocked class needs to be open.
-open class ViewModelY : AbstractViewModel() {
-
-    open fun askName(): String {
-        return "My name is Y."
-    }
-
+class ViewModelY(val message: String) : AbstractViewModel() {
     companion object : ViewModelFactory<ViewModelY>() {
-        override fun createViewModel(context: Context): ViewModelY = ViewModelY()
+        override fun createViewModel(context: Context): ViewModelY =
+            ViewModelY("I am ViewModelY.")
     }
 }
