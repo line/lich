@@ -19,8 +19,6 @@ import android.content.Context
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.linecorp.lich.component.getComponent
-import com.nhaarman.mockitokotlin2.doReturn
-import com.nhaarman.mockitokotlin2.verify
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -39,56 +37,73 @@ class ComponentMocksTest {
     }
 
     @Test
-    fun simpleMock() {
-        val mockX = mockComponent(ComponentX) {
-            on { value } doReturn "MockedX"
-            on { getMessage() } doReturn "Hello mock!"
-        }
+    fun setMockComponent() {
+        val foo1 = context.getComponent(FooComponent)
+        assertEquals("FooComponent", foo1.message)
 
-        val componentX = context.getComponent(ComponentX)
+        val mockFoo = FooComponent("MockFoo")
+        setMockComponent(FooComponent, mockFoo)
 
-        assertSame(mockX, componentX)
-        assertEquals("MockedX", componentX.value)
-        assertEquals("Hello mock!", componentX.getMessage())
+        val foo2 = context.getComponent(FooComponent)
+        assertEquals("MockFoo", foo2.message)
+
+        assertSame(mockFoo, foo2)
+        assertNotSame(foo1, foo2)
     }
 
     @Test
-    fun injectedMock() {
-        mockComponent(ComponentX) {
-            on { getMessage() } doReturn "Mocked."
-        }
+    fun clearMockComponent() {
+        val foo1 = context.getComponent(FooComponent)
+        assertEquals("FooComponent", foo1.message)
 
-        val componentY = context.getComponent(ComponentY)
+        val mockFoo = FooComponent("MockFoo")
+        setMockComponent(FooComponent, mockFoo)
 
-        assertEquals("From X: Mocked.", componentY.askToX())
+        val foo2 = context.getComponent(FooComponent)
+        assertEquals("MockFoo", foo2.message)
+
+        clearMockComponent(FooComponent)
+
+        val foo3 = context.getComponent(FooComponent)
+        assertEquals("FooComponent", foo3.message)
+
+        assertSame(foo1, foo3)
     }
 
     @Test
-    fun spying() {
-        val spyX = spyComponent(ComponentX)
+    fun getRealComponent() {
+        val foo1 = context.getComponent(FooComponent)
+        assertEquals("FooComponent", foo1.message)
 
-        val componentY = context.getComponent(ComponentY)
+        val mockFoo = FooComponent("MockFoo")
+        setMockComponent(FooComponent, mockFoo)
 
-        assertEquals("From X: Hello.", componentY.askToX())
-        assertEquals("From X: Hello.", componentY.askToX())
+        val foo2 = context.getComponent(FooComponent)
+        assertEquals("MockFoo", foo2.message)
 
-        verify(spyX) {
-            2 * { getMessage() }
-        }
+        val foo3 = getRealComponent(FooComponent)
+        assertEquals("FooComponent", foo3.message)
+
+        assertSame(foo1, foo3)
     }
 
     @Test
-    fun clearMock() {
-        val mockX = mockComponent(ComponentX)
+    fun clearAll() {
+        val foo1 = context.getComponent(FooComponent)
+        assertEquals("FooComponent", foo1.message)
 
-        val componentX1 = context.getComponent(ComponentX)
+        val mockFoo = FooComponent("MockFoo")
+        setMockComponent(FooComponent, mockFoo)
 
-        assertSame(mockX, componentX1)
+        val foo2 = context.getComponent(FooComponent)
+        assertEquals("MockFoo", foo2.message)
 
-        clearMockComponent(ComponentX)
-        val componentX2 = context.getComponent(ComponentX)
+        clearAllComponents()
 
-        assertNotSame(mockX, componentX2)
-        assertEquals("X", componentX2.value)
+        val foo3 = context.getComponent(FooComponent)
+        assertEquals("FooComponent", foo3.message)
+
+        assertNotSame(foo1, foo3)
+        assertNotSame(foo2, foo3)
     }
 }

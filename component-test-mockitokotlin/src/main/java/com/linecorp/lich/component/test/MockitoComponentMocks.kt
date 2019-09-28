@@ -17,27 +17,21 @@ package com.linecorp.lich.component.test
 
 import com.linecorp.lich.component.ComponentFactory
 import com.nhaarman.mockitokotlin2.KStubbing
-import com.nhaarman.mockitokotlin2.mock
-import com.nhaarman.mockitokotlin2.spy
 
-/**
- * Creates a mock component allowing for immediate stubbing, and sets the mock for [factory].
- * @return the created mock component.
- */
+@Deprecated(
+    "Moved to the `com.linecorp.lich.component.test.mockitokotlin` package.",
+    ReplaceWith("com.linecorp.lich.component.test.mockitokotlin.mockComponent(factory, stubbing)")
+)
 inline fun <reified T : Any> mockComponent(
     factory: ComponentFactory<T>,
     stubbing: KStubbing<T>.(T) -> Unit = {}
-): T = mock(stubbing = stubbing).also {
-    setMockComponent(factory, it)
-}
+): T = com.linecorp.lich.component.test.mockitokotlin.mockComponent(factory, stubbing)
 
-/**
- * Creates a spy of the real component allowing for immediate stubbing, and sets the spy for [factory].
- * @return the created spy component.
- */
+@Deprecated(
+    "Moved to the `com.linecorp.lich.component.test.mockitokotlin` package.",
+    ReplaceWith("com.linecorp.lich.component.test.mockitokotlin.spyComponent(factory, stubbing)")
+)
 inline fun <reified T : Any> spyComponent(
     factory: ComponentFactory<T>,
     stubbing: KStubbing<T>.(T) -> Unit = {}
-): T = spy(value = getRealComponent(factory), stubbing = stubbing).also {
-    setMockComponent(factory, it)
-}
+): T = com.linecorp.lich.component.test.mockitokotlin.spyComponent(factory, stubbing)

@@ -55,7 +55,7 @@ dependencies {
 
     debugRuntimeOnly project(':component-debug')
 
-    testImplementation project(':component-test')
+    testImplementation project(':component-test-mockitokotlin')
     testImplementation project(':viewmodel-test')
     testImplementation "org.jetbrains.kotlin:kotlin-test-junit:${versions.kotlin}"
     testImplementation "androidx.test:runner:${versions.androidxTestRunner}"

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.linecorp.lich.component.test
+package com.linecorp.lich.component.test.mockitokotlin
 
 import android.content.Context
 import com.linecorp.lich.component.ComponentFactory

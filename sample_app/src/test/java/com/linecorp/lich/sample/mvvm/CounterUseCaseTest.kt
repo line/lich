@@ -18,7 +18,7 @@ package com.linecorp.lich.sample.mvvm
 import android.content.Context
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.linecorp.lich.component.test.mockComponent
+import com.linecorp.lich.component.test.mockitokotlin.mockComponent
 import com.linecorp.lich.sample.entity.Counter
 import com.linecorp.lich.sample.repository.CounterRepository
 import com.linecorp.lich.sample.repository.CounterResult
