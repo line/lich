@@ -24,6 +24,4 @@ dependencies {
     androidTestImplementation "org.jetbrains.kotlin:kotlin-test-junit:${versions.kotlin}"
     androidTestImplementation "androidx.test:runner:${versions.androidxTestRunner}"
     androidTestImplementation "androidx.test.ext:junit:${versions.androidxTestJunit}"
-    androidTestImplementation "org.mockito:mockito-android:${versions.mockito}"
-    androidTestImplementation "com.nhaarman.mockitokotlin2:mockito-kotlin:${versions.mockitoKotlin}"
 }
