@@ -55,13 +55,12 @@ dependencies {
 
     debugRuntimeOnly project(':component-debug')
 
-    testImplementation project(':component-test-mockitokotlin')
-    testImplementation project(':viewmodel-test-mockitokotlin')
+    testImplementation project(':component-test-mockk')
+    testImplementation project(':viewmodel-test-mockk')
     testImplementation "org.jetbrains.kotlin:kotlin-test-junit:${versions.kotlin}"
     testImplementation "androidx.test:runner:${versions.androidxTestRunner}"
     testImplementation "androidx.test.ext:junit:${versions.androidxTestJunit}"
     testImplementation "androidx.test.espresso:espresso-core:${versions.androidxTestEspresso}"
-    testImplementation "org.mockito:mockito-inline:${versions.mockito}"
-    testImplementation "com.nhaarman.mockitokotlin2:mockito-kotlin:${versions.mockitoKotlin}"
+    testImplementation "io.mockk:mockk:${versions.mockk}"
     testImplementation "org.robolectric:robolectric:${versions.robolectric}"
 }
