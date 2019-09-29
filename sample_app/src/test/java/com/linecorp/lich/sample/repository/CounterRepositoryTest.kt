@@ -19,12 +19,9 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.linecorp.lich.sample.db.CounterDao
 import com.linecorp.lich.sample.entity.Counter
 import com.linecorp.lich.sample.remote.CounterServiceClient
-import com.nhaarman.mockitokotlin2.any
-import com.nhaarman.mockitokotlin2.eq
-import com.nhaarman.mockitokotlin2.mock
-import com.nhaarman.mockitokotlin2.never
-import com.nhaarman.mockitokotlin2.verify
-import com.nhaarman.mockitokotlin2.whenever
+import io.mockk.coEvery
+import io.mockk.coVerify
+import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.junit.Test
@@ -43,40 +40,40 @@ class CounterRepositoryTest {
 
     @Before
     fun setUp() {
-        counterServiceClient = mock()
-        counterDao = mock()
+        counterServiceClient = mockk()
+        counterDao = mockk(relaxUnitFun = true)
         counterRepository = CounterRepository(counterServiceClient, counterDao)
     }
 
     @Test
-    fun getCounterExisting() = runBlocking<Unit> {
+    fun getCounterExisting() = runBlocking {
         val counterName = "foo"
         val counter = Counter(counterName, 20)
-        whenever(counterDao.find(eq(counterName))).thenReturn(counter)
+        coEvery { counterDao.find(counterName) } returns counter
 
         val actual = counterRepository.getCounter(counterName)
 
         assertEquals(CounterResult.Success(counter), actual)
-        verify(counterServiceClient, never()).getInitialCounterValue(any())
+        coVerify(exactly = 0) { counterServiceClient.getInitialCounterValue(any()) }
     }
 
     @Test
     fun getCounterNew() = runBlocking {
         val counterName = "foo"
-        whenever(counterDao.find(any())).thenReturn(null)
-        whenever(counterServiceClient.getInitialCounterValue(eq(counterName))).thenReturn(42)
+        coEvery { counterDao.find(any()) } returns null
+        coEvery { counterServiceClient.getInitialCounterValue(counterName) } returns 42
 
         val actual = counterRepository.getCounter(counterName)
 
         val counter = Counter(counterName, 42)
         assertEquals(CounterResult.Success(counter), actual)
-        verify(counterDao).replace(eq(counter))
+        coVerify(exactly = 1) { counterDao.replace(counter) }
     }
 
     @Test
     fun getCounterNetworkError() = runBlocking {
-        whenever(counterDao.find(any())).thenReturn(null)
-        whenever(counterServiceClient.getInitialCounterValue(any())).thenThrow(IOException())
+        coEvery { counterDao.find(any()) } returns null
+        coEvery { counterServiceClient.getInitialCounterValue(any()) } throws IOException()
 
         val actual = counterRepository.getCounter("foo")
 

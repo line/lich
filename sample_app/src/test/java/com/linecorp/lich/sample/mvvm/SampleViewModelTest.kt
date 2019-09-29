@@ -22,12 +22,11 @@ import androidx.lifecycle.Observer
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.linecorp.lich.sample.entity.Counter
-import com.nhaarman.mockitokotlin2.doReturn
-import com.nhaarman.mockitokotlin2.mock
-import com.nhaarman.mockitokotlin2.only
-import com.nhaarman.mockitokotlin2.reset
-import com.nhaarman.mockitokotlin2.verify
-import com.nhaarman.mockitokotlin2.verifyBlocking
+import io.mockk.coVerify
+import io.mockk.confirmVerified
+import io.mockk.every
+import io.mockk.mockk
+import io.mockk.verify
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -51,9 +50,9 @@ class SampleViewModelTest {
 
         liveCounter = MutableLiveData(null)
         isLoading = MutableLiveData(false)
-        counterUseCase = mock {
-            on { liveCounter } doReturn liveCounter
-            on { isLoading } doReturn isLoading
+        counterUseCase = mockk(relaxUnitFun = true) {
+            every { liveCounter } returns this@SampleViewModelTest.liveCounter
+            every { isLoading } returns this@SampleViewModelTest.isLoading
         }
 
         sampleViewModel = SampleViewModel(context, counterUseCase)
@@ -63,54 +62,55 @@ class SampleViewModelTest {
     fun testLiveData() {
         isLoading.value = true
 
-        val counterTextObserver = mock<Observer<String>>().also {
+        val counterTextObserver = mockk<Observer<String>>(relaxUnitFun = true).also {
             sampleViewModel.counterText.observeForever(it)
         }
-        val loadingVisibilityObserver = mock<Observer<Int>>().also {
+        val loadingVisibilityObserver = mockk<Observer<Int>>(relaxUnitFun = true).also {
             sampleViewModel.loadingVisibility.observeForever(it)
         }
-        val isOperationEnabledObserver = mock<Observer<Boolean>>().also {
+        val isOperationEnabledObserver = mockk<Observer<Boolean>>(relaxUnitFun = true).also {
             sampleViewModel.isOperationEnabled.observeForever(it)
         }
 
-        verify(counterTextObserver, only()).onChanged("No value.")
-        verify(loadingVisibilityObserver, only()).onChanged(View.VISIBLE)
-        verify(isOperationEnabledObserver, only()).onChanged(false)
+        verify(exactly = 1) { counterTextObserver.onChanged("No value.") }
+        verify(exactly = 1) { loadingVisibilityObserver.onChanged(View.VISIBLE) }
+        verify(exactly = 1) { isOperationEnabledObserver.onChanged(false) }
+        confirmVerified(counterTextObserver, loadingVisibilityObserver, isOperationEnabledObserver)
 
-        reset(counterTextObserver, loadingVisibilityObserver, isOperationEnabledObserver)
         liveCounter.value = Counter("foo", 42)
         isLoading.value = false
 
-        verify(counterTextObserver, only()).onChanged("42")
-        verify(loadingVisibilityObserver, only()).onChanged(View.GONE)
-        verify(isOperationEnabledObserver, only()).onChanged(true)
+        verify(exactly = 1) { counterTextObserver.onChanged("42") }
+        verify(exactly = 1) { loadingVisibilityObserver.onChanged(View.GONE) }
+        verify(exactly = 1) { isOperationEnabledObserver.onChanged(true) }
+        confirmVerified(counterTextObserver, loadingVisibilityObserver, isOperationEnabledObserver)
     }
 
     @Test
     fun loadData() {
         sampleViewModel.loadData()
 
-        verifyBlocking(counterUseCase) { loadCounter() }
+        coVerify { counterUseCase.loadCounter() }
     }
 
     @Test
     fun countUp() {
         sampleViewModel.countUp()
 
-        verifyBlocking(counterUseCase) { changeCounterValue(1) }
+        coVerify { counterUseCase.changeCounterValue(1) }
     }
 
     @Test
     fun countDown() {
         sampleViewModel.countDown()
 
-        verifyBlocking(counterUseCase) { changeCounterValue(-1) }
+        coVerify { counterUseCase.changeCounterValue(-1) }
     }
 
     @Test
     fun deleteCounter() {
         sampleViewModel.deleteCounter()
 
-        verifyBlocking(counterUseCase) { deleteCounter() }
+        coVerify { counterUseCase.deleteCounter() }
     }
 }

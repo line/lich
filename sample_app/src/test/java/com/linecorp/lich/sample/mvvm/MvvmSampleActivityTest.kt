@@ -27,11 +27,9 @@ import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.linecorp.lich.sample.R
 import com.linecorp.lich.viewmodel.test.MockViewModelHandle
-import com.linecorp.lich.viewmodel.test.mockitokotlin.mockViewModel
-import com.nhaarman.mockitokotlin2.doReturn
-import com.nhaarman.mockitokotlin2.never
-import com.nhaarman.mockitokotlin2.times
-import com.nhaarman.mockitokotlin2.verify
+import com.linecorp.lich.viewmodel.test.mockk.mockViewModel
+import io.mockk.every
+import io.mockk.verify
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -55,9 +53,9 @@ class MvvmSampleActivityTest {
         loadingVisibility = MutableLiveData(View.GONE)
         isOperationEnabled = MutableLiveData(true)
         mockViewModelHandle = mockViewModel(SampleViewModel) {
-            on { counterText } doReturn counterText
-            on { loadingVisibility } doReturn loadingVisibility
-            on { isOperationEnabled } doReturn isOperationEnabled
+            every { counterText } returns this@MvvmSampleActivityTest.counterText
+            every { loadingVisibility } returns this@MvvmSampleActivityTest.loadingVisibility
+            every { isOperationEnabled } returns this@MvvmSampleActivityTest.isOperationEnabled
         }
     }
 
@@ -86,7 +84,7 @@ class MvvmSampleActivityTest {
 
             scenario.onActivity {
                 assertTrue(mockViewModelHandle.isCreated)
-                verify(mockViewModelHandle.mock, never()).countUp()
+                verify(exactly = 0) { mockViewModelHandle.mock.countUp() }
             }
 
             onView(withId(R.id.count_up_btn)).check(matches(isEnabled()))
@@ -94,7 +92,7 @@ class MvvmSampleActivityTest {
             onView(withId(R.id.count_up_btn)).perform(click())
 
             scenario.onActivity {
-                verify(mockViewModelHandle.mock, times(1)).countUp()
+                verify(exactly = 1) { mockViewModelHandle.mock.countUp() }
             }
         }
     }
