@@ -29,19 +29,39 @@ dependencies {
 
 For unit-testing, the `component-test` module provides [AndroidX Test](https://developer.android.com/training/testing/set-up-project)
 support. (For Robolectric, see also [this document](http://robolectric.org/androidx_test/).)
-And, it also provides helper functions to work with [Mockito-Kotlin](https://github.com/nhaarman/mockito-kotlin).
-To use these features, add the following dependencies:
+In addition, helper functions to work with [MockK](https://mockk.io/) or
+[Mockito-Kotlin](https://github.com/nhaarman/mockito-kotlin) are also available.
+
+If you are using [MockK](https://mockk.io/), add the following dependencies:
 
 ```groovy
 dependencies {
-    testImplementation 'com.linecorp.lich:component-test:x.x.x'
+    testImplementation 'com.linecorp.lich:component-test-mockk:x.x.x'
+    testImplementation 'androidx.test:runner:x.x.x'
+    testImplementation 'androidx.test.ext:junit:x.x.x'
+    testImplementation 'io.mockk:mockk:x.x.x'
+    testImplementation 'org.robolectric:robolectric:x.x'
+
+    androidTestImplementation 'com.linecorp.lich:component-test-mockk:x.x.x'
+    androidTestImplementation 'androidx.test:runner:x.x.x'
+    androidTestImplementation 'androidx.test.ext:junit:x.x.x'
+    androidTestImplementation 'io.mockk:mockk-android:x.x.x'
+}
+```
+
+If you are using [Mockito-Kotlin](https://github.com/nhaarman/mockito-kotlin), add the following
+dependencies instead:
+
+```groovy
+dependencies {
+    testImplementation 'com.linecorp.lich:component-test-mockitokotlin:x.x.x'
     testImplementation 'androidx.test:runner:x.x.x'
     testImplementation 'androidx.test.ext:junit:x.x.x'
     testImplementation 'org.mockito:mockito-inline:x.x.x'
     testImplementation 'com.nhaarman.mockitokotlin2:mockito-kotlin:x.x.x'
     testImplementation 'org.robolectric:robolectric:x.x'
 
-    androidTestImplementation 'com.linecorp.lich:component-test:x.x.x'
+    androidTestImplementation 'com.linecorp.lich:component-test-mockitokotlin:x.x.x'
     androidTestImplementation 'androidx.test:runner:x.x.x'
     androidTestImplementation 'androidx.test.ext:junit:x.x.x'
     androidTestImplementation 'org.mockito:mockito-android:x.x.x'
@@ -202,10 +222,17 @@ If the `component-test` module is in the runtime classpath, every component is t
 This is useful for Robolectric tests, because Robolectric recreates `applicationContext` for each test.
 It means all components are automatically reset for every Robolectric test.
 
-The `component-test` module also provides APIs to mock components for tests.
-Here is an example of
-[mockComponent](../component-test/src/main/java/com/linecorp/lich/component/test/MockitoComponentMocks.kt)
-function for testing the above `SaveFooUseCase`.
+The `component-test` module also provides APIs for tests.
+For example, you can use [setMockComponent](../component-test/src/main/java/com/linecorp/lich/component/test/ComponentMocks.kt)
+to mock components like this:
+
+```kotlin
+setMockComponent(FooComponent, createMockFoo())
+```
+
+If you are using [MockK](https://mockk.io/),
+[mockComponent](../component-test-mockk/src/main/java/com/linecorp/lich/component/test/mockk/Mocking.kt)
+is also a useful function. Here is an example for testing the above `SaveFooUseCase` class.
 
 ```kotlin
 @RunWith(AndroidJUnit4::class)
@@ -222,6 +249,30 @@ class SaveFooUseCaseTest {
     fun testGetFooFromStorage() {
         val expected = Foo()
         val mockFooRepository = mockComponent(FooRepository) {
+            coEvery { findFoo(any()) } returns expected
+        }
+        val saveFooUseCase = SaveFooUseCase(context)
+
+        val actual = runBlocking { saveFooUseCase.getFooFromStorage("key") }
+
+        assertEquals(expected, actual)
+        coVerify { mockFooRepository.findFoo(eq("key")) }
+    }
+}
+```
+
+See also
+[CounterUseCaseTest](../sample_app/src/test/java/com/linecorp/lich/sample/mvvm/CounterUseCaseTest.kt).
+
+The [mockComponent](../component-test-mockitokotlin/src/main/java/com/linecorp/lich/component/test/mockitokotlin/Mocking.kt)
+function is also available for [Mockito-Kotlin](https://github.com/nhaarman/mockito-kotlin).
+Here is an example using Mockito-Kotlin.
+
+```kotlin
+    @Test
+    fun testGetFooFromStorage() {
+        val expected = Foo()
+        val mockFooRepository = mockComponent(FooRepository) {
             onBlocking { findFoo(any()) } doReturn expected
         }
         val saveFooUseCase = SaveFooUseCase(context)
@@ -231,10 +282,7 @@ class SaveFooUseCaseTest {
         assertEquals(expected, actual)
         verifyBlocking(mockFooRepository) { findFoo(eq("key")) }
     }
-}
 ```
-See also
-[CounterUseCaseTest](../sample_app/src/test/java/com/linecorp/lich/sample/mvvm/CounterUseCaseTest.kt).
 
 ## Multi-module support
 
