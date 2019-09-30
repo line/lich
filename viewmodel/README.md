@@ -23,19 +23,39 @@ dependencies {
 
 For unit-testing, the `viewmodel-test` module provides [AndroidX Test](https://developer.android.com/training/testing/set-up-project)
 support. (For Robolectric, see also [this document](http://robolectric.org/androidx_test/).)
-And, it also provides helper functions to work with [Mockito-Kotlin](https://github.com/nhaarman/mockito-kotlin).
-To use these features, add the following dependencies:
+In addition, helper functions to work with [MockK](https://mockk.io/) or
+[Mockito-Kotlin](https://github.com/nhaarman/mockito-kotlin) are also available.
+
+If you are using [MockK](https://mockk.io/), add the following dependencies:
 
 ```groovy
 dependencies {
-    testImplementation 'com.linecorp.lich:viewmodel-test:x.x.x'
+    testImplementation 'com.linecorp.lich:viewmodel-test-mockk:x.x.x'
+    testImplementation 'androidx.test:runner:x.x.x'
+    testImplementation 'androidx.test.ext:junit:x.x.x'
+    testImplementation 'io.mockk:mockk:x.x.x'
+    testImplementation 'org.robolectric:robolectric:x.x'
+
+    androidTestImplementation 'com.linecorp.lich:viewmodel-test-mockk:x.x.x'
+    androidTestImplementation 'androidx.test:runner:x.x.x'
+    androidTestImplementation 'androidx.test.ext:junit:x.x.x'
+    androidTestImplementation 'io.mockk:mockk-android:x.x.x'
+}
+```
+
+If you are using [Mockito-Kotlin](https://github.com/nhaarman/mockito-kotlin), add the following
+dependencies instead:
+
+```groovy
+dependencies {
+    testImplementation 'com.linecorp.lich:viewmodel-test-mockitokotlin:x.x.x'
     testImplementation 'androidx.test:runner:x.x.x'
     testImplementation 'androidx.test.ext:junit:x.x.x'
     testImplementation 'org.mockito:mockito-inline:x.x.x'
     testImplementation 'com.nhaarman.mockitokotlin2:mockito-kotlin:x.x.x'
     testImplementation 'org.robolectric:robolectric:x.x'
 
-    androidTestImplementation 'com.linecorp.lich:viewmodel-test:x.x.x'
+    androidTestImplementation 'com.linecorp.lich:viewmodel-test-mockitokotlin:x.x.x'
     androidTestImplementation 'androidx.test:runner:x.x.x'
     androidTestImplementation 'androidx.test.ext:junit:x.x.x'
     androidTestImplementation 'org.mockito:mockito-android:x.x.x'
@@ -138,12 +158,61 @@ except that it is implemented as an extension property.
 
 ## Testing
 
-The `viewmodel-test` module provides APIs to mock ViewModels for tests.
-With these APIs, you can replace instances created for a `ViewModelFactory`.
+The `viewmodel-test` module provides APIs for tests.
+For example, you can use [setMockViewModel](../viewmodel-test/src/main/java/com/linecorp/lich/viewmodel/test/ViewModelMocks.kt)
+to mock ViewModels like this:
 
-Here is an example of
-[mockViewModel](../viewmodel-test/src/main/java/com/linecorp/lich/viewmodel/test/MockitoViewModelMocks.kt)
-function.
+```kotlin
+setMockViewModel(FooViewModel) { createMockFooViewModel() }
+```
+
+If you are using [MockK](https://mockk.io/),
+[mockViewModel](../viewmodel-test-mockk/src/main/java/com/linecorp/lich/viewmodel/test/mockk/Mocking.kt)
+is also a useful function.
+
+```kotlin
+@RunWith(AndroidJUnit4::class)
+class FooActivityTest {
+
+    @After
+    fun tearDown() {
+        // You can omit this in Robolectric tests.
+        // All ViewModel mocks are automatically cleared for every Robolectric test.
+        clearAllMockViewModels()
+    }
+
+    @Test
+    fun testViewBinding() {
+        val mockFooText: MutableLiveData<String> = MutableLiveData("Mocked.")
+        // Set mock ViewModel factory for `FooViewModel`.
+        val mockViewModelHandle = mockViewModel(FooViewModel) {
+            every { fooText } returns mockFooText
+        }
+
+        ActivityScenario.launch(FooActivity::class.java).use { scenario ->
+
+            scenario.onActivity {
+                assertTrue(mockViewModelHandle.isCreated)
+            }
+
+            onView(withId(R.id.foo_text)).check(matches(withText("Mocked.")))
+
+            onView(withId(R.id.load_foo_button)).perform(click())
+
+            scenario.onActivity {
+                verify(exactly = 1) { mockViewModelHandle.mock.loadFooText() }
+            }
+        }
+    }
+}
+```
+
+See also
+[MvvmSampleActivityTest](../sample_app/src/test/java/com/linecorp/lich/sample/mvvm/MvvmSampleActivityTest.kt).
+
+The [mockViewModel](../viewmodel-test-mockitokotlin/src/main/java/com/linecorp/lich/viewmodel/test/mockitokotlin/Mocking.kt)
+function is also available for [Mockito-Kotlin](https://github.com/nhaarman/mockito-kotlin).
+Here is an example using Mockito-Kotlin.
 
 ```kotlin
 @RunWith(AndroidJUnit4::class)
@@ -181,5 +250,3 @@ class FooActivityTest {
     }
 }
 ```
-See also
-[MvvmSampleActivityTest](../sample_app/src/test/java/com/linecorp/lich/sample/mvvm/MvvmSampleActivityTest.kt).
