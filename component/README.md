@@ -22,7 +22,7 @@ First, add the following entries to your `build.gradle` file.
 dependencies {
     implementation 'com.linecorp.lich:component:x.x.x'
 
-    // Optional: Log diagnostic messages for debug builds.
+    // Optional: Enables diagnostic features for debug builds.
     debugRuntimeOnly 'com.linecorp.lich:component-debug:x.x.x'
 }
 ```
@@ -124,7 +124,7 @@ class FooFragment : Fragment() {
 }
 ```
 
-### Declare a 3rd-party class as a component
+### Declare 3rd-party classes as components
 
 If you want to declare a 3rd-party class as a "component", implement a top-level object instead of
 a companion object.
@@ -144,13 +144,70 @@ object GlobalOkHttpClient : ComponentFactory<OkHttpClient>() {
 }
 ```
 
-Then, you can get the singleton like this:
+Then, you can get the singleton as follows:
 
 ```kotlin
-val okHttpClient = context.getComponent(GlobalOkHttpClient)
+val okHttpClient: OkHttpClient = context.getComponent(GlobalOkHttpClient)
 ```
 
 See also [the sample code](../sample_app/src/main/java/com/linecorp/lich/sample/GlobalOkHttpClient.kt).
+
+### Resolve circular dependencies
+
+For example, the following code has a circular dependency between `ComponentX` and `ComponentY`.
+
+```kotlin
+class ComponentX(context: Context) {
+
+    private val componentY = context.getComponent(ComponentY)
+
+    companion object : ComponentFactory<ComponentX>() {
+        override fun createComponent(context: Context): ComponentX =
+            ComponentX(context)
+    }
+}
+
+class ComponentY(context: Context) {
+
+    private val componentX = context.getComponent(ComponentX)
+
+    companion object : ComponentFactory<ComponentY>() {
+        override fun createComponent(context: Context): ComponentY =
+            ComponentY(context)
+    }
+}
+```
+
+If there is the `component-debug` module in the runtime classpath, it detects the circular dependency
+and throws an exception like this:
+
+```text
+java.lang.IllegalStateException: Detected circular dependency!: [com.example.ComponentX$Companion@44028ab5, com.example.ComponentY$Companion@60562d2d, com.example.ComponentX$Companion@44028ab5]
+```
+
+In such a case, you can use *lazy acquisition* to resolve the issue.
+
+```kotlin
+class ComponentX(context: Context) {
+
+    private val componentY by context.component(ComponentY)
+
+    companion object : ComponentFactory<ComponentX>() {
+        override fun createComponent(context: Context): ComponentX =
+            ComponentX(context)
+    }
+}
+
+class ComponentY(context: Context) {
+
+    private val componentX by context.component(ComponentX)
+
+    companion object : ComponentFactory<ComponentY>() {
+        override fun createComponent(context: Context): ComponentY =
+            ComponentY(context)
+    }
+}
+```
 
 ## Example
 
@@ -448,7 +505,10 @@ diagnostic logs like this:
 I/DebugComponentProvider: Created com.example.app.FooComponent@8488aeb in 20 ms.
 ```
 
-In addition, you can use
+As mentioned above, it also checks circular dependencies of components.
+
+The `component-debug` module also provides an API for debugging components.
+For example, you can use
 [DebugComponentManager](../component-debug/src/main/java/com/linecorp/lich/component/debug/DebugComponentManager.kt)
 to modify components directly.
 
