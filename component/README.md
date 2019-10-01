@@ -554,9 +554,9 @@ So, the above `initFooComponentForDebug(context)` should be called prior to any 
 
 ## FAQ
 
-**Q.** Why doesn't this library support creation or mocking of non-singleton objects?
+### Why doesn't this library support creation or mocking of non-singleton objects?
 
-**A.** You can use *default arguments* instead.
+You can use *default arguments* instead.
 
 ```kotlin
 class FooController(
@@ -604,16 +604,29 @@ class FooControllerTest {
 }
 ```
 
-**Q.** Why is `getComponent(factory)` implemented as an extension of `Context`?
-Is there any way to get a Component without a `Context`?
+### Why is `getComponent(factory)` implemented as an extension of `Context`?
 
-**A.** In order to force the correct use of `Context`, it is forbidden to get a Component without a `Context`.
+There are two reasons.
 
-Generally, there are two types of Android Context: UI and Non-UI. You should use these Contexts properly.
+The first is to follow the standard Android architecture guidelines.
+
+> [https://developer.android.com/reference/android/app/Application](https://developer.android.com/reference/android/app/Application)
+>
+> There is normally no need to subclass Application. In most situations, static singletons can
+> provide the same functionality in a more modular way. If your singleton needs a global context
+> (for example to register broadcast receivers), include Context.getApplicationContext() as a
+> Context argument when invoking your singleton's getInstance() method.
+
+Singleton's `getInstance()` methods usually take a `Context` as an argument.
+So, components of this library are also acquired with a `Context`.
+
+The second reason is to force the correct use of Contexts.
+
+Generally, there are two types of Android Context: UI and non-UI. You should use these Contexts properly.
 (cf. [Mastering Android context](https://www.freecodecamp.org/news/mastering-android-context-7055c8478a22/))
 
 Suppose `getComponent(factory)` was implemented as a top-level function.
-In that case, you can easily access the Application Context from **anywhere** like this:
+In that case, you can easily access the Application Context (it is a non-UI Context) from **anywhere** like this:
 
 ```kotlin
 class LeakContextComponent(val context: Context) {
@@ -627,5 +640,28 @@ class LeakContextComponent(val context: Context) {
 val context = getComponent(LeakContextComponent).context
 ```
 
-As a result, it causes mistakes that the Application Context is wrongly used where UI Contexts should be used.
-Therefore, to prevent such mistakes, `getComponent(factory)` is implemented as an extension of `Context`.
+As a result, it might cause mistakes that the Application Context is wrongly used where UI Contexts should be used.
+To avoid such mistakes, it is better not to allow getting components without a `Context`, we think.
+
+### But I'm really frustrated that a Context is always required to get components.
+
+Okay, then you can make `getComponent(factory)` and `component(factory)` top-level functions as follows:
+
+```kotlin
+class MyApplication : Application() {
+    override fun onCreate() {
+        super.onCreate()
+        myApplication = this
+    }
+}
+
+private lateinit var myApplication: Application
+
+fun <T : Any> getComponent(factory: ComponentFactory<T>): T =
+    myApplication.getComponent(factory)
+
+fun <T : Any> component(factory: ComponentFactory<T>): Lazy<T> =
+    componentLazy(factory) { myApplication }
+```
+
+Of course, as mentioned above, please be careful not to expose the `Context` outside components.
