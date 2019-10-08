@@ -38,6 +38,4 @@ class BarFeatureFacadeImpl : BarFeatureFacade, ServiceLoaderComponent {
         }
         context.startActivity(intent)
     }
-
-    override fun getMessage(): String = "I am BarFeatureFacadeImpl."
 }

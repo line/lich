@@ -51,8 +51,6 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:${versions.androidxLifecycle}"
     implementation "androidx.room:room-ktx:${versions.androidxRoom}"
     kapt "androidx.room:room-compiler:${versions.androidxRoom}"
-    implementation "com.google.auto.service:auto-service-annotations:${versions.autoService}"
-    kapt "com.google.auto.service:auto-service:${versions.autoService}"
     implementation "com.squareup.okhttp3:okhttp:${versions.okhttp}"
 
     debugRuntimeOnly project(':component-debug')
@@ -65,5 +63,4 @@ dependencies {
     testImplementation "androidx.test.espresso:espresso-core:${versions.androidxTestEspresso}"
     testImplementation "io.mockk:mockk:${versions.mockk}"
     testImplementation "org.robolectric:robolectric:${versions.robolectric}"
-    kaptTest "com.google.auto.service:auto-service:${versions.autoService}"
 }

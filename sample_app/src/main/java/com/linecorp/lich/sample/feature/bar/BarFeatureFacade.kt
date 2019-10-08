@@ -30,8 +30,6 @@ interface BarFeatureFacade {
      */
     fun launchBarFeatureActivity()
 
-    fun getMessage(): String
-
     companion object : ComponentFactory<BarFeatureFacade>() {
         override fun createComponent(context: Context): BarFeatureFacade =
             delegateToServiceLoader(context)
