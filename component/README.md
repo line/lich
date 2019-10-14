@@ -5,8 +5,9 @@
 Lightweight framework for managing singleton components on Android apps.
 
 This is **NOT** a DI (Dependency Injection) framework.
-That is, this framework uses no configuration files, no annotations and no DSL.
+That is, this library uses no configuration files, no annotations (except for AutoService) and no DSL.
 Instead, you can write dependencies programmatically.
+(Technically speaking, this library is a variant of *Service Locator*.)
 
 By using this framework, you can gain the following benefits:
 
@@ -429,9 +430,26 @@ for the actual code.
 [ComponentFactory.delegateToServiceLoader](src/main/java/com/linecorp/lich/component/ComponentFactory.kt)
 delegates the creation of a component to [ServiceLoader](https://developer.android.com/reference/java/util/ServiceLoader).
 
-`ServiceLoader` instantiates a class specified in the `META-INF/services/<binary name of the component class>`
-Java resource file. Then, `delegateToServiceLoader()` calls its `init(context)` function if it implements
-[ServiceLoaderComponent](src/main/java/com/linecorp/lich/component/ServiceLoaderComponent.kt) interface.
+We recommend using `delegateToServiceLoader()` with the
+[AutoService](https://github.com/google/auto/tree/master/service) library.
+So, please add the following entries to `build.gradle` of the "foo" module first.
+
+```groovy
+apply plugin: 'kotlin-kapt'
+
+dependencies {
+    implementation 'com.google.auto.service:auto-service-annotations:x.x'
+    kapt 'com.google.auto.service:auto-service:x.x'
+}
+```
+
+Then, implement `FooModuleFacadeImpl` class in the "foo" module. The class must have a public empty
+constructor and be annotated as `@AutoService(FooModuleFacade::class)`.
+If the class requires the Application Context, make the class implement the
+[ServiceLoaderComponent](src/main/java/com/linecorp/lich/component/ServiceLoaderComponent.kt)
+interface, and override the `init(context)` function.
+
+Finally, call `delegateToServiceLoader(context)` from `FooModuleFacade` like this:
 
 ```kotlin
 // "base" module
@@ -452,11 +470,15 @@ interface FooModuleFacade {
 // "foo" module
 package module.foo
 
-// The class instantiated by ServiceLoader must have a public empty constructor.
+// Declare this class as an implementation of `FooModuleFacade`.
+@AutoService(FooModuleFacade::class)
 class FooModuleFacadeImpl : FooModuleFacade, ServiceLoaderComponent {
 
     private lateinit var context: Context
 
+    // The class instantiated by `delegateToServiceLoader` must have a public empty constructor.
+    // If the class requires a `context`, implement the `ServiceLoaderComponent` interface and
+    // override the `init(context)` function.
     override fun init(context: Context) {
         this.context = context
     }
@@ -467,23 +489,16 @@ class FooModuleFacadeImpl : FooModuleFacade, ServiceLoaderComponent {
 }
 ```
 
-```text
-# META-INF/services/module.base.facades.FooModuleFacade
-module.foo.FooModuleFacadeImpl
-```
-
-You can place ServiceLoader resource files with different implementation classes in multiple
-modules. In such a case, the class with the largest `ServiceLoaderComponent.loadPriority` value is
-selected as the actual implementation class of the component. This is useful when you want to
+You can have different implementation classes with the same `@AutoService(FooModuleFacade::class)`
+annotation. In such a case, the class with the largest `ServiceLoaderComponent.loadPriority` value
+is selected as the actual implementation class of `FooModuleFacade`. This is useful when you want to
 switch features depending on the project configuration.
 
 If you are using R8 (included in Android Gradle Plugin 3.5.0+) with code shrinking and optimizations
 enabled, the R8 optimization gets rid of reflection entirely in the final byte code. For details,
 please refer [this article](https://medium.com/androiddevelopers/patterns-for-accessing-code-from-dynamic-feature-modules-7e5dca6f9123).
 
-You can also use [AutoService](https://github.com/google/auto/tree/master/service) to generate
-ServiceLoader resource files. See
-[BarFeatureFacade](../sample_app/src/main/java/com/linecorp/lich/sample/feature/bar/BarFeatureFacade.kt)
+See [BarFeatureFacade](../sample_app/src/main/java/com/linecorp/lich/sample/feature/bar/BarFeatureFacade.kt)
 and [BarFeatureFacadeImpl](../sample_feature/src/main/java/com/linecorp/lich/sample/feature/bar/BarFeatureFacadeImpl.kt)
 for the actual code.
 
@@ -604,7 +619,7 @@ class FooControllerTest {
 }
 ```
 
-### Why is `getComponent(factory)` implemented as an extension of `Context`?
+### Why is `getComponent(factory)` implemented as an extension of `Context`? In other words, why is a Context required to get components?
 
 There are two reasons.
 
