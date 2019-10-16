@@ -26,13 +26,13 @@ import androidx.fragment.app.Fragment
  *
  * This is a sample code:
  * ```
- * class FooViewModel(private val context: Context) : AbstractViewModel() {
+ * class FooViewModel(private val context: Context, savedState: SavedState) : AbstractViewModel() {
  *
  *     // snip...
  *
  *     companion object : ViewModelFactory<FooViewModel>() {
- *         override fun createViewModel(context: Context): FooViewModel =
- *             FooViewModel(context)
+ *         override fun createViewModel(context: Context, savedState: SavedState): FooViewModel =
+ *             FooViewModel(context, savedState)
  *     }
  * }
  * ```
@@ -81,9 +81,22 @@ abstract class ViewModelFactory<T : AbstractViewModel> {
      * Creates a ViewModel for this factory.
      *
      * @param context the application context.
+     * @param savedState a handle to saved state.
      */
     @MainThread
-    protected abstract fun createViewModel(context: Context): T
+    protected open fun createViewModel(context: Context, savedState: SavedState): T {
+        @Suppress("DEPRECATION")
+        return createViewModel(context)
+    }
 
-    internal fun create(context: Context): T = createViewModel(context)
+    @Deprecated(
+        message = "Only for backward compatibility. Will be removed in 2.1.0",
+        replaceWith = ReplaceWith("createViewModel(context, handle)")
+    )
+    protected open fun createViewModel(context: Context): T {
+        throw NotImplementedError()
+    }
+
+    internal fun create(context: Context, savedState: SavedState): T =
+        createViewModel(context, savedState)
 }

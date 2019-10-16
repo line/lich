@@ -51,6 +51,6 @@ inline fun <reified T : AbstractViewModel> spyViewModel(
     factory: ViewModelFactory<T>,
     crossinline stubbing: KStubbing<T>.(T) -> Unit = {}
 ): MockViewModelHandle<T> =
-    MockViewModelHandle {
-        spy(value = createRealViewModel(factory), stubbing = stubbing)
+    MockViewModelHandle { savedState ->
+        spy(value = createRealViewModel(factory, savedState), stubbing = stubbing)
     }.setAsMockViewModelFor(factory)

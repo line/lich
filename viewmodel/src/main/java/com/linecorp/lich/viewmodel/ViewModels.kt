@@ -22,6 +22,7 @@ import androidx.activity.ComponentActivity
 import androidx.annotation.MainThread
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelStoreOwner
+import androidx.savedstate.SavedStateRegistryOwner
 import com.linecorp.lich.viewmodel.internal.lichViewModelProvider
 
 /**
@@ -48,7 +49,7 @@ import com.linecorp.lich.viewmodel.internal.lichViewModelProvider
  */
 @MainThread
 fun <T : AbstractViewModel> ComponentActivity.getViewModel(factory: ViewModelFactory<T>): T =
-    getViewModel(this, factory)
+    getViewModel(this, this, factory)
 
 /**
  * Returns an existing ViewModel or creates a new one, associated with this Fragment.
@@ -74,7 +75,7 @@ fun <T : AbstractViewModel> ComponentActivity.getViewModel(factory: ViewModelFac
  */
 @MainThread
 fun <T : AbstractViewModel> Fragment.getViewModel(factory: ViewModelFactory<T>): T =
-    requireContext().getViewModel(this, factory)
+    requireContext().getViewModel(this, this, factory)
 
 /**
  * Returns an existing ViewModel or creates a new one, associated with the Activity hosting this
@@ -106,5 +107,12 @@ fun <T : AbstractViewModel> Fragment.getActivityViewModel(factory: ViewModelFact
 
 private fun <T : AbstractViewModel> Context.getViewModel(
     viewModelStoreOwner: ViewModelStoreOwner,
+    savedStateRegistryOwner: SavedStateRegistryOwner,
     factory: ViewModelFactory<T>
-): T = lichViewModelProvider.getViewModel(this, viewModelStoreOwner, factory)
+): T = lichViewModelProvider.getViewModel(
+    this,
+    viewModelStoreOwner,
+    savedStateRegistryOwner,
+    factory,
+    null // TODO
+)

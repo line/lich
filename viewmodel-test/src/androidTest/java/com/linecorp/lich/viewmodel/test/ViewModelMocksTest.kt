@@ -34,10 +34,10 @@ class ViewModelMocksTest {
 
     @Test
     fun simpleMocking() {
-        setMockViewModel(ViewModelX) {
+        setMockViewModel(ViewModelX) { _, _ ->
             ViewModelX("Mocked X.")
         }
-        setMockViewModel(ViewModelY) {
+        setMockViewModel(ViewModelY) { _, _ ->
             ViewModelY("Mocked Y.")
         }
 
@@ -55,10 +55,10 @@ class ViewModelMocksTest {
 
     @Test
     fun mockingForEachViewModelStoreOwner() {
-        setMockViewModel(ViewModelX) { viewModelStoreOwner ->
+        setMockViewModel(ViewModelX) { viewModelStoreOwner, savedState ->
             when (viewModelStoreOwner) {
                 is TestActivity -> ViewModelX("Mocked for TestActivity.")
-                else -> createRealViewModel(ViewModelX)
+                else -> createRealViewModel(ViewModelX, savedState)
             }
         }
 
@@ -75,10 +75,10 @@ class ViewModelMocksTest {
 
     @Test
     fun clearMock() {
-        setMockViewModel(ViewModelX) {
+        setMockViewModel(ViewModelX) { _, _ ->
             ViewModelX("Mocked X.")
         }
-        setMockViewModel(ViewModelY) {
+        setMockViewModel(ViewModelY) { _, _ ->
             ViewModelY("Mocked Y.")
         }
 
@@ -103,10 +103,10 @@ class ViewModelMocksTest {
 
     @Test
     fun clearAll() {
-        setMockViewModel(ViewModelX) {
+        setMockViewModel(ViewModelX) { _, _ ->
             ViewModelX("Mocked X.")
         }
-        setMockViewModel(ViewModelY) {
+        setMockViewModel(ViewModelY) { _, _ ->
             ViewModelY("Mocked Y.")
         }
 
