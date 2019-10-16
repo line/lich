@@ -16,8 +16,15 @@
 package com.linecorp.lich.viewmodel
 
 import android.content.Context
+import androidx.lifecycle.MutableLiveData
 
-class TestViewModel : AbstractViewModel() {
+class TestViewModel(val context: Context, savedState: SavedState) : AbstractViewModel() {
+
+    val param1: String by savedState.required()
+
+    val param2: Int by savedState.initial(42)
+
+    val param3: MutableLiveData<String> by savedState.liveData()
 
     var isCleared: Boolean = false
 
@@ -27,6 +34,7 @@ class TestViewModel : AbstractViewModel() {
     }
 
     companion object : ViewModelFactory<TestViewModel>() {
-        override fun createViewModel(context: Context): TestViewModel = TestViewModel()
+        override fun createViewModel(context: Context, savedState: SavedState): TestViewModel =
+            TestViewModel(context, savedState)
     }
 }

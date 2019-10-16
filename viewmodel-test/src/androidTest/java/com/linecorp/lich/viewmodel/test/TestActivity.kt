@@ -15,6 +15,8 @@
  */
 package com.linecorp.lich.viewmodel.test
 
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.FragmentActivity
 import com.linecorp.lich.viewmodel.viewModel
@@ -33,6 +35,9 @@ class TestActivity : FragmentActivity() {
         testFragment = supportFragmentManager.run {
             findFragmentByTag(FRAGMENT_TAG) as? TestFragment
                 ?: TestFragment().also {
+                    it.arguments = Bundle().apply {
+                        putString("messageForX", "I am TestFragment.viewModelX.")
+                    }
                     beginTransaction().add(it, FRAGMENT_TAG).commit()
                 }
         }
@@ -40,11 +45,17 @@ class TestActivity : FragmentActivity() {
 
     override fun onStart() {
         super.onStart()
-        println("TestActivity.onStart: viewModelX ${viewModelX.message}")
-        println("TestActivity.onStart: viewModelY ${viewModelY.message}")
+        println("TestActivity.onStart: viewModelX ${viewModelX.messageForX}")
+        println("TestActivity.onStart: viewModelY ${viewModelY.messageForY}")
     }
 
     companion object {
         const val FRAGMENT_TAG: String = "TestFragment"
+
+        fun newIntent(context: Context): Intent =
+            Intent(context, TestActivity::class.java).apply {
+                putExtra("messageForX", "I am TestActivity.viewModelX.")
+                putExtra("messageForY", "I am TestActivity.viewModelY.")
+            }
     }
 }
