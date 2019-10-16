@@ -18,7 +18,6 @@ package com.linecorp.lich.viewmodel
 import androidx.activity.ComponentActivity
 import androidx.annotation.MainThread
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentActivity
 
 /**
  * Creates a new instance of a [Lazy] that returns an existing ViewModel or creates a new one,
@@ -39,27 +38,6 @@ import androidx.fragment.app.FragmentActivity
  */
 @MainThread
 fun <T : AbstractViewModel> ComponentActivity.viewModel(factory: ViewModelFactory<T>): Lazy<T> =
-    lazy(LazyThreadSafetyMode.NONE) { getViewModel(factory) }
-
-/**
- * Creates a new instance of a [Lazy] that returns an existing ViewModel or creates a new one,
- * associated with this Activity.
- *
- * This is a sample code:
- * ```
- * class FooActivity : AppCompatActivity() {
- *
- *     // An instance of FooViewModel associated with FooActivity.
- *     private val fooViewModel by viewModel(FooViewModel)
- *
- *     // snip...
- * }
- * ```
- *
- * @param factory [ViewModelFactory] to create the ViewModel.
- */
-@MainThread
-fun <T : AbstractViewModel> FragmentActivity.viewModel(factory: ViewModelFactory<T>): Lazy<T> =
     lazy(LazyThreadSafetyMode.NONE) { getViewModel(factory) }
 
 /**

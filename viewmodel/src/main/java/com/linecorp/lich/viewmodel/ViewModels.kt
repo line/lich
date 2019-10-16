@@ -21,7 +21,6 @@ import android.content.Context
 import androidx.activity.ComponentActivity
 import androidx.annotation.MainThread
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelStoreOwner
 import com.linecorp.lich.viewmodel.internal.lichViewModelProvider
 
@@ -49,32 +48,6 @@ import com.linecorp.lich.viewmodel.internal.lichViewModelProvider
  */
 @MainThread
 fun <T : AbstractViewModel> ComponentActivity.getViewModel(factory: ViewModelFactory<T>): T =
-    getViewModel(this, factory)
-
-/**
- * Returns an existing ViewModel or creates a new one, associated with this Activity.
- *
- * In most cases, we recommend to use [FragmentActivity.viewModel] instead.
- *
- * This is a sample code:
- * ```
- * class FooActivity : AppCompatActivity() {
- *
- *     private lateinit var fooViewModel: FooViewModel
- *
- *     override fun onCreate(savedInstanceState: Bundle?) {
- *         super.onCreate(savedInstanceState)
- *         fooViewModel = getViewModel(FooViewModel)
- *     }
- *
- *     // snip...
- * }
- * ```
- *
- * @param factory [ViewModelFactory] to create the ViewModel.
- */
-@MainThread
-fun <T : AbstractViewModel> FragmentActivity.getViewModel(factory: ViewModelFactory<T>): T =
     getViewModel(this, factory)
 
 /**
