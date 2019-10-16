@@ -18,6 +18,7 @@
 package com.linecorp.lich.viewmodel
 
 import android.content.Context
+import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.annotation.MainThread
 import androidx.fragment.app.Fragment
@@ -46,10 +47,15 @@ import com.linecorp.lich.viewmodel.internal.lichViewModelProvider
  * ```
  *
  * @param factory [ViewModelFactory] to create the ViewModel.
+ * @param arguments initial values for a new [SavedState] passed down to the ViewModel.
+ * If omitted, the value of `getIntent()?.getExtras()` for this Activity is used.
  */
+@JvmOverloads
 @MainThread
-fun <T : AbstractViewModel> ComponentActivity.getViewModel(factory: ViewModelFactory<T>): T =
-    getViewModel(this, this, factory)
+fun <T : AbstractViewModel> ComponentActivity.getViewModel(
+    factory: ViewModelFactory<T>,
+    arguments: Bundle? = intent?.extras
+): T = getViewModel(this, this, factory, arguments)
 
 /**
  * Returns an existing ViewModel or creates a new one, associated with this Fragment.
@@ -72,10 +78,15 @@ fun <T : AbstractViewModel> ComponentActivity.getViewModel(factory: ViewModelFac
  * ```
  *
  * @param factory [ViewModelFactory] to create the ViewModel.
+ * @param arguments initial values for a new [SavedState] passed down to the ViewModel.
+ * If omitted, the value of `getArguments()` for this Fragment is used.
  */
+@JvmOverloads
 @MainThread
-fun <T : AbstractViewModel> Fragment.getViewModel(factory: ViewModelFactory<T>): T =
-    requireContext().getViewModel(this, this, factory)
+fun <T : AbstractViewModel> Fragment.getViewModel(
+    factory: ViewModelFactory<T>,
+    arguments: Bundle? = this.arguments
+): T = requireContext().getViewModel(this, this, factory, arguments)
 
 /**
  * Returns an existing ViewModel or creates a new one, associated with the Activity hosting this
@@ -100,19 +111,25 @@ fun <T : AbstractViewModel> Fragment.getViewModel(factory: ViewModelFactory<T>):
  * ```
  *
  * @param factory [ViewModelFactory] to create the ViewModel.
+ * @param arguments initial values for a new [SavedState] passed down to the ViewModel.
+ * If omitted, the value of `getIntent()?.getExtras()` for the host Activity is used.
  */
+@JvmOverloads
 @MainThread
-fun <T : AbstractViewModel> Fragment.getActivityViewModel(factory: ViewModelFactory<T>): T =
-    requireActivity().getViewModel(factory)
+fun <T : AbstractViewModel> Fragment.getActivityViewModel(
+    factory: ViewModelFactory<T>,
+    arguments: Bundle? = requireActivity().intent?.extras
+): T = requireActivity().getViewModel(factory, arguments)
 
 private fun <T : AbstractViewModel> Context.getViewModel(
     viewModelStoreOwner: ViewModelStoreOwner,
     savedStateRegistryOwner: SavedStateRegistryOwner,
-    factory: ViewModelFactory<T>
+    factory: ViewModelFactory<T>,
+    arguments: Bundle?
 ): T = lichViewModelProvider.getViewModel(
     this,
     viewModelStoreOwner,
     savedStateRegistryOwner,
     factory,
-    null // TODO
+    arguments
 )

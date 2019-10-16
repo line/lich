@@ -15,9 +15,11 @@
  */
 package com.linecorp.lich.viewmodel
 
+import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.annotation.MainThread
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
 
 /**
  * Creates a new instance of a [Lazy] that returns an existing ViewModel or creates a new one,
@@ -35,10 +37,16 @@ import androidx.fragment.app.Fragment
  * ```
  *
  * @param factory [ViewModelFactory] to create the ViewModel.
+ * @param argumentsFunction a function that returns initial values for a new [SavedState] passed
+ * down to the ViewModel. If omitted, `getIntent()?.getExtras()` for this Activity is used.
  */
 @MainThread
-fun <T : AbstractViewModel> ComponentActivity.viewModel(factory: ViewModelFactory<T>): Lazy<T> =
-    lazy(LazyThreadSafetyMode.NONE) { getViewModel(factory) }
+fun <T : AbstractViewModel> ComponentActivity.viewModel(
+    factory: ViewModelFactory<T>,
+    argumentsFunction: ComponentActivity.() -> Bundle? = { intent?.extras }
+): Lazy<T> = lazy(LazyThreadSafetyMode.NONE) {
+    getViewModel(factory, argumentsFunction())
+}
 
 /**
  * Creates a new instance of a [Lazy] that returns an existing ViewModel or creates a new one,
@@ -56,10 +64,16 @@ fun <T : AbstractViewModel> ComponentActivity.viewModel(factory: ViewModelFactor
  * ```
  *
  * @param factory [ViewModelFactory] to create the ViewModel.
+ * @param argumentsFunction a function that returns initial values for a new [SavedState] passed
+ * down to the ViewModel. If omitted, `getArguments()` for this Fragment is used.
  */
 @MainThread
-fun <T : AbstractViewModel> Fragment.viewModel(factory: ViewModelFactory<T>): Lazy<T> =
-    lazy(LazyThreadSafetyMode.NONE) { getViewModel(factory) }
+fun <T : AbstractViewModel> Fragment.viewModel(
+    factory: ViewModelFactory<T>,
+    argumentsFunction: Fragment.() -> Bundle? = { arguments }
+): Lazy<T> = lazy(LazyThreadSafetyMode.NONE) {
+    getViewModel(factory, argumentsFunction())
+}
 
 /**
  * Creates a new instance of a [Lazy] that returns an existing ViewModel or creates a new one,
@@ -78,7 +92,13 @@ fun <T : AbstractViewModel> Fragment.viewModel(factory: ViewModelFactory<T>): La
  * ```
  *
  * @param factory [ViewModelFactory] to create the ViewModel.
+ * @param argumentsFunction a function that returns initial values for a new [SavedState] passed
+ * down to the ViewModel. If omitted, `getIntent()?.getExtras()` for the host Activity is used.
  */
 @MainThread
-fun <T : AbstractViewModel> Fragment.activityViewModel(factory: ViewModelFactory<T>): Lazy<T> =
-    lazy(LazyThreadSafetyMode.NONE) { getActivityViewModel(factory) }
+fun <T : AbstractViewModel> Fragment.activityViewModel(
+    factory: ViewModelFactory<T>,
+    argumentsFunction: FragmentActivity.() -> Bundle? = { intent?.extras }
+): Lazy<T> = lazy(LazyThreadSafetyMode.NONE) {
+    requireActivity().run { getViewModel(factory, argumentsFunction()) }
+}
