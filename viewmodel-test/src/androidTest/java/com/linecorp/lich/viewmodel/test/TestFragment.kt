@@ -27,7 +27,7 @@ class TestFragment : Fragment() {
 
     override fun onStart() {
         super.onStart()
-        println("TestFragment.onStart: viewModelX ${viewModelX.message}")
-        println("TestFragment.onStart: activityViewModelX ${activityViewModelX.message}")
+        println("TestFragment.onStart: viewModelX ${viewModelX.messageForX}")
+        println("TestFragment.onStart: activityViewModelX ${activityViewModelX.messageForX}")
     }
 }

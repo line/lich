@@ -68,9 +68,9 @@ inline fun <reified T : AbstractViewModel> spyViewModel(
     recordPrivateCalls: Boolean = false,
     crossinline block: T.() -> Unit = {}
 ): MockViewModelHandle<T> =
-    MockViewModelHandle {
+    MockViewModelHandle { savedState ->
         spyk(
-            objToCopy = createRealViewModel(factory),
+            objToCopy = createRealViewModel(factory, savedState),
             recordPrivateCalls = recordPrivateCalls,
             block = block
         )
