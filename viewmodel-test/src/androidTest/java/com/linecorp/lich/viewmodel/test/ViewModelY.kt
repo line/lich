@@ -19,7 +19,6 @@ import android.content.Context
 import com.linecorp.lich.viewmodel.AbstractViewModel
 import com.linecorp.lich.viewmodel.SavedState
 import com.linecorp.lich.viewmodel.ViewModelFactory
-import com.linecorp.lich.viewmodel.required
 
 class ViewModelY(savedState: SavedState) : AbstractViewModel() {
 

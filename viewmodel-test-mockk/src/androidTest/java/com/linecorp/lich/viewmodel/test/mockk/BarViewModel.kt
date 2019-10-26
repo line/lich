@@ -19,7 +19,6 @@ import android.content.Context
 import com.linecorp.lich.viewmodel.AbstractViewModel
 import com.linecorp.lich.viewmodel.SavedState
 import com.linecorp.lich.viewmodel.ViewModelFactory
-import com.linecorp.lich.viewmodel.initial
 
 // Mocking of final classes is only supported for Android P or later.
 // https://mockk.io/ANDROID.html

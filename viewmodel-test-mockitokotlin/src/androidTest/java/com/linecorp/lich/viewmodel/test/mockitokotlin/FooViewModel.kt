@@ -19,7 +19,6 @@ import android.content.Context
 import com.linecorp.lich.viewmodel.AbstractViewModel
 import com.linecorp.lich.viewmodel.SavedState
 import com.linecorp.lich.viewmodel.ViewModelFactory
-import com.linecorp.lich.viewmodel.initial
 
 // Since Mockito's inline mocking doesn't work on Android instrumentation tests,
 // mocked class needs to be open.
