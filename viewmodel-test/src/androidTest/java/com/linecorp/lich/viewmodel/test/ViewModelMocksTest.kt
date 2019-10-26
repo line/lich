@@ -19,7 +19,6 @@ import android.content.Context
 import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.linecorp.lich.viewmodel.SavedState
 import org.junit.After
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -38,18 +37,14 @@ class ViewModelMocksTest {
     @Test
     fun simpleMocking() {
         setMockViewModel(ViewModelX) { _, _ ->
-            val mockSavedState = SavedState(
-                mapOf(
-                    "messageForX" to "Mocked X."
-                )
+            val mockSavedState = createSavedStateForTesting(
+                "messageForX" to "Mocked X."
             )
             ViewModelX(mockSavedState)
         }
         setMockViewModel(ViewModelY) { _, _ ->
-            val mockSavedState = SavedState(
-                mapOf(
-                    "messageForY" to "Mocked Y."
-                )
+            val mockSavedState = createSavedStateForTesting(
+                "messageForY" to "Mocked Y."
             )
             ViewModelY(mockSavedState)
         }
@@ -73,10 +68,8 @@ class ViewModelMocksTest {
         setMockViewModel(ViewModelX) { viewModelStoreOwner, savedState ->
             when (viewModelStoreOwner) {
                 is TestActivity -> {
-                    val mockSavedState = SavedState(
-                        mapOf(
-                            "messageForX" to "Mocked for TestActivity."
-                        )
+                    val mockSavedState = createSavedStateForTesting(
+                        "messageForX" to "Mocked for TestActivity."
                     )
                     ViewModelX(mockSavedState)
                 }
@@ -104,18 +97,14 @@ class ViewModelMocksTest {
     @Test
     fun clearMock() {
         setMockViewModel(ViewModelX) { _, _ ->
-            val mockSavedState = SavedState(
-                mapOf(
-                    "messageForX" to "Mocked X."
-                )
+            val mockSavedState = createSavedStateForTesting(
+                "messageForX" to "Mocked X."
             )
             ViewModelX(mockSavedState)
         }
         setMockViewModel(ViewModelY) { _, _ ->
-            val mockSavedState = SavedState(
-                mapOf(
-                    "messageForY" to "Mocked Y."
-                )
+            val mockSavedState = createSavedStateForTesting(
+                "messageForY" to "Mocked Y."
             )
             ViewModelY(mockSavedState)
         }
@@ -147,18 +136,14 @@ class ViewModelMocksTest {
     @Test
     fun clearAll() {
         setMockViewModel(ViewModelX) { _, _ ->
-            val mockSavedState = SavedState(
-                mapOf(
-                    "messageForX" to "Mocked X."
-                )
+            val mockSavedState = createSavedStateForTesting(
+                "messageForX" to "Mocked X."
             )
             ViewModelX(mockSavedState)
         }
         setMockViewModel(ViewModelY) { _, _ ->
-            val mockSavedState = SavedState(
-                mapOf(
-                    "messageForY" to "Mocked Y."
-                )
+            val mockSavedState = createSavedStateForTesting(
+                "messageForY" to "Mocked Y."
             )
             ViewModelY(mockSavedState)
         }

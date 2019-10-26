@@ -60,20 +60,6 @@ import kotlin.reflect.KProperty
 @MainThread
 class SavedState(private val savedStateHandle: SavedStateHandle) {
     /**
-     * Creates a handle with the empty state.
-     *
-     * Typically, this constructor is used for unit tests.
-     */
-    constructor() : this(SavedStateHandle())
-
-    /**
-     * Creates a handle with the given initial arguments.
-     *
-     * Typically, this constructor is used for unit tests.
-     */
-    constructor(initialState: Map<String, Any?>) : this(SavedStateHandle(initialState))
-
-    /**
      * Returns a view of the keys contained in this [SavedState].
      */
     val keys: Set<String>
