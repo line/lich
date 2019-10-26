@@ -103,6 +103,11 @@ class SavedState(private val savedStateHandle: SavedStateHandle) {
         savedStateHandle.set(key, value)
     }
 
+    @PublishedApi
+    @Suppress("UNCHECKED_CAST", "RemoveExplicitTypeArguments")
+    internal fun <T> getForExistingKey(key: String): T =
+        savedStateHandle.get<T>(key) as T
+
     // To keep the invariant of InitializedSavedState, we don't provide remove() function.
 
     /**
@@ -269,10 +274,10 @@ inline class RequiringSavedStateDelegate<T>(val savedState: SavedState) {
  */
 @Suppress("EXPERIMENTAL_FEATURE_WARNING")
 inline class InitializedSavedState<T>(val savedState: SavedState) {
-    @Suppress("NOTHING_TO_INLINE", "UNCHECKED_CAST", "RemoveExplicitTypeArguments")
+    @Suppress("NOTHING_TO_INLINE")
     @MainThread
     inline operator fun getValue(thisRef: Any?, property: KProperty<*>): T =
-        savedState.get<T>(property.name) as T
+        savedState.getForExistingKey(property.name)
 
     @Suppress("NOTHING_TO_INLINE")
     @MainThread
