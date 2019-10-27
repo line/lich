@@ -41,7 +41,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun launchMvvmSampleActivity(@Suppress("UNUSED_PARAMETER") view: View) {
-        startActivity(Intent(this, MvvmSampleActivity::class.java))
+        startActivity(MvvmSampleActivity.newIntent(this, "mvvm"))
     }
 
     fun launchFooFeatureActivity(@Suppress("UNUSED_PARAMETER") view: View) {

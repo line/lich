@@ -22,6 +22,7 @@ import androidx.lifecycle.Observer
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.linecorp.lich.sample.entity.Counter
+import com.linecorp.lich.viewmodel.test.createSavedStateForTesting
 import io.mockk.coVerify
 import io.mockk.confirmVerified
 import io.mockk.every
@@ -55,7 +56,10 @@ class SampleViewModelTest {
             every { isLoading } returns this@SampleViewModelTest.isLoading
         }
 
-        sampleViewModel = SampleViewModel(context, counterUseCase)
+        val savedState = createSavedStateForTesting(
+            SampleViewModelArgs(counterName = "foo")
+        )
+        sampleViewModel = SampleViewModel(context, savedState, counterUseCase)
     }
 
     @Test
@@ -90,7 +94,7 @@ class SampleViewModelTest {
     fun loadData() {
         sampleViewModel.loadData()
 
-        coVerify { counterUseCase.loadCounter() }
+        coVerify { counterUseCase.loadCounter("foo") }
     }
 
     @Test

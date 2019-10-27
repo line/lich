@@ -15,9 +15,11 @@
  */
 package com.linecorp.lich.sample.mvvm
 
+import android.content.Context
 import android.view.View
 import androidx.lifecycle.MutableLiveData
 import androidx.test.core.app.ActivityScenario
+import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.assertion.ViewAssertions.matches
@@ -33,11 +35,14 @@ import io.mockk.verify
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import kotlin.test.assertEquals
 import kotlin.test.assertSame
 import kotlin.test.assertTrue
 
 @RunWith(AndroidJUnit4::class)
 class MvvmSampleActivityTest {
+
+    private lateinit var context: Context
 
     private lateinit var mockViewModelHandle: MockViewModelHandle<SampleViewModel>
 
@@ -49,6 +54,7 @@ class MvvmSampleActivityTest {
 
     @Before
     fun setUp() {
+        context = ApplicationProvider.getApplicationContext()
         counterText = MutableLiveData("5")
         loadingVisibility = MutableLiveData(View.GONE)
         isOperationEnabled = MutableLiveData(true)
@@ -61,10 +67,12 @@ class MvvmSampleActivityTest {
 
     @Test
     fun testCounter() {
-        ActivityScenario.launch(MvvmSampleActivity::class.java).use { scenario ->
+        val intent = MvvmSampleActivity.newIntent(context, "counter")
+        ActivityScenario.launch<MvvmSampleActivity>(intent).use { scenario ->
 
             scenario.onActivity {
                 assertTrue(mockViewModelHandle.isCreated)
+                assertEquals<String?>("counter", mockViewModelHandle.savedState["counterName"])
                 assertSame(counterText, mockViewModelHandle.mock.counterText)
             }
 
@@ -80,7 +88,8 @@ class MvvmSampleActivityTest {
 
     @Test
     fun testCountUpButton() {
-        ActivityScenario.launch(MvvmSampleActivity::class.java).use { scenario ->
+        val intent = MvvmSampleActivity.newIntent(context, "counter")
+        ActivityScenario.launch<MvvmSampleActivity>(intent).use { scenario ->
 
             scenario.onActivity {
                 assertTrue(mockViewModelHandle.isCreated)

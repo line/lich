@@ -42,6 +42,7 @@ android {
 dependencies {
     implementation project(':component')
     implementation project(':viewmodel')
+    kapt project(':viewmodel-compiler')
     implementation project(':lifecycle')
     implementation project(':okhttp')
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:${versions.kotlin}"
