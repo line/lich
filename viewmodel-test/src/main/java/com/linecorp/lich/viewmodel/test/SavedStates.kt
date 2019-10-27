@@ -19,6 +19,7 @@ package com.linecorp.lich.viewmodel.test
 
 import androidx.lifecycle.SavedStateHandle
 import com.linecorp.lich.viewmodel.SavedState
+import com.linecorp.lich.viewmodel.ViewModelArgs
 
 /**
  * Creates a [SavedState] with the specified contents, given as a list of pairs
@@ -26,3 +27,11 @@ import com.linecorp.lich.viewmodel.SavedState
  */
 fun createSavedStateForTesting(vararg pairs: Pair<String, *>): SavedState =
     SavedState(SavedStateHandle(mapOf(*pairs)))
+
+/**
+ * Creates a [SavedState] initialized with the given [viewModelArgs].
+ */
+fun createSavedStateForTesting(viewModelArgs: ViewModelArgs): SavedState =
+    viewModelArgs.toBundle().let { bundle ->
+        SavedState(SavedStateHandle(bundle.keySet().associateWith { bundle.get(it) }))
+    }

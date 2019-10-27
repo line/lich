@@ -38,13 +38,13 @@ class ViewModelMocksTest {
     fun simpleMocking() {
         setMockViewModel(ViewModelX) { _, _ ->
             val mockSavedState = createSavedStateForTesting(
-                "message" to "Mocked X."
+                ViewModelXArgs(message = "Mocked X.")
             )
             ViewModelX(mockSavedState)
         }
         setMockViewModel(ViewModelY) { _, _ ->
             val mockSavedState = createSavedStateForTesting(
-                "message" to "Mocked Y."
+                ViewModelYArgs(message = "Mocked Y.")
             )
             ViewModelY(mockSavedState)
         }
@@ -69,7 +69,7 @@ class ViewModelMocksTest {
             when (viewModelStoreOwner) {
                 is TestActivity -> {
                     val mockSavedState = createSavedStateForTesting(
-                        "message" to "Mocked for TestActivity."
+                        ViewModelXArgs(message = "Mocked for TestActivity.")
                     )
                     ViewModelX(mockSavedState)
                 }
@@ -98,13 +98,13 @@ class ViewModelMocksTest {
     fun clearMock() {
         setMockViewModel(ViewModelX) { _, _ ->
             val mockSavedState = createSavedStateForTesting(
-                "message" to "Mocked X."
+                ViewModelXArgs(message = "Mocked X.")
             )
             ViewModelX(mockSavedState)
         }
         setMockViewModel(ViewModelY) { _, _ ->
             val mockSavedState = createSavedStateForTesting(
-                "message" to "Mocked Y."
+                ViewModelYArgs(message = "Mocked Y.")
             )
             ViewModelY(mockSavedState)
         }
