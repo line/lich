@@ -1,5 +1,6 @@
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
 apply plugin: 'com.jfrog.bintray'
 
 version = VERSION_NAME_VIEWMODEL
@@ -19,10 +20,10 @@ dependencies {
     api project(':viewmodel')
     implementation "org.jetbrains.kotlin:kotlin-stdlib:${versions.kotlin}"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:${versions.kotlinCoroutines}"
-    implementation "androidx.lifecycle:lifecycle-common:${versions.androidxLifecycle}"
-    implementation "androidx.lifecycle:lifecycle-viewmodel:${versions.androidxLifecycle}"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-savedstate:${versions.androidxViewmodelSavedstate}"
     implementation "androidx.test:core:${versions.androidxTestCore}"
 
+    kaptAndroidTest project(':viewmodel-compiler')
     androidTestImplementation "androidx.fragment:fragment:${versions.androidxFragment}"
     androidTestImplementation "org.jetbrains.kotlin:kotlin-test-junit:${versions.kotlin}"
     androidTestImplementation "androidx.test:runner:${versions.androidxTestRunner}"

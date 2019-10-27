@@ -18,12 +18,16 @@ package com.linecorp.lich.viewmodel
 import android.content.Context
 import androidx.lifecycle.MutableLiveData
 
+@GenerateArgs
 class TestViewModel(val context: Context, savedState: SavedState) : AbstractViewModel() {
 
+    @Argument
     val param1: String by savedState.required()
 
+    @Argument(isOptional = true)
     val param2: Int by savedState.initial(42)
 
+    @Argument(isOptional = true)
     val param3: MutableLiveData<String> by savedState.liveData()
 
     var isCleared: Boolean = false

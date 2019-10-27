@@ -60,20 +60,6 @@ import kotlin.reflect.KProperty
 @MainThread
 class SavedState(private val savedStateHandle: SavedStateHandle) {
     /**
-     * Creates a handle with the empty state.
-     *
-     * Typically, this constructor is used for unit tests.
-     */
-    constructor() : this(SavedStateHandle())
-
-    /**
-     * Creates a handle with the given initial arguments.
-     *
-     * Typically, this constructor is used for unit tests.
-     */
-    constructor(initialState: Map<String, Any?>) : this(SavedStateHandle(initialState))
-
-    /**
      * Returns a view of the keys contained in this [SavedState].
      */
     val keys: Set<String>
@@ -103,6 +89,13 @@ class SavedState(private val savedStateHandle: SavedStateHandle) {
         savedStateHandle.set(key, value)
     }
 
+    @PublishedApi
+    @Suppress("UNCHECKED_CAST", "RemoveExplicitTypeArguments")
+    internal fun <T> getForExistingKey(key: String): T =
+        savedStateHandle.get<T>(key) as T
+
+    // To keep the invariant of InitializedSavedState, we don't provide remove() function.
+
     /**
      * Returns a [MutableLiveData] that accesses the value associated with the given [key].
      *
@@ -121,109 +114,107 @@ class SavedState(private val savedStateHandle: SavedStateHandle) {
     fun <T> getLiveData(key: String, initialValue: T): MutableLiveData<T> =
         savedStateHandle.getLiveData(key, initialValue)
 
-    // To keep the invariant of InitializedSavedState, we don't provide remove() function.
+    // Property delegates for SavedState.
+
+    /**
+     * A property delegate to access the value associated with the name of the property.
+     *
+     * ```
+     * class FooViewModel(savedState: SavedState) : AbstractViewModel() {
+     *
+     *     // A delegated property that accesses the value associated with "fooParam".
+     *     // Its initial value can be specified by `arguments` of the functions such as `Fragment.viewModel`.
+     *     var fooParam: String? by savedState
+     * }
+     * ```
+     */
+    @Suppress("NOTHING_TO_INLINE")
+    @MainThread
+    inline operator fun <T> getValue(thisRef: Any?, property: KProperty<*>): T? =
+        this[property.name]
+
+    /**
+     * A property delegate to access the value associated with the name of the property.
+     * See [getValue] for details.
+     */
+    @Suppress("NOTHING_TO_INLINE")
+    @MainThread
+    inline operator fun <T> setValue(thisRef: Any?, property: KProperty<*>, value: T) {
+        this[property.name] = value
+    }
+
+    /**
+     * Provides a property delegate initialized with the given [value] unless specified by `arguments`
+     * of the functions such as `Fragment.viewModel`.
+     *
+     * ```
+     * class FooViewModel(savedState: SavedState) : AbstractViewModel() {
+     *
+     *     // A delegated property that accesses the value associated with "fooParam".
+     *     // The value is initialized with "abc" unless specified by `arguments`.
+     *     var fooParam: String by savedState.initial("abc")
+     * }
+     * ```
+     */
+    @MainThread
+    fun <T> initial(value: T): InitializingSavedStateDelegate<T> =
+        InitializingSavedStateDelegate(this, value)
+
+    /**
+     * Provides a property delegate that confirms the value is specified by `arguments` of the functions
+     * such as `Fragment.viewModel`.
+     * If it is not specified by `arguments`, throws IllegalStateException.
+     *
+     * ```
+     * class FooViewModel(savedState: SavedState) : AbstractViewModel() {
+     *
+     *     // A delegated property that accesses the value associated with "fooParam".
+     *     // The value must be initialized by `arguments`, otherwise IllegalStateException is thrown.
+     *     var fooParam: String by savedState.required()
+     * }
+     * ```
+     */
+    @MainThread
+    fun <T> required(): RequiringSavedStateDelegate<T> =
+        RequiringSavedStateDelegate(this)
+
+    /**
+     * Provides a property delegate of a [MutableLiveData] that accesses the value associated with
+     * the name of the property.
+     *
+     * ```
+     * class FooViewModel(savedState: SavedState) : AbstractViewModel() {
+     *
+     *     // A delegated property of a `MutableLiveData` that accesses the value associated with "fooParam".
+     *     // Its initial value can be specified by `arguments` of the functions such as `Fragment.viewModel`.
+     *     val fooParam: MutableLiveData<String> by savedState.liveData()
+     * }
+     * ```
+     */
+    @MainThread
+    fun <T> liveData(): SavedStateLiveDataDelegate<T> =
+        SavedStateLiveDataDelegate(this)
+
+    /**
+     * Provides a property delegate of a [MutableLiveData] that accesses the value associated with
+     * the name of the property.
+     *
+     * Its value is initialized with [initialValue] unless specified by `arguments` of the functions
+     * such as `Fragment.viewModel`.
+     *
+     * ```
+     * class FooViewModel(savedState: SavedState) : AbstractViewModel() {
+     *
+     *     // A delegated property of a `MutableLiveData` that accesses the value associated with "fooParam".
+     *     // The value is initialized with "abc" unless specified by `arguments`.
+     *     val fooParam: MutableLiveData<String> by savedState.liveData("abc")
+     * }
+     * ```
+     */
+    @MainThread
+    fun <T> liveData(initialValue: T): SavedStateLiveDataWithInitialDelegate<T> =
+        SavedStateLiveDataWithInitialDelegate(this, initialValue)
 }
-
-// Property delegates for SavedState.
-
-/**
- * A property delegate to access the value associated with the name of the property.
- *
- * ```
- * class FooViewModel(savedState: SavedState) : AbstractViewModel() {
- *
- *     // A delegated property that accesses the value associated with "fooParam".
- *     // Its initial value can be specified by `arguments` of the functions such as `Fragment.viewModel`.
- *     var fooParam: String? by savedState
- * }
- * ```
- */
-@Suppress("NOTHING_TO_INLINE")
-@MainThread
-inline operator fun <T> SavedState.getValue(thisRef: Any?, property: KProperty<*>): T? =
-    this[property.name]
-
-/**
- * A property delegate to access the value associated with the name of the property.
- * See [SavedState.getValue] for details.
- */
-@Suppress("NOTHING_TO_INLINE")
-@MainThread
-inline operator fun <T> SavedState.setValue(thisRef: Any?, property: KProperty<*>, value: T) {
-    this[property.name] = value
-}
-
-/**
- * Provides a property delegate initialized with the given [value] unless specified by `arguments`
- * of the functions such as `Fragment.viewModel`.
- *
- * ```
- * class FooViewModel(savedState: SavedState) : AbstractViewModel() {
- *
- *     // A delegated property that accesses the value associated with "fooParam".
- *     // The value is initialized with "abc" unless specified by `arguments`.
- *     var fooParam: String by savedState.initial("abc")
- * }
- * ```
- */
-@MainThread
-fun <T> SavedState.initial(value: T): InitializingSavedStateDelegate<T> =
-    InitializingSavedStateDelegate(this, value)
-
-/**
- * Provides a property delegate that confirms the value is specified by `arguments` of the functions
- * such as `Fragment.viewModel`.
- * If it is not specified by `arguments`, throws IllegalStateException.
- *
- * ```
- * class FooViewModel(savedState: SavedState) : AbstractViewModel() {
- *
- *     // A delegated property that accesses the value associated with "fooParam".
- *     // The value must be initialized by `arguments`, otherwise IllegalStateException is thrown.
- *     var fooParam: String by savedState.required()
- * }
- * ```
- */
-@MainThread
-fun <T> SavedState.required(): RequiringSavedStateDelegate<T> =
-    RequiringSavedStateDelegate(this)
-
-/**
- * Provides a property delegate of a [MutableLiveData] that accesses the value associated with
- * the name of the property.
- *
- * ```
- * class FooViewModel(savedState: SavedState) : AbstractViewModel() {
- *
- *     // A delegated property of a `MutableLiveData` that accesses the value associated with "fooParam".
- *     // Its initial value can be specified by `arguments` of the functions such as `Fragment.viewModel`.
- *     val fooParam: MutableLiveData<String> by savedState.liveData()
- * }
- * ```
- */
-@MainThread
-fun <T> SavedState.liveData(): SavedStateLiveDataDelegate<T> =
-    SavedStateLiveDataDelegate(this)
-
-/**
- * Provides a property delegate of a [MutableLiveData] that accesses the value associated with
- * the name of the property.
- *
- * Its value is initialized with [initialValue] unless specified by `arguments` of the functions
- * such as `Fragment.viewModel`.
- *
- * ```
- * class FooViewModel(savedState: SavedState) : AbstractViewModel() {
- *
- *     // A delegated property of a `MutableLiveData` that accesses the value associated with "fooParam".
- *     // The value is initialized with "abc" unless specified by `arguments`.
- *     val fooParam: MutableLiveData<String> by savedState.liveData("abc")
- * }
- * ```
- */
-@MainThread
-fun <T> SavedState.liveData(initialValue: T): SavedStateLiveDataWithInitialDelegate<T> =
-    SavedStateLiveDataWithInitialDelegate(this, initialValue)
 
 // Implementation details of the property delegates.
 
@@ -269,10 +260,10 @@ inline class RequiringSavedStateDelegate<T>(val savedState: SavedState) {
  */
 @Suppress("EXPERIMENTAL_FEATURE_WARNING")
 inline class InitializedSavedState<T>(val savedState: SavedState) {
-    @Suppress("NOTHING_TO_INLINE", "UNCHECKED_CAST", "RemoveExplicitTypeArguments")
+    @Suppress("NOTHING_TO_INLINE")
     @MainThread
     inline operator fun getValue(thisRef: Any?, property: KProperty<*>): T =
-        savedState.get<T>(property.name) as T
+        savedState.getForExistingKey(property.name)
 
     @Suppress("NOTHING_TO_INLINE")
     @MainThread

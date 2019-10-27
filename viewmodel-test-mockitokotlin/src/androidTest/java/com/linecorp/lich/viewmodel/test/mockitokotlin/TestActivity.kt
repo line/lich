@@ -15,16 +15,13 @@
  */
 package com.linecorp.lich.viewmodel.test.mockitokotlin
 
-import android.os.Bundle
 import androidx.fragment.app.FragmentActivity
 import com.linecorp.lich.viewmodel.viewModel
 
 class TestActivity : FragmentActivity() {
 
     val fooViewModel by viewModel(FooViewModel) {
-        Bundle().apply {
-            putInt("itemCount", 10)
-        }
+        FooViewModelArgs(itemCount = 10).toBundle()
     }
 
     override fun onStart() {

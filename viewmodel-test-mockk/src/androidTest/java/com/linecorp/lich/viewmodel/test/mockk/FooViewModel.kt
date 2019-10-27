@@ -17,15 +17,18 @@ package com.linecorp.lich.viewmodel.test.mockk
 
 import android.content.Context
 import com.linecorp.lich.viewmodel.AbstractViewModel
+import com.linecorp.lich.viewmodel.Argument
+import com.linecorp.lich.viewmodel.GenerateArgs
 import com.linecorp.lich.viewmodel.SavedState
 import com.linecorp.lich.viewmodel.ViewModelFactory
-import com.linecorp.lich.viewmodel.initial
 
 // Mocking of final classes is only supported for Android P or later.
 // https://mockk.io/ANDROID.html
+@GenerateArgs
 open class FooViewModel(savedState: SavedState) : AbstractViewModel() {
 
-    private var itemCount: Int by savedState.initial(0)
+    @Argument
+    private var itemCount: Int by savedState.required()
 
     open fun greeting(): String {
         return "Hello, I'm Foo."

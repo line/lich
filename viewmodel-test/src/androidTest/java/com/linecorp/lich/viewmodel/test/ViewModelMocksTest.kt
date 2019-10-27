@@ -19,7 +19,6 @@ import android.content.Context
 import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.linecorp.lich.viewmodel.SavedState
 import org.junit.After
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -38,18 +37,14 @@ class ViewModelMocksTest {
     @Test
     fun simpleMocking() {
         setMockViewModel(ViewModelX) { _, _ ->
-            val mockSavedState = SavedState(
-                mapOf(
-                    "messageForX" to "Mocked X."
-                )
+            val mockSavedState = createSavedStateForTesting(
+                ViewModelXArgs(message = "Mocked X.")
             )
             ViewModelX(mockSavedState)
         }
         setMockViewModel(ViewModelY) { _, _ ->
-            val mockSavedState = SavedState(
-                mapOf(
-                    "messageForY" to "Mocked Y."
-                )
+            val mockSavedState = createSavedStateForTesting(
+                ViewModelYArgs(message = "Mocked Y.")
             )
             ViewModelY(mockSavedState)
         }
@@ -61,9 +56,9 @@ class ViewModelMocksTest {
                 assertNotSame(activity.viewModelX, activity.testFragment.viewModelX)
                 assertSame(activity.viewModelX, activity.testFragment.activityViewModelX)
 
-                assertEquals("Mocked X.", activity.viewModelX.messageForX)
-                assertEquals("Mocked X.", activity.testFragment.viewModelX.messageForX)
-                assertEquals("Mocked Y.", activity.viewModelY.messageForY)
+                assertEquals("Mocked X.", activity.viewModelX.message)
+                assertEquals("Mocked X.", activity.testFragment.viewModelX.message)
+                assertEquals("Mocked Y.", activity.viewModelY.message)
             }
         }
     }
@@ -73,10 +68,8 @@ class ViewModelMocksTest {
         setMockViewModel(ViewModelX) { viewModelStoreOwner, savedState ->
             when (viewModelStoreOwner) {
                 is TestActivity -> {
-                    val mockSavedState = SavedState(
-                        mapOf(
-                            "messageForX" to "Mocked for TestActivity."
-                        )
+                    val mockSavedState = createSavedStateForTesting(
+                        ViewModelXArgs(message = "Mocked for TestActivity.")
                     )
                     ViewModelX(mockSavedState)
                 }
@@ -91,12 +84,12 @@ class ViewModelMocksTest {
                 assertNotSame(activity.viewModelX, activity.testFragment.viewModelX)
                 assertSame(activity.viewModelX, activity.testFragment.activityViewModelX)
 
-                assertEquals("Mocked for TestActivity.", activity.viewModelX.messageForX)
+                assertEquals("Mocked for TestActivity.", activity.viewModelX.message)
                 assertEquals(
                     "I am TestFragment.viewModelX.",
-                    activity.testFragment.viewModelX.messageForX
+                    activity.testFragment.viewModelX.message
                 )
-                assertEquals("I am TestActivity.viewModelY.", activity.viewModelY.messageForY)
+                assertEquals("I am TestActivity.viewModelY.", activity.viewModelY.message)
             }
         }
     }
@@ -104,18 +97,14 @@ class ViewModelMocksTest {
     @Test
     fun clearMock() {
         setMockViewModel(ViewModelX) { _, _ ->
-            val mockSavedState = SavedState(
-                mapOf(
-                    "messageForX" to "Mocked X."
-                )
+            val mockSavedState = createSavedStateForTesting(
+                ViewModelXArgs(message = "Mocked X.")
             )
             ViewModelX(mockSavedState)
         }
         setMockViewModel(ViewModelY) { _, _ ->
-            val mockSavedState = SavedState(
-                mapOf(
-                    "messageForY" to "Mocked Y."
-                )
+            val mockSavedState = createSavedStateForTesting(
+                ViewModelYArgs(message = "Mocked Y.")
             )
             ViewModelY(mockSavedState)
         }
@@ -124,9 +113,9 @@ class ViewModelMocksTest {
         val intent = TestActivity.newIntent(context)
         ActivityScenario.launch<TestActivity>(intent).use { scenario ->
             scenario.onActivity { activity ->
-                assertEquals("Mocked X.", activity.viewModelX.messageForX)
-                assertEquals("Mocked X.", activity.testFragment.viewModelX.messageForX)
-                assertEquals("Mocked Y.", activity.viewModelY.messageForY)
+                assertEquals("Mocked X.", activity.viewModelX.message)
+                assertEquals("Mocked X.", activity.testFragment.viewModelX.message)
+                assertEquals("Mocked Y.", activity.viewModelY.message)
             }
         }
 
@@ -134,12 +123,12 @@ class ViewModelMocksTest {
 
         ActivityScenario.launch<TestActivity>(intent).use { scenario ->
             scenario.onActivity { activity ->
-                assertEquals("I am TestActivity.viewModelX.", activity.viewModelX.messageForX)
+                assertEquals("I am TestActivity.viewModelX.", activity.viewModelX.message)
                 assertEquals(
                     "I am TestFragment.viewModelX.",
-                    activity.testFragment.viewModelX.messageForX
+                    activity.testFragment.viewModelX.message
                 )
-                assertEquals("Mocked Y.", activity.viewModelY.messageForY)
+                assertEquals("Mocked Y.", activity.viewModelY.message)
             }
         }
     }
@@ -147,18 +136,14 @@ class ViewModelMocksTest {
     @Test
     fun clearAll() {
         setMockViewModel(ViewModelX) { _, _ ->
-            val mockSavedState = SavedState(
-                mapOf(
-                    "messageForX" to "Mocked X."
-                )
+            val mockSavedState = createSavedStateForTesting(
+                "message" to "Mocked X."
             )
             ViewModelX(mockSavedState)
         }
         setMockViewModel(ViewModelY) { _, _ ->
-            val mockSavedState = SavedState(
-                mapOf(
-                    "messageForY" to "Mocked Y."
-                )
+            val mockSavedState = createSavedStateForTesting(
+                "message" to "Mocked Y."
             )
             ViewModelY(mockSavedState)
         }
@@ -167,9 +152,9 @@ class ViewModelMocksTest {
         val intent = TestActivity.newIntent(context)
         ActivityScenario.launch<TestActivity>(intent).use { scenario ->
             scenario.onActivity { activity ->
-                assertEquals("Mocked X.", activity.viewModelX.messageForX)
-                assertEquals("Mocked X.", activity.testFragment.viewModelX.messageForX)
-                assertEquals("Mocked Y.", activity.viewModelY.messageForY)
+                assertEquals("Mocked X.", activity.viewModelX.message)
+                assertEquals("Mocked X.", activity.testFragment.viewModelX.message)
+                assertEquals("Mocked Y.", activity.viewModelY.message)
             }
         }
 
@@ -177,12 +162,12 @@ class ViewModelMocksTest {
 
         ActivityScenario.launch<TestActivity>(intent).use { scenario ->
             scenario.onActivity { activity ->
-                assertEquals("I am TestActivity.viewModelX.", activity.viewModelX.messageForX)
+                assertEquals("I am TestActivity.viewModelX.", activity.viewModelX.message)
                 assertEquals(
                     "I am TestFragment.viewModelX.",
-                    activity.testFragment.viewModelX.messageForX
+                    activity.testFragment.viewModelX.message
                 )
-                assertEquals("I am TestActivity.viewModelY.", activity.viewModelY.messageForY)
+                assertEquals("I am TestActivity.viewModelY.", activity.viewModelY.message)
             }
         }
     }

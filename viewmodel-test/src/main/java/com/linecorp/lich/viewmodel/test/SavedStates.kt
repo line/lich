@@ -13,23 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+@file:JvmName("SavedStates")
+
 package com.linecorp.lich.viewmodel.test
 
-import android.content.Context
-import com.linecorp.lich.viewmodel.AbstractViewModel
-import com.linecorp.lich.viewmodel.Argument
-import com.linecorp.lich.viewmodel.GenerateArgs
+import androidx.lifecycle.SavedStateHandle
 import com.linecorp.lich.viewmodel.SavedState
-import com.linecorp.lich.viewmodel.ViewModelFactory
+import com.linecorp.lich.viewmodel.ViewModelArgs
 
-@GenerateArgs
-class ViewModelX(savedState: SavedState) : AbstractViewModel() {
+/**
+ * Creates a [SavedState] with the specified contents, given as a list of pairs
+ * where the first value is the key and the second is the value.
+ */
+fun createSavedStateForTesting(vararg pairs: Pair<String, *>): SavedState =
+    SavedState(SavedStateHandle(mapOf(*pairs)))
 
-    @Argument
-    val message: String by savedState.required()
-
-    companion object : ViewModelFactory<ViewModelX>() {
-        override fun createViewModel(context: Context, savedState: SavedState): ViewModelX =
-            ViewModelX(savedState)
+/**
+ * Creates a [SavedState] initialized with the given [viewModelArgs].
+ */
+fun createSavedStateForTesting(viewModelArgs: ViewModelArgs): SavedState =
+    viewModelArgs.toBundle().let { bundle ->
+        SavedState(SavedStateHandle(bundle.keySet().associateWith { bundle.get(it) }))
     }
-}
