@@ -32,11 +32,13 @@ class TestActivity : FragmentActivity() {
         testFragment = supportFragmentManager.run {
             findFragmentByTag(FRAGMENT_TAG) as? TestFragment
                 ?: TestFragment().also {
-                    it.arguments = Bundle().apply {
-                        putString("param1", "abc")
-                        putInt("param2", 100)
-                        putString("param3", "fooBar")
-                    }
+                    it.setViewModelArgs(
+                        TestViewModelArgs(
+                            param1 = "abc",
+                            param2 = 100,
+                            param3 = "fooBar"
+                        )
+                    )
                     beginTransaction().add(it, FRAGMENT_TAG).commit()
                 }
         }
@@ -56,8 +58,8 @@ class TestActivity : FragmentActivity() {
         const val FRAGMENT_TAG: String = "TestFragment"
 
         fun newIntent(context: Context): Intent =
-            Intent(context, TestActivity::class.java).apply {
-                putExtra("param1", "xyz")
-            }
+            Intent(context, TestActivity::class.java).putViewModelArgs(
+                TestViewModelArgs(param1 = "xyz")
+            )
     }
 }

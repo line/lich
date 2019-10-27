@@ -17,14 +17,18 @@ package com.linecorp.lich.viewmodel.test.mockitokotlin
 
 import android.content.Context
 import com.linecorp.lich.viewmodel.AbstractViewModel
+import com.linecorp.lich.viewmodel.Argument
+import com.linecorp.lich.viewmodel.GenerateArgs
 import com.linecorp.lich.viewmodel.SavedState
 import com.linecorp.lich.viewmodel.ViewModelFactory
 
 // Since Mockito's inline mocking doesn't work on Android instrumentation tests,
 // mocked class needs to be open.
+@GenerateArgs
 open class FooViewModel(savedState: SavedState) : AbstractViewModel() {
 
-    private var itemCount: Int by savedState.initial(0)
+    @Argument
+    private var itemCount: Int by savedState.required()
 
     open fun greeting(): String {
         return "Hello, I'm Foo."

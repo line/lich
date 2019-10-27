@@ -17,12 +17,16 @@ package com.linecorp.lich.viewmodel.test
 
 import android.content.Context
 import com.linecorp.lich.viewmodel.AbstractViewModel
+import com.linecorp.lich.viewmodel.Argument
+import com.linecorp.lich.viewmodel.GenerateArgs
 import com.linecorp.lich.viewmodel.SavedState
 import com.linecorp.lich.viewmodel.ViewModelFactory
 
+@GenerateArgs
 class ViewModelX(savedState: SavedState) : AbstractViewModel() {
 
-    val messageForX: String by savedState.required()
+    @Argument
+    val message: String by savedState.required()
 
     companion object : ViewModelFactory<ViewModelX>() {
         override fun createViewModel(context: Context, savedState: SavedState): ViewModelX =

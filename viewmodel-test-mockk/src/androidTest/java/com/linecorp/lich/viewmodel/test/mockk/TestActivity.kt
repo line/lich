@@ -15,22 +15,17 @@
  */
 package com.linecorp.lich.viewmodel.test.mockk
 
-import android.os.Bundle
 import androidx.fragment.app.FragmentActivity
 import com.linecorp.lich.viewmodel.viewModel
 
 class TestActivity : FragmentActivity() {
 
     val fooViewModel by viewModel(FooViewModel) {
-        Bundle().apply {
-            putInt("itemCount", 10)
-        }
+        FooViewModelArgs(itemCount = 10).toBundle()
     }
 
     val barViewModel by viewModel(BarViewModel) {
-        Bundle().apply {
-            putInt("itemCount", 20)
-        }
+        BarViewModelArgs(itemCount = 20).toBundle()
     }
 
     override fun onStart() {
