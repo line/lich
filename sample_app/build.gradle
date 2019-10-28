@@ -59,6 +59,7 @@ dependencies {
     testImplementation project(':component-test-mockk')
     testImplementation project(':viewmodel-test-mockk')
     testImplementation "org.jetbrains.kotlin:kotlin-test-junit:${versions.kotlin}"
+    testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:${versions.kotlinCoroutines}"
     testImplementation "androidx.test:runner:${versions.androidxTestRunner}"
     testImplementation "androidx.test.ext:junit:${versions.androidxTestJunit}"
     testImplementation "androidx.test.espresso:espresso-core:${versions.androidxTestEspresso}"

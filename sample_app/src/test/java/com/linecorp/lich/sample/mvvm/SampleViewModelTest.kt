@@ -28,12 +28,21 @@ import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.TestCoroutineDispatcher
+import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.setMain
+import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 
+@ExperimentalCoroutinesApi // For TestCoroutineDispatcher
 @RunWith(AndroidJUnit4::class)
 class SampleViewModelTest {
+
+    private val testDispatcher = TestCoroutineDispatcher()
 
     private lateinit var context: Context
 
@@ -47,6 +56,8 @@ class SampleViewModelTest {
 
     @Before
     fun setUp() {
+        Dispatchers.setMain(testDispatcher)
+
         context = ApplicationProvider.getApplicationContext()
 
         liveCounter = MutableLiveData(null)
@@ -60,6 +71,12 @@ class SampleViewModelTest {
             SampleViewModelArgs(counterName = "foo")
         )
         sampleViewModel = SampleViewModel(context, savedState, counterUseCase)
+    }
+
+    @After
+    fun cleanUp() {
+        Dispatchers.resetMain()
+        testDispatcher.cleanupTestCoroutines()
     }
 
     @Test
