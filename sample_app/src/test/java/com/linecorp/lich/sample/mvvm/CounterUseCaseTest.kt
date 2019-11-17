@@ -88,7 +88,7 @@ class CounterUseCaseTest {
 
     @Test
     fun changeCounterValue() {
-        val counterRepository = mockComponent(CounterRepository, relaxUnitFun = true)
+        val mockCounterRepository = mockComponent(CounterRepository, relaxUnitFun = true)
         val counterUseCase = CounterUseCase(context)
         counterUseCase.liveCounter.value = Counter("foo", 42)
 
@@ -96,18 +96,20 @@ class CounterUseCaseTest {
 
         val expected = Counter("foo", 43)
         assertEquals(expected, counterUseCase.liveCounter.value)
-        coVerify(exactly = 1) { counterRepository.storeCounter(expected) }
+        coVerify(exactly = 1) { mockCounterRepository.storeCounter(expected) }
     }
 
     @Test
     fun deleteCounter() {
-        val counterRepository = mockComponent(CounterRepository, relaxUnitFun = true)
+        val mockCounterRepository = mockComponent(CounterRepository, relaxUnitFun = true)
         val counterUseCase = CounterUseCase(context)
         counterUseCase.liveCounter.value = Counter("foo", 42)
 
         runBlocking { counterUseCase.deleteCounter() }
 
         assertEquals(null, counterUseCase.liveCounter.value)
-        coVerify(exactly = 1) { counterRepository.deleteCounter(Counter("foo", 42)) }
+        coVerify(exactly = 1) {
+            mockCounterRepository.deleteCounter(Counter("foo", 42))
+        }
     }
 }

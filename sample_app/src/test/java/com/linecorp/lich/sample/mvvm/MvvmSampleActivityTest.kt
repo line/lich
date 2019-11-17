@@ -46,22 +46,22 @@ class MvvmSampleActivityTest {
 
     private lateinit var mockViewModelHandle: MockViewModelHandle<SampleViewModel>
 
-    private lateinit var counterText: MutableLiveData<String>
+    private lateinit var mockCounterText: MutableLiveData<String>
 
-    private lateinit var loadingVisibility: MutableLiveData<Int>
+    private lateinit var mockLoadingVisibility: MutableLiveData<Int>
 
-    private lateinit var isOperationEnabled: MutableLiveData<Boolean>
+    private lateinit var mockIsOperationEnabled: MutableLiveData<Boolean>
 
     @Before
     fun setUp() {
         context = ApplicationProvider.getApplicationContext()
-        counterText = MutableLiveData("5")
-        loadingVisibility = MutableLiveData(View.GONE)
-        isOperationEnabled = MutableLiveData(true)
+        mockCounterText = MutableLiveData("5")
+        mockLoadingVisibility = MutableLiveData(View.GONE)
+        mockIsOperationEnabled = MutableLiveData(true)
         mockViewModelHandle = mockViewModel(SampleViewModel) {
-            every { counterText } returns this@MvvmSampleActivityTest.counterText
-            every { loadingVisibility } returns this@MvvmSampleActivityTest.loadingVisibility
-            every { isOperationEnabled } returns this@MvvmSampleActivityTest.isOperationEnabled
+            every { counterText } returns mockCounterText
+            every { loadingVisibility } returns mockLoadingVisibility
+            every { isOperationEnabled } returns mockIsOperationEnabled
         }
     }
 
@@ -73,13 +73,13 @@ class MvvmSampleActivityTest {
             scenario.onActivity {
                 assertTrue(mockViewModelHandle.isCreated)
                 assertEquals<String?>("counter", mockViewModelHandle.savedState["counterName"])
-                assertSame(counterText, mockViewModelHandle.mock.counterText)
+                assertSame(mockCounterText, mockViewModelHandle.mock.counterText)
             }
 
             onView(withId(R.id.counter_value)).check(matches(withText("5")))
 
             scenario.onActivity {
-                counterText.value = "42"
+                mockCounterText.value = "42"
             }
 
             onView(withId(R.id.counter_value)).check(matches(withText("42")))
