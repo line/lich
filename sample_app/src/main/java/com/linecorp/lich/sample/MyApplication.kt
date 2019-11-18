@@ -20,6 +20,14 @@ import android.os.StrictMode
 
 class MyApplication : Application() {
 
+    init {
+        // Disable FastServiceLoader.
+        // To avoid StrictMode DiskReadViolation, we use the standard ServiceLoader to load
+        // MainDispatcherFactory.
+        // cf. https://github.com/Kotlin/kotlinx.coroutines/issues/1231
+        System.setProperty("kotlinx.coroutines.fast.service.loader", "false")
+    }
+
     override fun onCreate() {
         super.onCreate()
 
