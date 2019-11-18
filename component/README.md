@@ -12,8 +12,8 @@ Instead, you can write dependencies programmatically.
 By using this framework, you can gain the following benefits:
 
 - Declare and use singleton instances with simple code.
-- Use mock instances in unit tests easily.
-- Divide dependencies in a multi-module project.
+- Resolve dependency complexity in multi-module projects.
+- Easy to mock, easy to test.
 
 ## Set up
 
@@ -125,91 +125,6 @@ class FooFragment : Fragment() {
 }
 ```
 
-### Declare 3rd-party classes as components
-
-If you want to declare a 3rd-party class as a "component", implement a top-level object instead of
-a companion object.
-
-For example, you should share a single [OkHttpClient](https://square.github.io/okhttp/4.x/okhttp/okhttp3/-ok-http-client/)
-instance across the app because each `OkHttpClient` instance holds its own connection pool and thread pools.
-The application-wide singleton of `OkHttpClient` can be declared as follows:
-
-```kotlin
-object GlobalOkHttpClient : ComponentFactory<OkHttpClient>() {
-    override fun createComponent(context: Context): OkHttpClient {
-        val builder = OkHttpClient.Builder()
-        // Apply custom settings.
-        builder.addInterceptor(LoggingInterceptor())
-        return builder.build()
-    }
-}
-```
-
-Then, you can get the singleton as follows:
-
-```kotlin
-val okHttpClient: OkHttpClient = context.getComponent(GlobalOkHttpClient)
-```
-
-See also [the sample code](../sample_app/src/main/java/com/linecorp/lich/sample/GlobalOkHttpClient.kt).
-
-### Resolve circular dependencies
-
-For example, the following code has a circular dependency between `ComponentX` and `ComponentY`.
-
-```kotlin
-class ComponentX(context: Context) {
-
-    private val componentY = context.getComponent(ComponentY)
-
-    companion object : ComponentFactory<ComponentX>() {
-        override fun createComponent(context: Context): ComponentX =
-            ComponentX(context)
-    }
-}
-
-class ComponentY(context: Context) {
-
-    private val componentX = context.getComponent(ComponentX)
-
-    companion object : ComponentFactory<ComponentY>() {
-        override fun createComponent(context: Context): ComponentY =
-            ComponentY(context)
-    }
-}
-```
-
-If there is the `component-debug` module in the runtime classpath, it detects the circular dependency
-and throws an exception like this:
-
-```text
-java.lang.IllegalStateException: Detected circular dependency!: [com.example.ComponentX$Companion@44028ab5, com.example.ComponentY$Companion@60562d2d, com.example.ComponentX$Companion@44028ab5]
-```
-
-In such a case, you can use *lazy acquisition* to resolve the issue.
-
-```kotlin
-class ComponentX(context: Context) {
-
-    private val componentY by context.component(ComponentY)
-
-    companion object : ComponentFactory<ComponentX>() {
-        override fun createComponent(context: Context): ComponentX =
-            ComponentX(context)
-    }
-}
-
-class ComponentY(context: Context) {
-
-    private val componentX by context.component(ComponentX)
-
-    companion object : ComponentFactory<ComponentY>() {
-        override fun createComponent(context: Context): ComponentY =
-            ComponentY(context)
-    }
-}
-```
-
 ## Example
 
 This is a sample code to declare a
@@ -273,78 +188,9 @@ class SaveFooUseCase(context: Context) {
 }
 ```
 
-## Testing
-
-If the `component-test` module is in the runtime classpath, every component is tied to an
-`applicationContext`. And, a different instance of component is created for each `applicationContext`.
-This is useful for Robolectric tests, because Robolectric recreates `applicationContext` for each test.
-It means all components are automatically reset for every Robolectric test.
-
-The `component-test` module also provides APIs for tests.
-For example, you can use [setMockComponent](../component-test/src/main/java/com/linecorp/lich/component/test/ComponentMocks.kt)
-to mock components like this:
-
-```kotlin
-setMockComponent(FooComponent, createMockFoo())
-```
-
-If you are using [MockK](https://mockk.io/),
-[mockComponent](../component-test-mockk/src/main/java/com/linecorp/lich/component/test/mockk/Mocking.kt)
-is also a useful function. Here is an example for testing the above `SaveFooUseCase` class.
-
-```kotlin
-@RunWith(AndroidJUnit4::class)
-class SaveFooUseCaseTest {
-
-    private lateinit var context: Context
-
-    @Before
-    fun setUp() {
-        context = ApplicationProvider.getApplicationContext()
-    }
-
-    @Test
-    fun testGetFooFromStorage() {
-        val expected = Foo()
-        val mockFooRepository = mockComponent(FooRepository) {
-            coEvery { findFoo(any()) } returns expected
-        }
-        val saveFooUseCase = SaveFooUseCase(context)
-
-        val actual = runBlocking { saveFooUseCase.getFooFromStorage("key") }
-
-        assertEquals(expected, actual)
-        coVerify { mockFooRepository.findFoo(eq("key")) }
-    }
-}
-```
-
-See also
-[CounterUseCaseTest](../sample_app/src/test/java/com/linecorp/lich/sample/mvvm/CounterUseCaseTest.kt).
-
-The [mockComponent](../component-test-mockitokotlin/src/main/java/com/linecorp/lich/component/test/mockitokotlin/Mocking.kt)
-function is also available for [Mockito-Kotlin](https://github.com/nhaarman/mockito-kotlin).
-Here is an example using Mockito-Kotlin.
-
-```kotlin
-    @Test
-    fun testGetFooFromStorage() {
-        val expected = Foo()
-        val mockFooRepository = mockComponent(FooRepository) {
-            onBlocking { findFoo(any()) } doReturn expected
-        }
-        val saveFooUseCase = SaveFooUseCase(context)
-
-        val actual = runBlocking { saveFooUseCase.getFooFromStorage("key") }
-
-        assertEquals(expected, actual)
-        verifyBlocking(mockFooRepository) { findFoo(eq("key")) }
-    }
-```
-
 ## Multi-module support
 
-This library provides two methods for splitting dependencies in multi-module projects.
+This library provides two methods for resolving dependencies in multi-module projects.
 
 We assume that there are two modules "base" and "foo" such that "foo" depends on "base".
 If you want to call some function of "foo" from "base", define a Facade interface like this:
@@ -438,7 +284,7 @@ So, please add the following entries to `build.gradle` of the "foo" module first
 apply plugin: 'kotlin-kapt'
 
 dependencies {
-    implementation 'com.google.auto.service:auto-service-annotations:x.x'
+    compileOnly 'com.google.auto.service:auto-service-annotations:x.x'
     kapt 'com.google.auto.service:auto-service:x.x'
 }
 ```
@@ -501,6 +347,171 @@ please refer [this article](https://medium.com/androiddevelopers/patterns-for-ac
 See [BarFeatureFacade](../sample_app/src/main/java/com/linecorp/lich/sample/feature/bar/BarFeatureFacade.kt)
 and [BarFeatureFacadeImpl](../sample_feature/src/main/java/com/linecorp/lich/sample/feature/bar/BarFeatureFacadeImpl.kt)
 for the actual code.
+
+## Testing
+
+If the `component-test` module is in the runtime classpath, every component is tied to an
+`applicationContext`. And, a different instance of component is created for each `applicationContext`.
+This is useful for Robolectric tests, because Robolectric recreates `applicationContext` for each test.
+It means all components are automatically reset for every Robolectric test.
+
+The `component-test` module also provides APIs for tests.
+For example, you can use [setMockComponent](../component-test/src/main/java/com/linecorp/lich/component/test/ComponentMocks.kt)
+to mock components like this:
+
+```kotlin
+setMockComponent(FooComponent, createMockFoo())
+```
+
+If you are using [MockK](https://mockk.io/),
+[mockComponent](../component-test-mockk/src/main/java/com/linecorp/lich/component/test/mockk/Mocking.kt)
+is also a useful function. Here is an example for testing the above `SaveFooUseCase` class.
+
+```kotlin
+@RunWith(AndroidJUnit4::class)
+class SaveFooUseCaseTest {
+
+    private lateinit var context: Context
+
+    @Before
+    fun setUp() {
+        context = ApplicationProvider.getApplicationContext()
+    }
+
+    @Test
+    fun testGetFooFromStorage() {
+        val expected = Foo()
+        val mockFooRepository = mockComponent(FooRepository) {
+            coEvery { findFoo(any()) } returns expected
+        }
+        val saveFooUseCase = SaveFooUseCase(context)
+
+        val actual = runBlocking { saveFooUseCase.getFooFromStorage("key") }
+
+        assertEquals(expected, actual)
+        coVerify { mockFooRepository.findFoo(eq("key")) }
+    }
+}
+```
+
+See also
+[CounterUseCaseTest](../sample_app/src/test/java/com/linecorp/lich/sample/mvvm/CounterUseCaseTest.kt).
+
+The [mockComponent](../component-test-mockitokotlin/src/main/java/com/linecorp/lich/component/test/mockitokotlin/Mocking.kt)
+function is also available for [Mockito-Kotlin](https://github.com/nhaarman/mockito-kotlin).
+Here is an example using Mockito-Kotlin.
+
+```kotlin
+@RunWith(AndroidJUnit4::class)
+class SaveFooUseCaseTest {
+
+    private lateinit var context: Context
+
+    @Before
+    fun setUp() {
+        context = ApplicationProvider.getApplicationContext()
+    }
+
+    @Test
+    fun testGetFooFromStorage() {
+        val expected = Foo()
+        val mockFooRepository = mockComponent(FooRepository) {
+            onBlocking { findFoo(any()) } doReturn expected
+        }
+        val saveFooUseCase = SaveFooUseCase(context)
+
+        val actual = runBlocking { saveFooUseCase.getFooFromStorage("key") }
+
+        assertEquals(expected, actual)
+        verifyBlocking(mockFooRepository) { findFoo(eq("key")) }
+    }
+}
+```
+
+## Declare 3rd-party classes as components
+
+If you want to declare a 3rd-party class as a "component", implement a top-level object instead of
+a companion object.
+
+For example, you should share a single [OkHttpClient](https://square.github.io/okhttp/4.x/okhttp/okhttp3/-ok-http-client/)
+instance across the app because each `OkHttpClient` instance holds its own connection pool and thread pools.
+The application-wide singleton of `OkHttpClient` can be declared as follows:
+
+```kotlin
+object GlobalOkHttpClient : ComponentFactory<OkHttpClient>() {
+    override fun createComponent(context: Context): OkHttpClient {
+        val builder = OkHttpClient.Builder()
+        // Apply custom settings.
+        builder.addInterceptor(LoggingInterceptor())
+        return builder.build()
+    }
+}
+```
+
+Then, you can get the singleton as follows:
+
+```kotlin
+val okHttpClient: OkHttpClient = context.getComponent(GlobalOkHttpClient)
+```
+
+See also [the sample code](../sample_app/src/main/java/com/linecorp/lich/sample/GlobalOkHttpClient.kt).
+
+## Resolve circular dependencies
+
+For example, the following code has a circular dependency between `ComponentX` and `ComponentY`.
+
+```kotlin
+class ComponentX(context: Context) {
+
+    private val componentY = context.getComponent(ComponentY)
+
+    companion object : ComponentFactory<ComponentX>() {
+        override fun createComponent(context: Context): ComponentX =
+            ComponentX(context)
+    }
+}
+
+class ComponentY(context: Context) {
+
+    private val componentX = context.getComponent(ComponentX)
+
+    companion object : ComponentFactory<ComponentY>() {
+        override fun createComponent(context: Context): ComponentY =
+            ComponentY(context)
+    }
+}
+```
+
+If there is the `component-debug` module in the runtime classpath, it detects the circular dependency
+and throws an exception like this:
+
+```text
+java.lang.IllegalStateException: Detected circular dependency!: [com.example.ComponentX$Companion@44028ab5, com.example.ComponentY$Companion@60562d2d, com.example.ComponentX$Companion@44028ab5]
+```
+
+In such a case, you can use *lazy acquisition* to resolve the issue.
+
+```kotlin
+class ComponentX(context: Context) {
+
+    private val componentY by context.component(ComponentY)
+
+    companion object : ComponentFactory<ComponentX>() {
+        override fun createComponent(context: Context): ComponentX =
+            ComponentX(context)
+    }
+}
+
+class ComponentY(context: Context) {
+
+    private val componentX by context.component(ComponentX)
+
+    companion object : ComponentFactory<ComponentY>() {
+        override fun createComponent(context: Context): ComponentY =
+            ComponentY(context)
+    }
+}
+```
 
 ## Debugging features
 
@@ -596,9 +607,9 @@ class FooControllerTest {
 
     private lateinit var context: Context
 
-    private lateinit var barHelper: BarHelper
+    private lateinit var mockBarHelper: BarHelper
 
-    private lateinit var bazComponent: BazComponent
+    private lateinit var mockBazComponent: BazComponent
 
     private lateinit var fooController: FooController
 
@@ -606,10 +617,10 @@ class FooControllerTest {
     fun setUp() {
         context = ApplicationProvider.getApplicationContext()
 
-        barHelper = mock()
-        bazComponent = mockComponent(BazComponent)
+        mockBarHelper = mock()
+        mockBazComponent = mockComponent(BazComponent)
 
-        fooController = FooController(context, barHelper)
+        fooController = FooController(context, mockBarHelper)
     }
 
     @Test
