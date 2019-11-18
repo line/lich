@@ -18,16 +18,18 @@ is a lifecycle-aware
 [CoroutineScope](https://kotlin.github.io/kotlinx.coroutines/kotlinx-coroutines-core/kotlinx.coroutines/-coroutine-scope/).
 
 `AutoResetLifecycleScope` will be canceled when its `Lifecycle` is destroyed.
-`AutoResetLifecycleScope` will also "reset" jobs launched from it when the Lifecycle events
+`AutoResetLifecycleScope` will also "reset" coroutines launched from it when the Lifecycle events
 specified by `resetPolicy` have occurred.
 
 `AutoResetLifecycleScope` is bound to
 [Dispatchers.Main](https://kotlin.github.io/kotlinx.coroutines/kotlinx-coroutines-core/kotlinx.coroutines/-dispatchers/-main.html).
-So, jobs launched from the scope will be executed on the main thread by default.
+So, coroutines launched from the scope will be executed on the main thread by default.
 
 `AutoResetLifecycleScope` is similar to
 [Android Architecture Components' lifecycleScope](https://developer.android.com/reference/kotlin/androidx/lifecycle/package-summary.html#lifecyclescope),
-but it is canceled only when its `Lifecycle` is destroyed.
+but `lifecycleScope` is canceled only when its `Lifecycle` is destroyed.
+So, `AutoResetLifecycleScope` is useful if you want to *cancel* coroutines when the `Lifecycle` is
+stopped or paused.
 
 Example of use:
 ```kotlin
@@ -36,7 +38,7 @@ class FooActivity : AppCompatActivity() {
     private val coroutineScope: CoroutineScope = AutoResetLifecycleScope(this)
 
     fun loadDataThenDraw() {
-        // The launched job will be automatically cancelled ON_STOP and ON_DESTROY.
+        // The launched coroutines will be automatically cancelled ON_STOP and ON_DESTROY.
         coroutineScope.launch {
             try {
                 val fooData = fooServiceClient.fetchFooData()
