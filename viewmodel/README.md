@@ -270,6 +270,7 @@ but you can simply write `launch { ... }` instead of `viewModelScope.launch { ..
 ## Example
 
 [SampleViewModel](../sample_app/src/main/java/com/linecorp/lich/sample/mvvm/SampleViewModel.kt)
+in the sample_app module.
 
 ## Testing
 
@@ -313,7 +314,7 @@ class BarActivityTest {
     @Test
     fun testViewBinding() {
         val mockBarText = MutableLiveData("Mocked.")
-        // Set mock ViewModel factory for `BarViewModel`.
+        // Set mock ViewModel for `BarViewModel`.
         val mockViewModelHandle = mockViewModel(BarViewModel) {
             every { barText } returns mockBarText
         }
@@ -337,7 +338,8 @@ class BarActivityTest {
 ```
 
 See also
-[MvvmSampleActivityTest](../sample_app/src/test/java/com/linecorp/lich/sample/mvvm/MvvmSampleActivityTest.kt).
+[MvvmSampleActivityTest](../sample_app/src/test/java/com/linecorp/lich/sample/mvvm/MvvmSampleActivityTest.kt)
+in the sample_app module.
 
 The [mockViewModel](../viewmodel-test-mockitokotlin/src/main/java/com/linecorp/lich/viewmodel/test/mockitokotlin/Mocking.kt)
 function is also available for [Mockito-Kotlin](https://github.com/nhaarman/mockito-kotlin).
@@ -357,7 +359,7 @@ class BarActivityTest {
     @Test
     fun testViewBinding() {
         val mockBarText = MutableLiveData("Mocked.")
-        // Set mock ViewModel factory for `BarViewModel`.
+        // Set mock ViewModel for `BarViewModel`.
         val mockViewModelHandle = mockViewModel(BarViewModel) {
             on { barText } doReturn mockBarText
         }
