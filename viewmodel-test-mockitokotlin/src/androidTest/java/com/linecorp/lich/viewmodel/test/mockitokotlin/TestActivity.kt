@@ -20,7 +20,9 @@ import com.linecorp.lich.viewmodel.viewModel
 
 class TestActivity : FragmentActivity() {
 
-    val fooViewModel by viewModel(FooViewModel)
+    val fooViewModel by viewModel(FooViewModel) {
+        FooViewModelArgs(itemCount = 10).toBundle()
+    }
 
     override fun onStart() {
         super.onStart()

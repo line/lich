@@ -17,6 +17,7 @@ package com.linecorp.lich.viewmodel.test
 
 import androidx.lifecycle.ViewModelStoreOwner
 import com.linecorp.lich.viewmodel.AbstractViewModel
+import com.linecorp.lich.viewmodel.SavedState
 import com.linecorp.lich.viewmodel.ViewModelFactory
 
 /**
@@ -24,11 +25,13 @@ import com.linecorp.lich.viewmodel.ViewModelFactory
  *
  * @param mockProducer a function to create a new mock instance.
  */
-class MockViewModelHandle<T : AbstractViewModel>(private val mockProducer: () -> T) {
+class MockViewModelHandle<T : AbstractViewModel>(private val mockProducer: (SavedState) -> T) {
 
     private var _mock: T? = null
 
     private var _viewModelStoreOwner: ViewModelStoreOwner? = null
+
+    private var _savedState: SavedState? = null
 
     /**
      * True if at least one mock ViewModel instance was created for this handle.
@@ -50,13 +53,20 @@ class MockViewModelHandle<T : AbstractViewModel>(private val mockProducer: () ->
     val viewModelStoreOwner: ViewModelStoreOwner
         get() = _viewModelStoreOwner ?: throwNotCreatedException()
 
+    /**
+     * The [SavedState] for which [mock] was created.
+     */
+    val savedState: SavedState
+        get() = _savedState ?: throwNotCreatedException()
+
     private fun throwNotCreatedException(): Nothing =
         throw IllegalStateException("Mock ViewModel is not created yet.")
 
-    private fun createMock(viewModelStoreOwner: ViewModelStoreOwner): T {
-        val mock = mockProducer()
+    private fun createMock(viewModelStoreOwner: ViewModelStoreOwner, savedState: SavedState): T {
+        val mock = mockProducer(savedState)
         _mock = mock
         _viewModelStoreOwner = viewModelStoreOwner
+        _savedState = savedState
         return mock
     }
 

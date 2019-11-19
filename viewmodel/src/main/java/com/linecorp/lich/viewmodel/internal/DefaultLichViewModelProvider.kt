@@ -16,10 +16,15 @@
 package com.linecorp.lich.viewmodel.internal
 
 import android.content.Context
+import android.os.Bundle
+import androidx.lifecycle.AbstractSavedStateViewModelFactory
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelStoreOwner
+import androidx.savedstate.SavedStateRegistryOwner
 import com.linecorp.lich.viewmodel.AbstractViewModel
+import com.linecorp.lich.viewmodel.SavedState
 import com.linecorp.lich.viewmodel.ViewModelFactory
 
 /**
@@ -30,22 +35,18 @@ open class DefaultLichViewModelProvider : LichViewModelProvider {
     override val loadPriority: Int
         get() = 0
 
-    private val bridgeViewModelFactory: ViewModelProvider.Factory =
-        object : ViewModelProvider.Factory {
-            @Suppress("UNCHECKED_CAST")
-            override fun <T : ViewModel> create(modelClass: Class<T>): T =
-                BridgeViewModel() as T
-        }
-
     final override fun <T : AbstractViewModel> getViewModel(
         context: Context,
         viewModelStoreOwner: ViewModelStoreOwner,
-        factory: ViewModelFactory<T>
+        savedStateRegistryOwner: SavedStateRegistryOwner,
+        factory: ViewModelFactory<T>,
+        arguments: Bundle?
     ): T {
         // The key to use to identify the BridgeViewModel in a ViewModelStore.
         val key = factory.javaClass.name
 
         // We always create a BridgeViewModel object for ViewModelStores of Android Architecture Components.
+        val bridgeViewModelFactory = BridgeViewModelFactory(savedStateRegistryOwner, arguments)
         val viewModelProvider = ViewModelProvider(viewModelStoreOwner, bridgeViewModelFactory)
         val bridgeViewModel = viewModelProvider.get(key, BridgeViewModel::class.java)
 
@@ -57,6 +58,7 @@ open class DefaultLichViewModelProvider : LichViewModelProvider {
         return newViewModelFor(
             factory,
             context.applicationContext,
+            bridgeViewModel.savedState,
             viewModelStoreOwner
         ).also { viewModel ->
             bridgeViewModel.viewModel = viewModel
@@ -67,13 +69,27 @@ open class DefaultLichViewModelProvider : LichViewModelProvider {
     protected open fun <T : AbstractViewModel> newViewModelFor(
         factory: ViewModelFactory<T>,
         applicationContext: Context,
+        savedState: SavedState,
         viewModelStoreOwner: ViewModelStoreOwner
-    ): T = createViewModel(factory, applicationContext)
+    ): T = createViewModel(factory, applicationContext, savedState)
 
     protected fun <T : AbstractViewModel> createViewModel(
         factory: ViewModelFactory<T>,
-        applicationContext: Context
-    ): T = factory.create(applicationContext)
+        applicationContext: Context,
+        savedState: SavedState
+    ): T = factory.create(applicationContext, savedState)
+
+    private class BridgeViewModelFactory(
+        savedStateRegistryOwner: SavedStateRegistryOwner,
+        arguments: Bundle?
+    ) : AbstractSavedStateViewModelFactory(savedStateRegistryOwner, arguments) {
+        @Suppress("UNCHECKED_CAST")
+        override fun <T : ViewModel> create(
+            key: String,
+            modelClass: Class<T>,
+            handle: SavedStateHandle
+        ): T = BridgeViewModel(handle) as T
+    }
 
     override fun getManager(applicationContext: Context): Any =
         throw UnsupportedOperationException()

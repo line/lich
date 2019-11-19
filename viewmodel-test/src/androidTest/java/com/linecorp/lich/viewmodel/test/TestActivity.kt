@@ -15,6 +15,8 @@
  */
 package com.linecorp.lich.viewmodel.test
 
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.FragmentActivity
 import com.linecorp.lich.viewmodel.viewModel
@@ -23,9 +25,13 @@ class TestActivity : FragmentActivity() {
 
     lateinit var testFragment: TestFragment
 
-    val viewModelX by viewModel(ViewModelX)
+    val viewModelX by viewModel(ViewModelX) {
+        intent?.getBundleExtra(VIEWMODELX_ARGS_TAG)
+    }
 
-    val viewModelY by viewModel(ViewModelY)
+    val viewModelY by viewModel(ViewModelY) {
+        intent?.getBundleExtra(VIEWMODELY_ARGS_TAG)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,6 +39,12 @@ class TestActivity : FragmentActivity() {
         testFragment = supportFragmentManager.run {
             findFragmentByTag(FRAGMENT_TAG) as? TestFragment
                 ?: TestFragment().also {
+                    it.arguments = Bundle().apply {
+                        putBundle(
+                            TestFragment.FRAGMENTVIEWMODEL_ARGS_TAG,
+                            ViewModelXArgs(message = "I am TestFragment.viewModelX.").toBundle()
+                        )
+                    }
                     beginTransaction().add(it, FRAGMENT_TAG).commit()
                 }
         }
@@ -46,5 +58,19 @@ class TestActivity : FragmentActivity() {
 
     companion object {
         const val FRAGMENT_TAG: String = "TestFragment"
+        const val VIEWMODELX_ARGS_TAG: String = "ViewModelXArgs"
+        const val VIEWMODELY_ARGS_TAG: String = "ViewModelYArgs"
+
+        fun newIntent(context: Context): Intent =
+            Intent(context, TestActivity::class.java).apply {
+                putExtra(
+                    VIEWMODELX_ARGS_TAG,
+                    ViewModelXArgs(message = "I am TestActivity.viewModelX.").toBundle()
+                )
+                putExtra(
+                    VIEWMODELY_ARGS_TAG,
+                    ViewModelYArgs(message = "I am TestActivity.viewModelY.").toBundle()
+                )
+            }
     }
 }

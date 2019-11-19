@@ -15,11 +15,14 @@
  */
 package com.linecorp.lich.viewmodel
 
+import android.content.Context
 import androidx.lifecycle.Lifecycle
 import androidx.test.core.app.ActivityScenario
+import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import org.junit.Test
 import org.junit.runner.RunWith
+import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertNotSame
 import kotlin.test.assertSame
@@ -33,18 +36,35 @@ class ViewModelTest {
         lateinit var activityViewModel: TestViewModel
         lateinit var fragmentViewModel: TestViewModel
 
-        ActivityScenario.launch(TestActivity::class.java).use { scenario ->
+        val context: Context = ApplicationProvider.getApplicationContext()
+        val intent = TestActivity.newIntent(context)
+        ActivityScenario.launch<TestActivity>(intent).use { scenario ->
             scenario.onActivity { activity ->
                 println("Activity started.")
 
-                activityViewModel = activity.testViewModel
-                fragmentViewModel = activity.testFragment.testViewModel
+                val fragment = activity.testFragment
 
+                activityViewModel = activity.getViewModel(TestViewModel)
+                fragmentViewModel = fragment.getViewModel(TestViewModel)
                 assertNotSame(activityViewModel, fragmentViewModel)
-                assertSame(activityViewModel, activity.testFragment.testActivityViewModel)
+                assertSame(activityViewModel, fragment.getActivityViewModel(TestViewModel))
+
+                assertSame(activityViewModel, activity.testViewModel)
+                assertSame(fragmentViewModel, fragment.testViewModel)
+                assertSame(activityViewModel, fragment.testActivityViewModel)
+
+                assertSame(context, activityViewModel.context)
+                assertSame(context, fragmentViewModel.context)
 
                 assertFalse(activityViewModel.isCleared)
                 assertFalse(fragmentViewModel.isCleared)
+
+                assertEquals("xyz", activityViewModel.param1)
+                assertEquals(42, activityViewModel.param2)
+                assertEquals(null, activityViewModel.param3.value)
+                assertEquals("abc", fragmentViewModel.param1)
+                assertEquals(100, fragmentViewModel.param2)
+                assertEquals("fooBar", fragmentViewModel.param3.value)
             }
 
             println("Recreating Activity...")
@@ -71,7 +91,7 @@ class ViewModelTest {
             assertTrue(fragmentViewModel.isCleared)
         }
 
-        ActivityScenario.launch(TestActivity::class.java).use { scenario ->
+        ActivityScenario.launch<TestActivity>(intent).use { scenario ->
             scenario.onActivity { activity ->
                 println("Another Activity started.")
 

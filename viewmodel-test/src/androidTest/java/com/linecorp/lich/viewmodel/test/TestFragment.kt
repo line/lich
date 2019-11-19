@@ -21,13 +21,21 @@ import com.linecorp.lich.viewmodel.viewModel
 
 class TestFragment : Fragment() {
 
-    val viewModelX by viewModel(ViewModelX)
+    val viewModelX by viewModel(ViewModelX) {
+        arguments?.getBundle(FRAGMENTVIEWMODEL_ARGS_TAG)
+    }
 
-    val activityViewModelX by activityViewModel(ViewModelX)
+    val activityViewModelX by activityViewModel(ViewModelX) {
+        intent?.getBundleExtra(TestActivity.VIEWMODELX_ARGS_TAG)
+    }
 
     override fun onStart() {
         super.onStart()
         println("TestFragment.onStart: viewModelX ${viewModelX.message}")
         println("TestFragment.onStart: activityViewModelX ${activityViewModelX.message}")
+    }
+
+    companion object {
+        const val FRAGMENTVIEWMODEL_ARGS_TAG: String = "FragmentViewModelArgs"
     }
 }

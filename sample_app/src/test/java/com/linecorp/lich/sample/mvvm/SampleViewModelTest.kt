@@ -17,68 +17,84 @@ package com.linecorp.lich.sample.mvvm
 
 import android.content.Context
 import android.view.View
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.linecorp.lich.sample.entity.Counter
+import com.linecorp.lich.viewmodel.test.createSavedStateForTesting
 import io.mockk.coVerify
 import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.TestCoroutineDispatcher
+import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.setMain
+import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 
+@ExperimentalCoroutinesApi // For TestCoroutineDispatcher
 @RunWith(AndroidJUnit4::class)
 class SampleViewModelTest {
 
+    private val testDispatcher = TestCoroutineDispatcher()
+
     private lateinit var context: Context
 
-    private lateinit var liveCounter: MutableLiveData<Counter?>
+    private lateinit var mockLiveCounter: MutableLiveData<Counter?>
 
-    private lateinit var isLoading: MutableLiveData<Boolean>
+    private lateinit var mockIsLoading: MutableLiveData<Boolean>
 
-    private lateinit var counterUseCase: CounterUseCase
+    private lateinit var mockCounterUseCase: CounterUseCase
 
     private lateinit var sampleViewModel: SampleViewModel
 
     @Before
     fun setUp() {
+        Dispatchers.setMain(testDispatcher)
+
         context = ApplicationProvider.getApplicationContext()
 
-        liveCounter = MutableLiveData(null)
-        isLoading = MutableLiveData(false)
-        counterUseCase = mockk(relaxUnitFun = true) {
-            every { liveCounter } returns this@SampleViewModelTest.liveCounter
-            every { isLoading } returns this@SampleViewModelTest.isLoading
+        mockLiveCounter = MutableLiveData(null)
+        mockIsLoading = MutableLiveData(false)
+        mockCounterUseCase = mockk(relaxUnitFun = true) {
+            every { liveCounter } returns mockLiveCounter
+            every { isLoading } returns mockIsLoading
         }
 
-        sampleViewModel = SampleViewModel(context, counterUseCase)
+        val savedState = createSavedStateForTesting(
+            SampleViewModelArgs(counterName = "foo")
+        )
+        sampleViewModel = SampleViewModel(context, savedState, mockCounterUseCase)
+    }
+
+    @After
+    fun cleanUp() {
+        Dispatchers.resetMain()
+        testDispatcher.cleanupTestCoroutines()
     }
 
     @Test
     fun testLiveData() {
-        isLoading.value = true
+        mockIsLoading.value = true
 
-        val counterTextObserver = mockk<Observer<String>>(relaxUnitFun = true).also {
-            sampleViewModel.counterText.observeForever(it)
-        }
-        val loadingVisibilityObserver = mockk<Observer<Int>>(relaxUnitFun = true).also {
-            sampleViewModel.loadingVisibility.observeForever(it)
-        }
-        val isOperationEnabledObserver = mockk<Observer<Boolean>>(relaxUnitFun = true).also {
-            sampleViewModel.isOperationEnabled.observeForever(it)
-        }
+        val counterTextObserver = sampleViewModel.counterText.observeWithMockk()
+        val loadingVisibilityObserver = sampleViewModel.loadingVisibility.observeWithMockk()
+        val isOperationEnabledObserver = sampleViewModel.isOperationEnabled.observeWithMockk()
 
         verify(exactly = 1) { counterTextObserver.onChanged("No value.") }
         verify(exactly = 1) { loadingVisibilityObserver.onChanged(View.VISIBLE) }
         verify(exactly = 1) { isOperationEnabledObserver.onChanged(false) }
         confirmVerified(counterTextObserver, loadingVisibilityObserver, isOperationEnabledObserver)
 
-        liveCounter.value = Counter("foo", 42)
-        isLoading.value = false
+        mockLiveCounter.value = Counter("foo", 42)
+        mockIsLoading.value = false
 
         verify(exactly = 1) { counterTextObserver.onChanged("42") }
         verify(exactly = 1) { loadingVisibilityObserver.onChanged(View.GONE) }
@@ -86,31 +102,36 @@ class SampleViewModelTest {
         confirmVerified(counterTextObserver, loadingVisibilityObserver, isOperationEnabledObserver)
     }
 
+    private fun <T> LiveData<T>.observeWithMockk(): Observer<T> =
+        mockk<Observer<T>>(relaxUnitFun = true).also {
+            this.observeForever(it)
+        }
+
     @Test
     fun loadData() {
         sampleViewModel.loadData()
 
-        coVerify { counterUseCase.loadCounter() }
+        coVerify { mockCounterUseCase.loadCounter("foo") }
     }
 
     @Test
     fun countUp() {
         sampleViewModel.countUp()
 
-        coVerify { counterUseCase.changeCounterValue(1) }
+        coVerify { mockCounterUseCase.changeCounterValue(1) }
     }
 
     @Test
     fun countDown() {
         sampleViewModel.countDown()
 
-        coVerify { counterUseCase.changeCounterValue(-1) }
+        coVerify { mockCounterUseCase.changeCounterValue(-1) }
     }
 
     @Test
     fun deleteCounter() {
         sampleViewModel.deleteCounter()
 
-        coVerify { counterUseCase.deleteCounter() }
+        coVerify { mockCounterUseCase.deleteCounter() }
     }
 }

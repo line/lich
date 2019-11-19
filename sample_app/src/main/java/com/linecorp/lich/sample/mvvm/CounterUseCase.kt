@@ -24,7 +24,7 @@ import com.linecorp.lich.sample.repository.CounterRepository
 import com.linecorp.lich.sample.repository.CounterResult
 
 @MainThread
-class CounterUseCase(context: Context, private val counterName: String) {
+class CounterUseCase(context: Context) {
 
     private val counterRepository by context.component(CounterRepository)
 
@@ -32,11 +32,10 @@ class CounterUseCase(context: Context, private val counterName: String) {
 
     val isLoading: MutableLiveData<Boolean> = MutableLiveData(false)
 
-    suspend fun loadCounter() {
+    suspend fun loadCounter(counterName: String) {
         isLoading.value = true
 
-        val result = counterRepository.getCounter(counterName)
-        when (result) {
+        when (val result = counterRepository.getCounter(counterName)) {
             is CounterResult.Success ->
                 liveCounter.value = result.counter
             CounterResult.NetworkError -> {

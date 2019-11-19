@@ -15,9 +15,11 @@
  */
 package com.linecorp.lich.sample.mvvm
 
+import android.content.Context
 import android.view.View
 import androidx.lifecycle.MutableLiveData
 import androidx.test.core.app.ActivityScenario
+import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.assertion.ViewAssertions.matches
@@ -33,45 +35,51 @@ import io.mockk.verify
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import kotlin.test.assertEquals
 import kotlin.test.assertSame
 import kotlin.test.assertTrue
 
 @RunWith(AndroidJUnit4::class)
 class MvvmSampleActivityTest {
 
+    private lateinit var context: Context
+
     private lateinit var mockViewModelHandle: MockViewModelHandle<SampleViewModel>
 
-    private lateinit var counterText: MutableLiveData<String>
+    private lateinit var mockCounterText: MutableLiveData<String>
 
-    private lateinit var loadingVisibility: MutableLiveData<Int>
+    private lateinit var mockLoadingVisibility: MutableLiveData<Int>
 
-    private lateinit var isOperationEnabled: MutableLiveData<Boolean>
+    private lateinit var mockIsOperationEnabled: MutableLiveData<Boolean>
 
     @Before
     fun setUp() {
-        counterText = MutableLiveData("5")
-        loadingVisibility = MutableLiveData(View.GONE)
-        isOperationEnabled = MutableLiveData(true)
+        context = ApplicationProvider.getApplicationContext()
+        mockCounterText = MutableLiveData("5")
+        mockLoadingVisibility = MutableLiveData(View.GONE)
+        mockIsOperationEnabled = MutableLiveData(true)
         mockViewModelHandle = mockViewModel(SampleViewModel) {
-            every { counterText } returns this@MvvmSampleActivityTest.counterText
-            every { loadingVisibility } returns this@MvvmSampleActivityTest.loadingVisibility
-            every { isOperationEnabled } returns this@MvvmSampleActivityTest.isOperationEnabled
+            every { counterText } returns mockCounterText
+            every { loadingVisibility } returns mockLoadingVisibility
+            every { isOperationEnabled } returns mockIsOperationEnabled
         }
     }
 
     @Test
     fun testCounter() {
-        ActivityScenario.launch(MvvmSampleActivity::class.java).use { scenario ->
+        val intent = MvvmSampleActivity.newIntent(context, "counter")
+        ActivityScenario.launch<MvvmSampleActivity>(intent).use { scenario ->
 
             scenario.onActivity {
                 assertTrue(mockViewModelHandle.isCreated)
-                assertSame(counterText, mockViewModelHandle.mock.counterText)
+                assertEquals<String?>("counter", mockViewModelHandle.savedState["counterName"])
+                assertSame(mockCounterText, mockViewModelHandle.mock.counterText)
             }
 
             onView(withId(R.id.counter_value)).check(matches(withText("5")))
 
             scenario.onActivity {
-                counterText.value = "42"
+                mockCounterText.value = "42"
             }
 
             onView(withId(R.id.counter_value)).check(matches(withText("42")))
@@ -80,7 +88,8 @@ class MvvmSampleActivityTest {
 
     @Test
     fun testCountUpButton() {
-        ActivityScenario.launch(MvvmSampleActivity::class.java).use { scenario ->
+        val intent = MvvmSampleActivity.newIntent(context, "counter")
+        ActivityScenario.launch<MvvmSampleActivity>(intent).use { scenario ->
 
             scenario.onActivity {
                 assertTrue(mockViewModelHandle.isCreated)

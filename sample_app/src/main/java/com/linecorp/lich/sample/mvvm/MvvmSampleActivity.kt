@@ -15,11 +15,14 @@
  */
 package com.linecorp.lich.sample.mvvm
 
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import com.linecorp.lich.sample.R
 import com.linecorp.lich.sample.databinding.MvvmSampleActivityBinding
+import com.linecorp.lich.viewmodel.putViewModelArgs
 import com.linecorp.lich.viewmodel.viewModel
 
 class MvvmSampleActivity : AppCompatActivity() {
@@ -33,5 +36,12 @@ class MvvmSampleActivity : AppCompatActivity() {
             DataBindingUtil.setContentView(this, R.layout.mvvm_sample_activity)
         binding.lifecycleOwner = this
         binding.viewModel = sampleViewModel
+    }
+
+    companion object {
+        fun newIntent(context: Context, counterName: String): Intent =
+            Intent(context, MvvmSampleActivity::class.java).putViewModelArgs(
+                SampleViewModelArgs(counterName)
+            )
     }
 }
