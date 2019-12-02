@@ -1,4 +1,4 @@
-package com.example.static_analysis.extensions
+package com.linecorp.lich.static_analysis.extensions
 
 import org.jetbrains.uast.UElement
 import org.jetbrains.uast.UExpression

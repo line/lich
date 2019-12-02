@@ -1,9 +1,9 @@
-package com.example.static_analysis
+package com.linecorp.lich.static_analysis
 
 import com.android.tools.lint.client.api.IssueRegistry
 import com.android.tools.lint.detector.api.CURRENT_API
 import com.android.tools.lint.detector.api.Issue
-import com.example.static_analysis.detectors.OptionalArgumentRequiredDetector
+import com.linecorp.lich.static_analysis.detectors.OptionalArgumentRequiredDetector
 import com.google.auto.service.AutoService
 
 

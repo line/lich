@@ -1,9 +1,9 @@
-package com.example.static_analysis
+package com.linecorp.lich.static_analysis
 
 import com.android.tools.lint.checks.infrastructure.LintDetectorTest
 import com.android.tools.lint.detector.api.Detector
 import com.android.tools.lint.detector.api.Issue
-import com.example.static_analysis.detectors.OptionalArgumentRequiredDetector
+import com.linecorp.lich.static_analysis.detectors.OptionalArgumentRequiredDetector
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.Paths

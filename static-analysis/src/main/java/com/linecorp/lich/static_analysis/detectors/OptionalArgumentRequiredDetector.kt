@@ -1,4 +1,4 @@
-package com.example.static_analysis.detectors
+package com.linecorp.lich.static_analysis.detectors
 
 import com.android.tools.lint.detector.api.Category
 import com.android.tools.lint.detector.api.Detector
@@ -9,8 +9,8 @@ import com.android.tools.lint.detector.api.Scope
 import com.android.tools.lint.detector.api.Severity
 import com.android.tools.lint.detector.api.SourceCodeScanner
 import com.android.tools.lint.detector.api.isKotlin
-import com.example.static_analysis.extensions.evaluateOrDefault
-import com.example.static_analysis.extensions.findClosestParentByType
+import com.linecorp.lich.static_analysis.extensions.evaluateOrDefault
+import com.linecorp.lich.static_analysis.extensions.findClosestParentByType
 import com.intellij.psi.PsiMethod
 import org.jetbrains.uast.UCallExpression
 import org.jetbrains.uast.UField
