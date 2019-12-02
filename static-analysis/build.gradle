@@ -7,11 +7,11 @@ dependencies {
     kapt "com.google.auto.service:auto-service:${versions.autoService}"
     compileOnly "com.google.auto.service:auto-service:${versions.autoService}"
     testImplementation "junit:junit:4.12"
-    compileOnly "com.android.tools.lint:lint-api:${versions.lint}"
-    compileOnly "com.android.tools.lint:lint-checks:${versions.lint}"
-    testImplementation "com.android.tools.lint:lint:${versions.lint}"
-    testImplementation "com.android.tools.lint:lint-tests:${versions.lint}"
-    testImplementation "com.android.tools:testutils:${versions.lint}"
+    compileOnly "com.android.tools.lint:lint-api:${versions.androidLint}"
+    compileOnly "com.android.tools.lint:lint-checks:${versions.androidLint}"
+    testImplementation "com.android.tools.lint:lint:${versions.androidLint}"
+    testImplementation "com.android.tools.lint:lint-tests:${versions.androidLint}"
+    testImplementation "com.android.tools:testutils:${versions.androidLint}"
 }
 
 sourceCompatibility = "1.8"

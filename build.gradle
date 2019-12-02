@@ -38,7 +38,7 @@ buildscript {
         mockitoKotlin              : '2.2.0',
         mockk                      : '1.9.3',
         androidGradlePlugin        : androidGradlePlugin,
-        lint                       : lintVersion(androidGradlePlugin),
+        androidLint                : lintVersion(androidGradlePlugin),
         robolectric                : '4.3',
     ]
     repositories {
