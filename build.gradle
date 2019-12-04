@@ -1,4 +1,18 @@
 buildscript {
+    // Make sure to use the same AGP as the main project.
+    def androidGradlePlugin = '3.5.2'
+    /**
+     * Calculates the right lint version for the provided [androidGradlePlugin] version. AGP is
+     * tightly coupled with lint because it implements LintClient. The formula to calculate the
+     * lint version relative to AGP is: AGP version + 23.
+     *
+     * E.g. AGP version 3.2.1 -> Lint version 26.2.1
+     */
+    def lintVersion = { agp ->
+        def (majorVersion, minorVersion, patchVersion) = agp.split("\\.")
+        int lintMajorVersion = (majorVersion as Integer) + 23
+        return "$lintMajorVersion.$minorVersion.$patchVersion"
+    }
     ext.versions = [
         compileSdk                 : 29,
         minSdk                     : 14,
@@ -23,6 +37,8 @@ buildscript {
         mockito                    : '2.28.2',
         mockitoKotlin              : '2.2.0',
         mockk                      : '1.9.3',
+        androidGradlePlugin        : androidGradlePlugin,
+        androidLint                : lintVersion(androidGradlePlugin),
         robolectric                : '4.3',
     ]
     repositories {
@@ -30,7 +46,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.5.2'
+        classpath "com.android.tools.build:gradle:${versions.androidGradlePlugin}"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${versions.kotlin}"
         classpath 'digital.wup:android-maven-publish:3.6.3'
         classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.4'
