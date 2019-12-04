@@ -6,7 +6,6 @@ import com.android.tools.lint.detector.api.Issue
 import com.linecorp.lich.static_analysis.detectors.OptionalArgumentRequiredDetector
 import com.google.auto.service.AutoService
 
-
 /**
  * A class to register custom [Issue]s
  */
