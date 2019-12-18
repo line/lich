@@ -9,11 +9,26 @@ That is, this library uses no configuration files, no annotations (except for Au
 Instead, you can write dependencies programmatically.
 (Technically speaking, this library is a variant of *Service Locator*.)
 
-By using this framework, you can gain the following benefits:
+This library offers the following benefits:
 
-- Declare and use singleton instances with simple code.
-- Resolve dependency complexity in multi-module projects.
-- Easy to mock, easy to test.
+- Easy to learn
+  - You only need to know about Kotlin's companion object, extension functions and delegated properties.
+- Super fast
+  - Runtime performance is almost equivalent to Dagger2.
+- Extremely low footprint
+  - Only ~3kB in classes after R8 optimization.
+- Zero configuration
+  - No global settings or initialization code are needed.
+- Ensures completeness without building
+  - In most cases, you can check the completeness of dependencies without building the project.
+- Works well in Dynamic Feature Modules
+  - Resolves dependencies across modules without reflection overhead.
+- Easy to write lazy acquisition
+  - Lazy acquisition can be simply written as a delegated property of Kotlin.
+- Easy to mock in unit tests
+  - You can mock any components freely with simple code.
+- Extensive debugging features
+  - Provides various debug logs and the ability to override dependencies at runtime.
 
 ## Set up
 
@@ -629,6 +644,14 @@ class FooControllerTest {
     }
 }
 ```
+
+### Can we use "scoped" objects?
+
+Use ViewModels instead. For most Android apps, ViewModels meet the requirements for scoped objects.
+
+[Lich ViewModel](../viewmodel) allows you to use ViewModels in a similar way to this library.
+It also provides sophisticated access to
+[saved instance state](https://developer.android.com/topic/libraries/architecture/saving-states).
 
 ### Why is `getComponent(factory)` implemented as an extension of `Context`? In other words, why is a Context required to get components?
 
