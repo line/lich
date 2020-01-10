@@ -17,6 +17,8 @@ package com.linecorp.lich.sample.feature.foo
 
 import android.content.Context
 import android.content.Intent
+import com.linecorp.lich.sample.feature.viewmodel.SampleFeatureViewModelArgs
+import com.linecorp.lich.viewmodel.putViewModelArgs
 
 /**
  * The implementation of [FooFeatureFacade].
@@ -26,6 +28,7 @@ internal class FooFeatureFacadeImpl(private val context: Context) : FooFeatureFa
     override fun launchFooFeatureActivity() {
         val intent = Intent(context, FooFeatureActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK
+            putViewModelArgs(SampleFeatureViewModelArgs("FooFeature"))
         }
         context.startActivity(intent)
     }

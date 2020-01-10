@@ -19,6 +19,8 @@ import android.content.Context
 import android.content.Intent
 import com.google.auto.service.AutoService
 import com.linecorp.lich.component.ServiceLoaderComponent
+import com.linecorp.lich.sample.feature.viewmodel.SampleFeatureViewModelArgs
+import com.linecorp.lich.viewmodel.putViewModelArgs
 
 /**
  * The implementation of [BarFeatureFacade].
@@ -35,6 +37,7 @@ class BarFeatureFacadeImpl : BarFeatureFacade, ServiceLoaderComponent {
     override fun launchBarFeatureActivity() {
         val intent = Intent(context, BarFeatureActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK
+            putViewModelArgs(SampleFeatureViewModelArgs("BarFeature"))
         }
         context.startActivity(intent)
     }

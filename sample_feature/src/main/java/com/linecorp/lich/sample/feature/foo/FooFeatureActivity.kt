@@ -16,13 +16,24 @@
 package com.linecorp.lich.sample.feature.foo
 
 import android.os.Bundle
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.observe
 import com.linecorp.lich.sample.feature.R
+import com.linecorp.lich.sample.feature.viewmodel.SampleFeatureViewModel
+import com.linecorp.lich.viewmodel.viewModel
 
 class FooFeatureActivity : AppCompatActivity() {
+
+    private val sampleFeatureViewModel by viewModel(SampleFeatureViewModel)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.foo_feature_activity)
+
+        val messageView: TextView = findViewById(R.id.feature_message)
+        sampleFeatureViewModel.message.observe(this) {
+            messageView.text = it
+        }
     }
 }

@@ -22,9 +22,12 @@ android {
 dependencies {
     implementation project(':sample_app')
     implementation project(':component')
+    implementation project(':viewmodel')
+    kapt project(':viewmodel-compiler')
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:${versions.kotlin}"
     implementation "androidx.appcompat:appcompat:${versions.androidxAppcompat}"
     implementation "androidx.constraintlayout:constraintlayout:${versions.androidxConstraintlayout}"
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:${versions.androidxLifecycle}"
     compileOnly "com.google.auto.service:auto-service-annotations:${versions.autoService}"
     kapt "com.google.auto.service:auto-service:${versions.autoService}"
 }
