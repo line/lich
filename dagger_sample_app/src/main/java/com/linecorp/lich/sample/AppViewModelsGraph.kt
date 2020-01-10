@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 LINE Corporation
+ * Copyright 2020 LINE Corporation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,14 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.linecorp.lich.sample.db
+package com.linecorp.lich.sample
 
-import androidx.room.Database
-import androidx.room.RoomDatabase
-import com.linecorp.lich.sample.entity.Counter
+import com.linecorp.lich.sample.mvvm.SampleViewModel
+import com.linecorp.lich.viewmodel.SavedState
+import dagger.BindsInstance
+import dagger.Subcomponent
 
-@Database(entities = [Counter::class], version = 1)
-abstract class CounterDatabase : RoomDatabase() {
+/**
+ * A Dagger [Subcomponent] that instantiates ViewModels in the `dagger_sample_app` subproject.
+ */
+@Subcomponent
+interface AppViewModelsGraph {
 
-    abstract val counterDao: CounterDao
+    fun sampleViewModel(): SampleViewModel
+
+    @Subcomponent.Factory
+    interface Factory {
+        fun create(@BindsInstance savedState: SavedState): AppViewModelsGraph
+    }
 }

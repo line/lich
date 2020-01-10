@@ -15,21 +15,18 @@
  */
 package com.linecorp.lich.sample.remote
 
-import android.content.Context
 import android.util.Log
-import com.linecorp.lich.component.ComponentFactory
-import com.linecorp.lich.component.component
 import com.linecorp.lich.okhttp.call
-import com.linecorp.lich.sample.GlobalOkHttpClient
+import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.json.JSONArray
 import org.json.JSONException
 import java.io.IOException
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class CounterServiceClient private constructor(context: Context) {
-
-    private val okHttpClient by context.component(GlobalOkHttpClient)
-
+@Singleton
+class CounterServiceClient @Inject constructor(private val okHttpClient: OkHttpClient) {
     /**
      * Query the server for the initial value of the given `Counter`.
      *
@@ -57,10 +54,7 @@ class CounterServiceClient private constructor(context: Context) {
         }
     }
 
-    companion object : ComponentFactory<CounterServiceClient>() {
-        override fun createComponent(context: Context): CounterServiceClient =
-            CounterServiceClient(context)
-
+    companion object {
         private const val FAKE_SERVICE_URL = "https://jsonplaceholder.typicode.com/photos?albumId=1"
     }
 }

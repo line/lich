@@ -18,12 +18,12 @@ package com.linecorp.lich.sample.mvvm
 import android.content.Context
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.linecorp.lich.component.test.mockk.mockComponent
 import com.linecorp.lich.sample.entity.Counter
 import com.linecorp.lich.sample.repository.CounterRepository
 import com.linecorp.lich.sample.repository.CounterResult
 import io.mockk.coEvery
 import io.mockk.coVerify
+import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.junit.Test
@@ -42,11 +42,11 @@ class CounterUseCaseTest {
 
     @Test
     fun loadCounterSuccess() {
-        mockComponent(CounterRepository) {
+        val mockCounterRepository: CounterRepository = mockk {
             coEvery { getCounter("foo") } returns
                 CounterResult.Success(Counter("foo", 42))
         }
-        val counterUseCase = CounterUseCase(context)
+        val counterUseCase = CounterUseCase(mockCounterRepository)
 
         assertEquals(null, counterUseCase.liveCounter.value)
 
@@ -57,10 +57,10 @@ class CounterUseCaseTest {
 
     @Test
     fun loadCounterNetworkError() {
-        mockComponent(CounterRepository) {
+        val mockCounterRepository: CounterRepository = mockk {
             coEvery { getCounter("foo") } returns CounterResult.NetworkError
         }
-        val counterUseCase = CounterUseCase(context)
+        val counterUseCase = CounterUseCase(mockCounterRepository)
 
         assertEquals(null, counterUseCase.liveCounter.value)
 
@@ -71,8 +71,9 @@ class CounterUseCaseTest {
 
     @Test
     fun loadCounterIsLoading() {
-        val counterUseCase = CounterUseCase(context)
-        mockComponent(CounterRepository) {
+        val mockCounterRepository: CounterRepository = mockk()
+        val counterUseCase = CounterUseCase(mockCounterRepository)
+        mockCounterRepository.apply {
             coEvery { getCounter(any()) } answers {
                 assertEquals(true, counterUseCase.isLoading.value)
                 CounterResult.NetworkError
@@ -88,8 +89,8 @@ class CounterUseCaseTest {
 
     @Test
     fun changeCounterValue() {
-        val mockCounterRepository = mockComponent(CounterRepository, relaxUnitFun = true)
-        val counterUseCase = CounterUseCase(context)
+        val mockCounterRepository: CounterRepository = mockk(relaxUnitFun = true)
+        val counterUseCase = CounterUseCase(mockCounterRepository)
         counterUseCase.liveCounter.value = Counter("foo", 42)
 
         runBlocking { counterUseCase.changeCounterValue(1) }
@@ -101,8 +102,8 @@ class CounterUseCaseTest {
 
     @Test
     fun deleteCounter() {
-        val mockCounterRepository = mockComponent(CounterRepository, relaxUnitFun = true)
-        val counterUseCase = CounterUseCase(context)
+        val mockCounterRepository: CounterRepository = mockk(relaxUnitFun = true)
+        val counterUseCase = CounterUseCase(mockCounterRepository)
         counterUseCase.liveCounter.value = Counter("foo", 42)
 
         runBlocking { counterUseCase.deleteCounter() }

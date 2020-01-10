@@ -18,9 +18,10 @@ package com.linecorp.lich.sample.mvvm
 import android.content.Context
 import android.view.View
 import androidx.annotation.MainThread
-import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.map
+import com.linecorp.lich.component.getComponent
+import com.linecorp.lich.sample.ApplicationGraph
 import com.linecorp.lich.sample.R
 import com.linecorp.lich.viewmodel.AbstractViewModel
 import com.linecorp.lich.viewmodel.Argument
@@ -28,13 +29,14 @@ import com.linecorp.lich.viewmodel.GenerateArgs
 import com.linecorp.lich.viewmodel.SavedState
 import com.linecorp.lich.viewmodel.ViewModelFactory
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @GenerateArgs
 @MainThread
-class SampleViewModel @VisibleForTesting internal constructor(
+class SampleViewModel @Inject constructor(
     private val context: Context,
     savedState: SavedState,
-    private val counterUseCase: CounterUseCase = CounterUseCase(context)
+    private val counterUseCase: CounterUseCase
 ) : AbstractViewModel() {
 
     @Argument
@@ -78,8 +80,9 @@ class SampleViewModel @VisibleForTesting internal constructor(
 
     companion object : ViewModelFactory<SampleViewModel>() {
         override fun createViewModel(context: Context, savedState: SavedState): SampleViewModel =
-            SampleViewModel(context, savedState).also {
-                it.loadData()
-            }
+            context.getComponent(ApplicationGraph).viewModelsGraphFactory().create(savedState)
+                .sampleViewModel().also {
+                    it.loadData()
+                }
     }
 }

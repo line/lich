@@ -15,18 +15,16 @@
  */
 package com.linecorp.lich.sample.repository
 
-import android.content.Context
 import android.util.Log
-import androidx.annotation.VisibleForTesting
-import com.linecorp.lich.component.ComponentFactory
-import com.linecorp.lich.component.getComponent
 import com.linecorp.lich.sample.db.CounterDao
-import com.linecorp.lich.sample.db.CounterDatabase
 import com.linecorp.lich.sample.entity.Counter
 import com.linecorp.lich.sample.remote.CounterServiceClient
 import java.io.IOException
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class CounterRepository @VisibleForTesting internal constructor(
+@Singleton
+class CounterRepository @Inject constructor(
     private val counterServiceClient: CounterServiceClient,
     private val counterDao: CounterDao
 ) {
@@ -72,13 +70,5 @@ class CounterRepository @VisibleForTesting internal constructor(
     suspend fun deleteCounter(counter: Counter) {
         counterDao.delete(counter)
         Log.i("CounterRepository", "Deleted the counter: $counter")
-    }
-
-    companion object : ComponentFactory<CounterRepository>() {
-        override fun createComponent(context: Context): CounterRepository {
-            val serviceClient = context.getComponent(CounterServiceClient)
-            val database = context.getComponent(CounterDatabase)
-            return CounterRepository(serviceClient, database.counterDao)
-        }
     }
 }

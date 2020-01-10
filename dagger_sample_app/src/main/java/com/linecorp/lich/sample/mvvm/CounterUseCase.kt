@@ -15,19 +15,17 @@
  */
 package com.linecorp.lich.sample.mvvm
 
-import android.content.Context
 import androidx.annotation.MainThread
 import androidx.lifecycle.MutableLiveData
-import com.linecorp.lich.component.component
 import com.linecorp.lich.sample.entity.Counter
 import com.linecorp.lich.sample.repository.CounterRepository
 import com.linecorp.lich.sample.repository.CounterResult
+import javax.inject.Inject
 
 @MainThread
-class CounterUseCase(context: Context) {
-
-    private val counterRepository by context.component(CounterRepository)
-
+class CounterUseCase @Inject constructor(
+    private val counterRepository: CounterRepository
+) {
     val liveCounter: MutableLiveData<Counter?> = MutableLiveData(null)
 
     val isLoading: MutableLiveData<Boolean> = MutableLiveData(false)
