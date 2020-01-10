@@ -1,0 +1,83 @@
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
+
+android {
+    compileSdkVersion versions.compileSdk
+
+    defaultConfig {
+        minSdkVersion versions.minSdk
+        targetSdkVersion versions.targetSdk
+        versionCode 1
+        versionName "1.0"
+        applicationIdSuffix ".dagger"
+
+        kapt {
+            arguments {
+                arg("room.schemaLocation", "$projectDir/schemas")
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+
+    dataBinding {
+        enabled = true
+    }
+
+    testOptions {
+        unitTests {
+            // For Robolectric. See: http://robolectric.org/getting-started/
+            includeAndroidResources = true
+        }
+    }
+
+    packagingOptions {
+        exclude '/META-INF/*.kotlin_module'
+        exclude '**/*.kotlin_builtins'
+        exclude '**/*.kotlin_metadata'
+    }
+
+    dynamicFeatures = [":dagger_sample_feature"]
+}
+
+dependencies {
+    implementation project(':component')
+    implementation project(':viewmodel')
+    kapt project(':viewmodel-compiler')
+    implementation project(':lifecycle')
+    implementation project(':okhttp')
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:${versions.kotlin}"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:${versions.kotlinCoroutines}"
+    implementation "androidx.appcompat:appcompat:${versions.androidxAppcompat}"
+    implementation "androidx.constraintlayout:constraintlayout:${versions.androidxConstraintlayout}"
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:${versions.androidxLifecycle}"
+    implementation "androidx.room:room-ktx:${versions.androidxRoom}"
+    kapt "androidx.room:room-compiler:${versions.androidxRoom}"
+    implementation "com.squareup.okhttp3:okhttp:${versions.okhttp}"
+
+    debugRuntimeOnly project(':component-debug')
+
+    testImplementation project(':component-test-mockk')
+    testImplementation project(':viewmodel-test-mockk')
+    testImplementation "org.jetbrains.kotlin:kotlin-test-junit:${versions.kotlin}"
+    testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:${versions.kotlinCoroutines}"
+    testImplementation "androidx.test:runner:${versions.androidxTestRunner}"
+    testImplementation "androidx.test.ext:junit:${versions.androidxTestJunit}"
+    testImplementation "androidx.test.espresso:espresso-core:${versions.androidxTestEspresso}"
+    testImplementation "io.mockk:mockk:${versions.mockk}"
+    testImplementation "org.robolectric:robolectric:${versions.robolectric}"
+}

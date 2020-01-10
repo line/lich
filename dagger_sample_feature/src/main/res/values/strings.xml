@@ -1,0 +1,4 @@
+<resources>
+    <string name="foo_activity_message">This is FooFeatureActivity.</string>
+    <string name="bar_activity_message">This is BarFeatureActivity.</string>
+</resources>
