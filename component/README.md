@@ -714,3 +714,7 @@ fun <T : Any> component(factory: ComponentFactory<T>): Lazy<T> =
 ```
 
 Of course, as mentioned above, please be careful not to expose the `Context` outside components.
+
+### What are the advantages of this library compared to Dagger?
+
+Please refer to [this page](../dagger_sample_app).

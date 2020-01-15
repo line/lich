@@ -21,6 +21,8 @@ repositories {
 
 - [sample_app](sample_app) - A sample application using Lich libraries.
 - [sample_feature](sample_feature) - A sample feature module using Lich component library.
+- [dagger_sample_app](dagger_sample_app) - A sample application to demonstrate integration of Lich and [Dagger2](https://dagger.dev/).
+- [dagger_sample_feature](dagger_sample_feature) - A sample feature module for `dagger_sample_app`.
 
 ## License
 
