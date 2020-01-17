@@ -84,18 +84,7 @@ abstract class ViewModelFactory<T : AbstractViewModel> {
      * @param savedState a handle to saved state.
      */
     @MainThread
-    protected open fun createViewModel(context: Context, savedState: SavedState): T {
-        @Suppress("DEPRECATION")
-        return createViewModel(context)
-    }
-
-    @Deprecated(
-        message = "Only for backward compatibility. Will be removed in 2.1.0",
-        replaceWith = ReplaceWith("createViewModel(context, handle)")
-    )
-    protected open fun createViewModel(context: Context): T {
-        throw NotImplementedError()
-    }
+    protected abstract fun createViewModel(context: Context, savedState: SavedState): T
 
     internal fun create(context: Context, savedState: SavedState): T =
         createViewModel(context, savedState)
