@@ -5,6 +5,7 @@ import com.android.tools.lint.detector.api.CURRENT_API
 import com.android.tools.lint.detector.api.Issue
 import com.linecorp.lich.static_analysis.detectors.OptionalArgumentRequiredDetector
 import com.google.auto.service.AutoService
+import com.linecorp.lich.static_analysis.detectors.LichFactoryDetector
 
 /**
  * A class to register custom [Issue]s
@@ -12,7 +13,11 @@ import com.google.auto.service.AutoService
 @AutoService(IssueRegistry::class)
 class LichIssueRegistry : IssueRegistry() {
     override val issues: List<Issue>
-        get() = listOf(OptionalArgumentRequiredDetector.ISSUE)
+        get() = listOf(
+            OptionalArgumentRequiredDetector.ISSUE,
+            LichFactoryDetector.TYPE_ARGUMENT_ISSUE,
+            LichFactoryDetector.OBJECT_ISSUE
+        )
 
     override val api: Int = CURRENT_API
 
