@@ -25,12 +25,6 @@ specified by `resetPolicy` have occurred.
 [Dispatchers.Main](https://kotlin.github.io/kotlinx.coroutines/kotlinx-coroutines-core/kotlinx.coroutines/-dispatchers/-main.html).
 So, coroutines launched from the scope will be executed on the main thread by default.
 
-`AutoResetLifecycleScope` is similar to
-[Android Architecture Components' lifecycleScope](https://developer.android.com/reference/kotlin/androidx/lifecycle/package-summary.html#lifecyclescope),
-but `lifecycleScope` is canceled only when its `Lifecycle` is destroyed.
-So, `AutoResetLifecycleScope` is useful if you want to *cancel* coroutines when the `Lifecycle` is
-stopped or paused.
-
 Example of use:
 ```kotlin
 class FooActivity : AppCompatActivity() {
@@ -57,3 +51,26 @@ class FooActivity : AppCompatActivity() {
 ```
 See also
 [SimpleCoroutineActivity](../sample_app/src/main/java/com/linecorp/lich/sample/simplecoroutine/SimpleCoroutineActivity.kt).
+
+### About difference with Jetpack's lifecycleScope
+
+AndroidX Lifecycle 2.2.0+ provides `lifecycleScope`. Please read
+[this document](https://developer.android.com/topic/libraries/architecture/coroutines#lifecyclescope)
+first for details. `lifecycleScope` has useful functions like `launchWhenStarted`,
+but these functions must be used with care.
+
+[LifecycleScopeDemo1Fragment](../sample_app/src/main/java/com/linecorp/lich/sample/lifecyclescope/LifecycleScopeDemo1Fragment.kt)
+is an example. Here are some things to keep in mind when using `lifecycleScope`:
+
+- Avoid using `Fragment.lifecycleScope.launch*`. Coroutines launched from `Fragment.lifecycleScope` stay alive even after `onDestroyView()`. So, you need to be careful about View recreation.
+- `Fragment.viewLifecycleOwner.lifecycleScope.launchWhenStarted` is somewhat safe, but its coroutines stay alive even after `onStop()` and restart execution after the next `onStart()`. So, you shouldn't use it for tasks launched on `onStart()`.
+
+Thus, `lifecycleScope` has some pitfalls. So, you should consider using alternatives.
+
+The best way is to use coroutines only in ViewModels. All asynchronous tasks are launched
+in ViewModels, and Fragment/Activity only observes the result via LiveData.
+See [SampleViewModel](../sample_app/src/main/java/com/linecorp/lich/sample/mvvm/SampleViewModel.kt)
+for a working example.
+
+Another alternative is using `AutoResetLifecycleScope`. Any coroutines launched from it
+are just cancelled when `onStop()` is called. So it is relatively safe to use.
