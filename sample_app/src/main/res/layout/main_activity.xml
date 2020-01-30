@@ -19,6 +19,18 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
+        android:id="@+id/launch_lifecyclescope_demo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="16dp"
+        android:onClick="launchLifecycleScopeDemoActivity"
+        android:text="@string/launch_lifecyclescope"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/launch_simple_coroutine" />
+
+    <Button
         android:id="@+id/launch_mvvm_sample"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -28,7 +40,7 @@
         android:onClick="launchMvvmSampleActivity"
         android:text="@string/launch_mvvmsample"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/launch_simple_coroutine" />
+        app:layout_constraintTop_toBottomOf="@id/launch_lifecyclescope_demo" />
 
     <Button
         android:id="@+id/launch_foo_feature"

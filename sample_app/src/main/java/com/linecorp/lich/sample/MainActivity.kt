@@ -16,28 +16,27 @@
 package com.linecorp.lich.sample
 
 import android.content.Intent
-import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.linecorp.lich.component.component
 import com.linecorp.lich.sample.feature.bar.BarFeatureFacade
 import com.linecorp.lich.sample.feature.foo.FooFeatureFacade
+import com.linecorp.lich.sample.lifecyclescope.LifecycleScopeDemoActivity
 import com.linecorp.lich.sample.mvvm.MvvmSampleActivity
 import com.linecorp.lich.sample.simplecoroutine.SimpleCoroutineActivity
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(R.layout.main_activity) {
 
     private val fooFeatureFacade by component(FooFeatureFacade)
 
     private val barFeatureFacade by component(BarFeatureFacade)
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.main_activity)
-    }
-
     fun launchSimpleCoroutineActivity(@Suppress("UNUSED_PARAMETER") view: View) {
         startActivity(Intent(this, SimpleCoroutineActivity::class.java))
+    }
+
+    fun launchLifecycleScopeDemoActivity(@Suppress("UNUSED_PARAMETER") view: View) {
+        startActivity(Intent(this, LifecycleScopeDemoActivity::class.java))
     }
 
     fun launchMvvmSampleActivity(@Suppress("UNUSED_PARAMETER") view: View) {
