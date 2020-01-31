@@ -58,9 +58,9 @@ internal class ViewModelArgsInfo private constructor(
     private val className: KpClassName,
     private val originatingElement: TypeElement,
     private val arguments: List<ArgumentInfo>,
-    val failedProperties: List<String>
+    val errorMessages: List<String>
 ) {
-    fun toFileSpec(elements: Elements, types: Types): FileSpec {
+    fun toFileSpec(): FileSpec {
         val constructorSpec = FunSpec.constructorBuilder().apply {
             arguments.forEach { addParameter(it.toConstructorParameterSpec()) }
         }.build()
@@ -71,7 +71,7 @@ internal class ViewModelArgsInfo private constructor(
             .addModifiers(KModifier.OVERRIDE)
             .returns(bundleClass)
             .beginControlFlow("return %T().apply", bundleClass).also { builder ->
-                arguments.forEach { it.addPutValueStatement(builder, elements, types) }
+                arguments.forEach { it.addPutValueStatement(builder) }
             }.endControlFlow()
             .build()
 
@@ -91,7 +91,11 @@ internal class ViewModelArgsInfo private constructor(
     }
 
     companion object {
-        fun create(viewModelClass: TypeElement): ViewModelArgsInfo {
+        fun create(
+            viewModelClass: TypeElement,
+            elements: Elements,
+            types: Types
+        ): ViewModelArgsInfo {
             val metadataAnnotation = viewModelClass.getAnnotation(Metadata::class.java)
                 ?: throw IllegalStateException("Kotlin Metadata annotation is not found.")
             val metadata = KotlinClassMetadata.read(metadataAnnotation.asClassHeader())
@@ -102,14 +106,25 @@ internal class ViewModelArgsInfo private constructor(
             val classVisitor = ClassVisitor(viewModelClass)
             metadata.accept(classVisitor)
 
+            val resolvedArguments = classVisitor.resolvedArguments
+            val errorMessages = listOf(
+                classVisitor.failedProperties.map { propertyName ->
+                    "Failed to resolve the type of a property: $propertyName"
+                },
+                resolvedArguments.filterNot { it.resolvePutMethod(elements, types) }.map { info ->
+                    "Unsupported type: Cannot put \"${info.name}: " +
+                        "${info.type.copy(nullable = false)}\" to Bundle."
+                }
+            ).flatten()
+
             val className = viewModelClass.asClassName().let {
                 KpClassName(it.packageName, "${it.simpleName}Args")
             }
             return ViewModelArgsInfo(
                 className,
                 viewModelClass,
-                classVisitor.resolvedArguments,
-                classVisitor.failedProperties
+                resolvedArguments,
+                errorMessages
             )
         }
 
@@ -132,6 +147,13 @@ internal class ViewModelArgsInfo private constructor(
 
 private class ArgumentInfo(val name: String, val type: TypeName, val isOptional: Boolean) {
 
+    private var putMethodName: String? = null
+
+    fun resolvePutMethod(elements: Elements, types: Types): Boolean {
+        putMethodName = resolveMethodNameOrNull(elements, types)
+        return putMethodName != null
+    }
+
     fun toConstructorParameterSpec(): ParameterSpec =
         ParameterSpec.builder(name, type).apply {
             if (isOptional) defaultValue("%L", null)
@@ -142,12 +164,11 @@ private class ArgumentInfo(val name: String, val type: TypeName, val isOptional:
             .initializer("%N", name)
             .build()
 
-    fun addPutValueStatement(builder: FunSpec.Builder, elements: Elements, types: Types) {
-        // If `resolveMethodNameOrNull` returns null, we always use "putSerializable".
-        // Because, `Int?`, `Array<CharSequence>`, `ArrayList<Int>`, etc. are all Serializable.
-        val methodName = resolveMethodNameOrNull(elements, types) ?: "putSerializable"
-
-        if (isOptional) {
+    fun addPutValueStatement(builder: FunSpec.Builder) {
+        val methodName = putMethodName
+        if (methodName == null) {
+            builder.addStatement("TODO(%S)", "Unsupported type: Cannot put $name to Bundle.")
+        } else if (isOptional) {
             builder.addStatement("if (%N != null) %L(%S, %N)", name, methodName, name, name)
         } else {
             builder.addStatement("%L(%S, %N)", methodName, name, name)
@@ -157,8 +178,32 @@ private class ArgumentInfo(val name: String, val type: TypeName, val isOptional:
     private fun resolveMethodNameOrNull(elements: Elements, types: Types): String? {
         val rawTypeName = type.getRawCanonicalName() ?: return null
 
-        if (!isOptional && type.isNullable && rawTypeName in primitiveTypes) return null
+        // For nullable primitive types, we cannot use put-methods such as
+        // "putInt(key: String, value: Int)". So, we use "putSerializable" instead.
+        if (!isOptional && type.isNullable && rawTypeName in primitiveTypes) {
+            return "putSerializable"
+        }
+
         rawTypeMethodMap[rawTypeName]?.let { return it }
+
+        if (rawTypeName in parcelablesMethodMap &&
+            type is ParameterizedTypeName &&
+            type.typeArguments.size == 1
+        ) {
+            // Handles the following types:
+            // "putParcelableArray(key: String, value: Array<Parcelable>)"
+            // "putParcelableArrayList(key: String, value: ArrayList<Parcelable>)"
+            // "putSparseParcelableArray(key: String, value: SparseArray<Parcelable>)"
+            type.typeArguments[0].getRawCanonicalName()?.let { parameterTypeName ->
+                elements.getTypeMirror(parameterTypeName)
+            }?.let { parameterTypeMirror ->
+                if (parameterTypeMirror.isSubtypeOf("android.os.Parcelable", elements, types))
+                    return parcelablesMethodMap[rawTypeName]
+            }
+
+            // Any other "Array<T>" and "ArrayList<T>" can be put using "putSerializable".
+            if (rawTypeName != "android.util.SparseArray") return "putSerializable"
+        }
 
         elements.getTypeMirror(rawTypeName)?.let { rawTypeMirror ->
             if (rawTypeMirror.isSubtypeOf("java.lang.CharSequence", elements, types))
@@ -169,18 +214,9 @@ private class ArgumentInfo(val name: String, val type: TypeName, val isOptional:
 
             if (rawTypeMirror.isSubtypeOf("android.os.Parcelable", elements, types))
                 return "putParcelable"
-        }
 
-        if (rawTypeName in parcelablesMethodMap &&
-            type is ParameterizedTypeName &&
-            type.typeArguments.size == 1
-        ) {
-            type.typeArguments[0].getRawCanonicalName()?.let { parameterTypeName ->
-                elements.getTypeMirror(parameterTypeName)
-            }?.let { parameterTypeMirror ->
-                if (parameterTypeMirror.isSubtypeOf("android.os.Parcelable", elements, types))
-                    return parcelablesMethodMap[rawTypeName]
-            }
+            if (rawTypeMirror.isSubtypeOf("java.io.Serializable", elements, types))
+                return "putSerializable"
         }
 
         return null

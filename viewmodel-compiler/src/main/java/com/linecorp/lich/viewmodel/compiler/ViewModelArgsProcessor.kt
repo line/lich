@@ -42,7 +42,11 @@ class ViewModelArgsProcessor : AbstractProcessor() {
                 }
 
                 val viewModelArgsInfo = try {
-                    ViewModelArgsInfo.create(element)
+                    ViewModelArgsInfo.create(
+                        element,
+                        processingEnv.elementUtils,
+                        processingEnv.typeUtils
+                    )
                 } catch (e: Exception) {
                     processingEnv.messager.printMessage(
                         Diagnostic.Kind.WARNING,
@@ -51,19 +55,16 @@ class ViewModelArgsProcessor : AbstractProcessor() {
                     )
                     continue
                 }
-                for (propertyName in viewModelArgsInfo.failedProperties) {
+
+                viewModelArgsInfo.errorMessages.forEach { errorMessage ->
                     processingEnv.messager.printMessage(
                         Diagnostic.Kind.WARNING,
-                        "Failed to resolve the type of a property: $propertyName",
+                        errorMessage,
                         element
                     )
                 }
-
                 try {
-                    viewModelArgsInfo.toFileSpec(
-                        processingEnv.elementUtils,
-                        processingEnv.typeUtils
-                    ).writeTo(processingEnv.filer)
+                    viewModelArgsInfo.toFileSpec().writeTo(processingEnv.filer)
                 } catch (e: Exception) {
                     processingEnv.messager.printMessage(
                         Diagnostic.Kind.ERROR,
