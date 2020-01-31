@@ -34,7 +34,7 @@ class ViewModelArgsProcessor : AbstractProcessor() {
             for (element in roundEnv.getElementsAnnotatedWith(annotation)) {
                 if (element !is TypeElement || element.nestingKind != NestingKind.TOP_LEVEL) {
                     processingEnv.messager.printMessage(
-                        Diagnostic.Kind.WARNING,
+                        Diagnostic.Kind.ERROR,
                         "@GenerateArgs supports top-level classes only.",
                         element
                     )
@@ -42,32 +42,33 @@ class ViewModelArgsProcessor : AbstractProcessor() {
                 }
 
                 val viewModelArgsInfo = try {
-                    ViewModelArgsInfo.create(element)
+                    ViewModelArgsInfo.create(
+                        element,
+                        processingEnv.elementUtils,
+                        processingEnv.typeUtils
+                    )
                 } catch (e: Exception) {
                     processingEnv.messager.printMessage(
-                        Diagnostic.Kind.WARNING,
+                        Diagnostic.Kind.ERROR,
                         "Failed to parse the metadata: $e",
                         element
                     )
                     continue
                 }
-                for (propertyName in viewModelArgsInfo.failedProperties) {
-                    processingEnv.messager.printMessage(
-                        Diagnostic.Kind.WARNING,
-                        "Failed to resolve the type of a property: $propertyName",
-                        element
-                    )
-                }
 
                 try {
-                    viewModelArgsInfo.toFileSpec(
-                        processingEnv.elementUtils,
-                        processingEnv.typeUtils
-                    ).writeTo(processingEnv.filer)
+                    viewModelArgsInfo.toFileSpec().writeTo(processingEnv.filer)
                 } catch (e: Exception) {
                     processingEnv.messager.printMessage(
                         Diagnostic.Kind.ERROR,
                         "Failed to generate the Args file: $e"
+                    )
+                }
+                viewModelArgsInfo.errorMessages.forEach { errorMessage ->
+                    processingEnv.messager.printMessage(
+                        Diagnostic.Kind.ERROR,
+                        errorMessage,
+                        element
                     )
                 }
             }
