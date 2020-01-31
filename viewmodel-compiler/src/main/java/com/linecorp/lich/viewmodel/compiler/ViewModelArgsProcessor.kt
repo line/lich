@@ -34,7 +34,7 @@ class ViewModelArgsProcessor : AbstractProcessor() {
             for (element in roundEnv.getElementsAnnotatedWith(annotation)) {
                 if (element !is TypeElement || element.nestingKind != NestingKind.TOP_LEVEL) {
                     processingEnv.messager.printMessage(
-                        Diagnostic.Kind.WARNING,
+                        Diagnostic.Kind.ERROR,
                         "@GenerateArgs supports top-level classes only.",
                         element
                     )
@@ -49,26 +49,26 @@ class ViewModelArgsProcessor : AbstractProcessor() {
                     )
                 } catch (e: Exception) {
                     processingEnv.messager.printMessage(
-                        Diagnostic.Kind.WARNING,
+                        Diagnostic.Kind.ERROR,
                         "Failed to parse the metadata: $e",
                         element
                     )
                     continue
                 }
 
-                viewModelArgsInfo.errorMessages.forEach { errorMessage ->
-                    processingEnv.messager.printMessage(
-                        Diagnostic.Kind.WARNING,
-                        errorMessage,
-                        element
-                    )
-                }
                 try {
                     viewModelArgsInfo.toFileSpec().writeTo(processingEnv.filer)
                 } catch (e: Exception) {
                     processingEnv.messager.printMessage(
                         Diagnostic.Kind.ERROR,
                         "Failed to generate the Args file: $e"
+                    )
+                }
+                viewModelArgsInfo.errorMessages.forEach { errorMessage ->
+                    processingEnv.messager.printMessage(
+                        Diagnostic.Kind.ERROR,
+                        errorMessage,
+                        element
                     )
                 }
             }
