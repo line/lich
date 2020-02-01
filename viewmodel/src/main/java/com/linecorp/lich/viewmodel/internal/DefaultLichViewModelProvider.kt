@@ -43,7 +43,9 @@ open class DefaultLichViewModelProvider : LichViewModelProvider {
         arguments: Bundle?
     ): T {
         // The key to use to identify the BridgeViewModel in a ViewModelStore.
-        val key = factory.javaClass.name
+        val key = "lich:" + requireNotNull(factory.javaClass.canonicalName) {
+            "ViewModelFactories cannot be local or anonymous classes."
+        }
 
         // We always create a BridgeViewModel object for ViewModelStores of Android Architecture Components.
         val bridgeViewModelFactory = BridgeViewModelFactory(savedStateRegistryOwner, arguments)
