@@ -58,6 +58,10 @@ class LichFactoryDetector : Detector(), SourceCodeScanner {
         val declarationPsi = declaration.sourcePsi
         if (declarationPsi !is KtObjectDeclaration || declarationPsi.isObjectLiteral()) {
             context.reportObject(declaration)
+            return
+        }
+        if (!declarationPsi.isCompanion()) {
+            return
         }
         val factorySupertypeDeclaration = declaration.findFactorySupertype() ?: return
         val factoryType = Factory.find(factorySupertypeDeclaration.getQualifiedName()) ?: return
