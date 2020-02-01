@@ -13,9 +13,7 @@ import com.android.tools.lint.detector.api.isKotlin
 import com.intellij.psi.PsiClassType
 import com.intellij.psi.impl.source.PsiClassReferenceType
 import com.linecorp.lich.static_analysis.extensions.findClosestParentByType
-import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtObjectDeclaration
-import org.jetbrains.kotlin.psi.psiUtil.isAbstract
 import org.jetbrains.uast.UClass
 import org.jetbrains.uast.UElement
 import org.jetbrains.uast.UTypeReferenceExpression
@@ -54,14 +52,12 @@ class LichFactoryDetector : Detector(), SourceCodeScanner {
     override fun applicableSuperClasses(): List<String> = Factory.qualifiedNames
 
     override fun visitClass(context: JavaContext, declaration: UClass) {
-        if (!isKotlin(declaration)) {
+        if (!isKotlin(declaration) || Factory.contains(declaration.qualifiedName)) {
             return
         }
         val declarationPsi = declaration.sourcePsi
-        if (declarationPsi !is KtObjectDeclaration) {
-            if (declarationPsi is KtClass && !declarationPsi.isAbstract()) {
-                context.reportObject(declaration)
-            }
+        if (declarationPsi !is KtObjectDeclaration || declarationPsi.isObjectLiteral()) {
+            context.reportObject(declaration)
         }
         val factorySupertypeDeclaration = declaration.findFactorySupertype() ?: return
         val factoryType = Factory.find(factorySupertypeDeclaration.getQualifiedName()) ?: return
