@@ -39,12 +39,12 @@ class LichFactoryDetector : Detector(), SourceCodeScanner {
         @JvmStatic
         val OBJECT_ISSUE: Issue = Issue.create(
             "FactoryShouldBeObject",
-            "It is better practice to implement factories using an *object* declaration.",
-            "Factories should be implemented by *object* declarations in order to avoid multiple " +
-                "instances of the same factory.",
+            "Factories should be implemented by *object declarations*.",
+            "In order to avoid multiple instances of the same factory, you should implement " +
+                "factories using an *object declaration*.",
             Category.CORRECTNESS,
             6,
-            Severity.WARNING,
+            Severity.ERROR,
             Implementation(LichFactoryDetector::class.java, Scope.JAVA_FILE_SCOPE)
         )
     }
@@ -127,7 +127,7 @@ class LichFactoryDetector : Detector(), SourceCodeScanner {
             OBJECT_ISSUE,
             node,
             getNameLocation(node),
-            "Factories generally should be implemented by *object* declarations."
+            "Factories should be implemented by *object declarations*."
         )
     }
 
