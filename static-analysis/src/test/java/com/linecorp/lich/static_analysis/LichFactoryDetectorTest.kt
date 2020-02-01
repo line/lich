@@ -16,13 +16,16 @@ class LichFactoryDetectorTest : LichLintDetectorTest(testAssetsFolder = "LichFac
         ).allowCompilationErrors(false)
             .run()
             .expect("""
-                src/com/linecorp/lich/component/ClassFactory.kt:5: Warning: Factories generally should be implemented by object declarations. [FactoryShouldBeObject]
-                class ClassFactory : ComponentFactory<ClassFactory>()
+                src/com/linecorp/lich/component/Api.kt:7: Error: Factories should be implemented by object declarations. [FactoryShouldBeObject]
+                class ClassFactory : ComponentFactory<Api>()
                       ~~~~~~~~~~~~
-                src/com/linecorp/lich/component/ClassFactory.kt:18: Error: This ComponentFactory's type argument should be TestBar. [InvalidTypeArgumentInFactory]
+                src/com/linecorp/lich/component/Api.kt:14: Error: Factories should be implemented by object declarations. [FactoryShouldBeObject]
+                val expressionFactory = object : ComponentFactory<Api>() {}
+                                        ~~~~~~
+                src/com/linecorp/lich/component/Api.kt:23: Error: This ComponentFactory's type argument should be TestBar. [InvalidTypeArgumentInFactory]
                     companion object : ComponentFactory<TestFoo>()
                                        ~~~~~~~~~~~~~~~~~~~~~~~~~
-                1 errors, 1 warnings
+                3 errors, 0 warnings
             """.trimIndent())
     }
 
@@ -36,13 +39,16 @@ class LichFactoryDetectorTest : LichLintDetectorTest(testAssetsFolder = "LichFac
         ).allowCompilationErrors(false)
             .run()
             .expect("""
-                src/com/linecorp/lich/viewmodel/TestFoo.kt:15: Warning: Factories generally should be implemented by object declarations. [FactoryShouldBeObject]
-                class ClassFactory : ViewModelFactory<ClassFactory>()
+                src/com/linecorp/lich/viewmodel/FooViewModel.kt:7: Error: Factories should be implemented by object declarations. [FactoryShouldBeObject]
+                class ClassFactory : ViewModelFactory<FooViewModel>()
                       ~~~~~~~~~~~~
-                src/com/linecorp/lich/viewmodel/TestFoo.kt:10: Error: This ViewModelFactory's type argument should be TestBar. [InvalidTypeArgumentInFactory]
+                src/com/linecorp/lich/viewmodel/FooViewModel.kt:14: Error: Factories should be implemented by object declarations. [FactoryShouldBeObject]
+                val expressionFactory = object : ViewModelFactory<FooViewModel>() {}
+                                        ~~~~~~
+                src/com/linecorp/lich/viewmodel/FooViewModel.kt:23: Error: This ViewModelFactory's type argument should be TestBar. [InvalidTypeArgumentInFactory]
                     companion object : ViewModelFactory<TestFoo>()
                                        ~~~~~~~~~~~~~~~~~~~~~~~~~
-                1 errors, 1 warnings
+                3 errors, 0 warnings
             """.trimIndent())
     }
 
