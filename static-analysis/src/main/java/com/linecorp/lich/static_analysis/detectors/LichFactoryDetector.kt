@@ -13,9 +13,7 @@ import com.android.tools.lint.detector.api.isKotlin
 import com.intellij.psi.PsiClassType
 import com.intellij.psi.impl.source.PsiClassReferenceType
 import com.linecorp.lich.static_analysis.extensions.findClosestParentByType
-import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtObjectDeclaration
-import org.jetbrains.kotlin.psi.psiUtil.isAbstract
 import org.jetbrains.uast.UClass
 import org.jetbrains.uast.UElement
 import org.jetbrains.uast.UTypeReferenceExpression
@@ -41,12 +39,12 @@ class LichFactoryDetector : Detector(), SourceCodeScanner {
         @JvmStatic
         val OBJECT_ISSUE: Issue = Issue.create(
             "FactoryShouldBeObject",
-            "It is better practice to implement factories using an *object* declaration.",
-            "Factories should be implemented by *object* declarations in order to avoid multiple " +
-                "instances of the same factory.",
+            "Factories should be implemented by *object declarations*.",
+            "In order to avoid multiple instances of the same factory, you should implement " +
+                "factories using an *object declaration*.",
             Category.CORRECTNESS,
             6,
-            Severity.WARNING,
+            Severity.ERROR,
             Implementation(LichFactoryDetector::class.java, Scope.JAVA_FILE_SCOPE)
         )
     }
@@ -54,14 +52,16 @@ class LichFactoryDetector : Detector(), SourceCodeScanner {
     override fun applicableSuperClasses(): List<String> = Factory.qualifiedNames
 
     override fun visitClass(context: JavaContext, declaration: UClass) {
-        if (!isKotlin(declaration)) {
+        if (!isKotlin(declaration) || Factory.contains(declaration.qualifiedName)) {
             return
         }
         val declarationPsi = declaration.sourcePsi
-        if (declarationPsi !is KtObjectDeclaration) {
-            if (declarationPsi is KtClass && !declarationPsi.isAbstract()) {
-                context.reportObject(declaration)
-            }
+        if (declarationPsi !is KtObjectDeclaration || declarationPsi.isObjectLiteral()) {
+            context.reportObject(declaration)
+            return
+        }
+        if (!declarationPsi.isCompanion()) {
+            return
         }
         val factorySupertypeDeclaration = declaration.findFactorySupertype() ?: return
         val factoryType = Factory.find(factorySupertypeDeclaration.getQualifiedName()) ?: return
@@ -127,7 +127,7 @@ class LichFactoryDetector : Detector(), SourceCodeScanner {
             OBJECT_ISSUE,
             node,
             getNameLocation(node),
-            "Factories generally should be implemented by *object* declarations."
+            "Factories should be implemented by *object declarations*."
         )
     }
 
