@@ -21,6 +21,7 @@
         </activity>
 
         <activity android:name=".simplecoroutine.SimpleCoroutineActivity" />
+        <activity android:name=".lifecyclescope.LifecycleScopeDemoActivity" />
         <activity android:name=".mvvm.MvvmSampleActivity" />
 
     </application>

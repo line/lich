@@ -2,6 +2,7 @@
     <string name="app_name">Lich Dagger Sample</string>
     <string name="feature_foo_title">Dagger Foo Feature</string>
     <string name="launch_simplecoroutine">Launch SimpleCoroutine</string>
+    <string name="launch_lifecyclescope">Launch LifecycleScopeDemo</string>
     <string name="launch_mvvmsample">Launch MvvmSample</string>
     <string name="launch_foofeature">Launch FooFeature</string>
     <string name="launch_barfeature">Launch BarFeature</string>
