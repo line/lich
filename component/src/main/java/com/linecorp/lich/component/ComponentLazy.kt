@@ -66,6 +66,8 @@ fun <T : Any> Fragment.component(factory: ComponentFactory<T>): Lazy<T> =
  *
  * If possible, prefer to use [Context.component] or [Fragment.component] instead.
  *
+ * As long as [contextProducer] is thread-safe, the [Lazy] is also thread-safe.
+ *
  * @param contextProducer a function that returns a [Context]. This function is called without any
  * synchronization. So, it might be called multiple times if the [Lazy] is called from multiple
  * threads.
@@ -85,7 +87,8 @@ internal abstract class ComponentLazy<T : Any>(private val factory: ComponentFac
 
     protected abstract val context: Context
 
-    // Since "Component" is singleton, no extra synchronization is needed.
+    // Since it is guaranteed that `getComponent(factory)` always returns the same instance,
+    // no extra synchronization is needed.
     // NOTE: We cannot use `lazy(LazyThreadSafetyMode.NONE) {...}` instead of `ComponentLazy`,
     // because it clears its `initializer` field after creation. It's not thread-safe.
     override val value: T

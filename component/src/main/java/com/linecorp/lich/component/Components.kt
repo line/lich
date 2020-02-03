@@ -24,6 +24,9 @@ import com.linecorp.lich.component.internal.componentProvider
  * Gets a singleton instance of component created from [factory].
  * If such component is not created yet, it will be created immediately.
  *
+ * This function is thread-safe. It is guaranteed that the same instance will always be returned
+ * even if called from multiple threads.
+ *
  * If you want to get components lazily, use [Context.component] instead.
  *
  * @see Context.component
