@@ -264,7 +264,7 @@ class BarViewModel(private val barRepository: BarRepository) : AbstractViewModel
 ```
 
 This feature is almost equivalent to
-[Android Architecture Components' viewModelScope](https://developer.android.com/reference/kotlin/androidx/lifecycle/package-summary.html#viewmodelscope),
+[Android Architecture Components' viewModelScope](https://developer.android.com/topic/libraries/architecture/coroutines#viewmodelscope),
 but you can simply write `launch { ... }` instead of `viewModelScope.launch { ... }`.
 
 ## Example

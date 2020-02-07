@@ -29,7 +29,9 @@ import kotlinx.coroutines.cancel
  *
  * This class also implements [CoroutineScope]. This scope has [kotlinx.coroutines.SupervisorJob]
  * and [kotlinx.coroutines.Dispatchers.Main] context elements, and is cancelled just before
- * [onCleared] is called.
+ * [onCleared] is called. This is almost equivalent to Android Architecture Components' `viewModelScope`
+ * (cf. https://developer.android.com/topic/libraries/architecture/coroutines#viewmodelscope ),
+ * but you can simply write `launch { ... }` instead of `viewModelScope.launch { ... }`.
  *
  * @see ViewModelFactory
  */
