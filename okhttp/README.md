@@ -16,7 +16,6 @@ function to send an HTTP request and receive its response.
 
 This is a sample code that fetches a content of the given URL as a `String`.
 ```kotlin
-@Throws(IOException::class)
 suspend fun fetchContentAsString(url: String): String {
     val request = Request.Builder().url(url).build()
     return okHttpClient.call(request) { response ->

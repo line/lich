@@ -33,7 +33,6 @@ import kotlin.coroutines.resumeWithException
  *
  * This is a sample code that fetches a content of the given URL as `String`.
  * ```
- * @Throws(IOException::class)
  * suspend fun fetchContentAsString(url: String): String {
  *     val request = Request.Builder().url(url).build()
  *     return okHttpClient.call(request) { response ->
@@ -51,7 +50,6 @@ import kotlin.coroutines.resumeWithException
  * will be called from OkHttp's background threads.
  * @throws IOException
  */
-@Throws(IOException::class)
 suspend fun <T> OkHttpClient.call(request: Request, responseMapper: (Response) -> T): T =
     suspendCancellableCoroutine { cont ->
         val call = newCall(request)

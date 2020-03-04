@@ -34,7 +34,6 @@ class CounterServiceClient @Inject constructor(private val okHttpClient: OkHttpC
      * @return the initial value for the counter.
      * @throws IOException
      */
-    @Throws(IOException::class)
     suspend fun getInitialCounterValue(counterName: String): Int {
         Log.i("CounterServiceClient", "getInitialCounterValue: counterName = $counterName")
         // We use "jsonplaceholder.typicode.com" for a fake API server.

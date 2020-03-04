@@ -43,7 +43,6 @@ import java.io.IOException
  *     // See AbstractThriftCallHandler.
  *     private val handler: ThriftCallHandler<FooService.Client> = ...
  *
- *     @Throws(TException::class)
  *     suspend fun callFoo(id: Long, name: String, param: FooParam): FooResponse =
  *         okHttpClient.callThrift(handler,
  *             { send_callFoo(id, name, param) },
@@ -62,7 +61,6 @@ import java.io.IOException
  * @throws TException
  * @see AbstractThriftCallHandler
  */
-@Throws(TException::class)
 suspend fun <T : TServiceClient, R> OkHttpClient.callThrift(
     thriftCallHandler: ThriftCallHandler<T>,
     sendRequest: T.() -> Unit,
