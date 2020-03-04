@@ -41,14 +41,12 @@ class FooServiceClient(private val okHttpClient: OkHttpClient) {
     private val handler: ThriftCallHandler<FooService.Client> =
         MyThriftCallHandler(FooService.Client.Factory(), "/foo")
 
-    @Throws(TException::class)
     suspend fun ping() =
         okHttpClient.callThrift(handler,
             { send_ping() },
             { recv_ping() }
         )
 
-    @Throws(TException::class)
     suspend fun callFoo(id: Long, name: String, param: FooParam): FooResponse =
         okHttpClient.callThrift(handler,
             { send_callFoo(id, name, param) },
