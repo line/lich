@@ -240,8 +240,8 @@ class InitializingSavedStateDelegate<T>(private val savedState: SavedState, priv
 /**
  * A delegate provider for [SavedState.required].
  */
-@Suppress("EXPERIMENTAL_FEATURE_WARNING")
-inline class RequiringSavedStateDelegate<T>(val savedState: SavedState) {
+// #29 In Kotlin 1.3.70, `provideDelegate` cannot be compiled in inline classes.
+class RequiringSavedStateDelegate<T>(val savedState: SavedState) {
     @Suppress("NOTHING_TO_INLINE")
     inline operator fun provideDelegate(
         thisRef: Any?,
@@ -275,8 +275,8 @@ inline class InitializedSavedState<T>(val savedState: SavedState) {
 /**
  * A delegate provider for [SavedState.liveData] without `initialValue`.
  */
-@Suppress("EXPERIMENTAL_FEATURE_WARNING")
-inline class SavedStateLiveDataDelegate<T>(val savedState: SavedState) {
+// #29 In Kotlin 1.3.70, `provideDelegate` cannot be compiled in inline classes.
+class SavedStateLiveDataDelegate<T>(val savedState: SavedState) {
     @Suppress("NOTHING_TO_INLINE")
     inline operator fun provideDelegate(
         thisRef: Any?,
