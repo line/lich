@@ -48,7 +48,6 @@ buildscript {
     dependencies {
         classpath "com.android.tools.build:gradle:${versions.androidGradlePlugin}"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${versions.kotlin}"
-        classpath 'digital.wup:android-maven-publish:3.6.3'
         classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.4'
     }
 }
@@ -61,7 +60,9 @@ allprojects {
     }
     afterEvaluate {
         if (ext.has('publicationType')) {
-            configurePublication(project, ext.publicationType)
+            afterEvaluate {
+                configurePublication(project, ext.publicationType)
+            }
         }
     }
 }
@@ -70,7 +71,6 @@ def configurePublication(project, type) {
     configure(project) {
         switch (type) {
             case 'jar':
-                apply plugin: 'maven-publish'
                 task sourcesJar(type: Jar) {
                     archiveClassifier = 'sources'
                     from sourceSets.main.allSource
@@ -85,7 +85,6 @@ def configurePublication(project, type) {
                 }
                 break
             case 'aar':
-                apply plugin: 'digital.wup.android-maven-publish'
                 task sourcesJar(type: Jar) {
                     archiveClassifier = 'sources'
                     from android.sourceSets.main.java.srcDirs
@@ -93,7 +92,7 @@ def configurePublication(project, type) {
                 publishing {
                     publications {
                         myPublication(MavenPublication) {
-                            from components.android
+                            from components.release
                             artifact sourcesJar
                         }
                     }
