@@ -18,6 +18,7 @@ package com.linecorp.lich.sample.mvvm
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.observe
 import com.linecorp.lich.sample.databinding.MvvmSampleActivityBinding
@@ -37,13 +38,13 @@ class MvvmSampleActivity : AppCompatActivity() {
         sampleViewModel.counterText.observe(this) { counterText ->
             binding.counterValue.text = counterText
         }
-        sampleViewModel.loadingVisibility.observe(this) { loadingVisibility ->
-            binding.loadingProgress.visibility = loadingVisibility
-        }
         sampleViewModel.isOperationEnabled.observe(this) { isEnabled ->
             binding.countUpBtn.isEnabled = isEnabled
             binding.countDownBtn.isEnabled = isEnabled
             binding.deleteCounterBtn.isEnabled = isEnabled
+        }
+        sampleViewModel.isLoading.observe(this) { isLoading ->
+            binding.loadingProgress.visibility = if (isLoading) View.VISIBLE else View.GONE
         }
 
         binding.countUpBtn.setOnClickListener { sampleViewModel.countUp() }

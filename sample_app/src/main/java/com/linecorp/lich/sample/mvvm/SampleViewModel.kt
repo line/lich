@@ -16,7 +16,6 @@
 package com.linecorp.lich.sample.mvvm
 
 import android.content.Context
-import android.view.View
 import androidx.annotation.MainThread
 import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.LiveData
@@ -44,13 +43,12 @@ class SampleViewModel @VisibleForTesting internal constructor(
         counter?.value?.toString() ?: context.getString(R.string.counter_no_value)
     }
 
-    val loadingVisibility: LiveData<Int> = counterUseCase.isLoading.map { isLoading ->
-        if (isLoading) View.VISIBLE else View.GONE
-    }
-
     val isOperationEnabled: LiveData<Boolean> = counterUseCase.liveCounter.map { counter ->
         counter != null
     }
+
+    val isLoading: LiveData<Boolean>
+        get() = counterUseCase.isLoading
 
     fun loadData() {
         launch {

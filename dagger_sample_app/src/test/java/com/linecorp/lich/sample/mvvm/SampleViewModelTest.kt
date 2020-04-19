@@ -16,7 +16,6 @@
 package com.linecorp.lich.sample.mvvm
 
 import android.content.Context
-import android.view.View
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
@@ -85,21 +84,21 @@ class SampleViewModelTest {
         mockIsLoading.value = true
 
         val counterTextObserver = sampleViewModel.counterText.observeWithMockk()
-        val loadingVisibilityObserver = sampleViewModel.loadingVisibility.observeWithMockk()
         val isOperationEnabledObserver = sampleViewModel.isOperationEnabled.observeWithMockk()
+        val isLoadingObserver = sampleViewModel.isLoading.observeWithMockk()
 
         verify(exactly = 1) { counterTextObserver.onChanged("No value.") }
-        verify(exactly = 1) { loadingVisibilityObserver.onChanged(View.VISIBLE) }
         verify(exactly = 1) { isOperationEnabledObserver.onChanged(false) }
-        confirmVerified(counterTextObserver, loadingVisibilityObserver, isOperationEnabledObserver)
+        verify(exactly = 1) { isLoadingObserver.onChanged(true) }
+        confirmVerified(counterTextObserver, isOperationEnabledObserver, isLoadingObserver)
 
         mockLiveCounter.value = Counter("foo", 42)
         mockIsLoading.value = false
 
         verify(exactly = 1) { counterTextObserver.onChanged("42") }
-        verify(exactly = 1) { loadingVisibilityObserver.onChanged(View.GONE) }
         verify(exactly = 1) { isOperationEnabledObserver.onChanged(true) }
-        confirmVerified(counterTextObserver, loadingVisibilityObserver, isOperationEnabledObserver)
+        verify(exactly = 1) { isLoadingObserver.onChanged(false) }
+        confirmVerified(counterTextObserver, isOperationEnabledObserver, isLoadingObserver)
     }
 
     private fun <T> LiveData<T>.observeWithMockk(): Observer<T> =

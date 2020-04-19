@@ -16,7 +16,6 @@
 package com.linecorp.lich.sample.mvvm
 
 import android.content.Context
-import android.view.View
 import androidx.lifecycle.MutableLiveData
 import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider
@@ -48,20 +47,20 @@ class MvvmSampleActivityTest {
 
     private lateinit var mockCounterText: MutableLiveData<String>
 
-    private lateinit var mockLoadingVisibility: MutableLiveData<Int>
-
     private lateinit var mockIsOperationEnabled: MutableLiveData<Boolean>
+
+    private lateinit var mockIsLoading: MutableLiveData<Boolean>
 
     @Before
     fun setUp() {
         context = ApplicationProvider.getApplicationContext()
         mockCounterText = MutableLiveData("5")
-        mockLoadingVisibility = MutableLiveData(View.GONE)
         mockIsOperationEnabled = MutableLiveData(true)
+        mockIsLoading = MutableLiveData(false)
         mockViewModelHandle = mockViewModel(SampleViewModel) {
             every { counterText } returns mockCounterText
-            every { loadingVisibility } returns mockLoadingVisibility
             every { isOperationEnabled } returns mockIsOperationEnabled
+            every { isLoading } returns mockIsLoading
         }
     }
 
