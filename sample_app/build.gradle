@@ -33,7 +33,7 @@ android {
         jvmTarget = '1.8'
     }
 
-    dataBinding {
+    viewBinding {
         enabled = true
     }
 

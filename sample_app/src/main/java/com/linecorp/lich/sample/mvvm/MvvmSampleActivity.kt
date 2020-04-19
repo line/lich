@@ -19,8 +19,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.databinding.DataBindingUtil
-import com.linecorp.lich.sample.R
+import androidx.lifecycle.observe
 import com.linecorp.lich.sample.databinding.MvvmSampleActivityBinding
 import com.linecorp.lich.viewmodel.putViewModelArgs
 import com.linecorp.lich.viewmodel.viewModel
@@ -32,10 +31,24 @@ class MvvmSampleActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val binding: MvvmSampleActivityBinding =
-            DataBindingUtil.setContentView(this, R.layout.mvvm_sample_activity)
-        binding.lifecycleOwner = this
-        binding.viewModel = sampleViewModel
+        val binding = MvvmSampleActivityBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
+        sampleViewModel.counterText.observe(this) { counterText ->
+            binding.counterValue.text = counterText
+        }
+        sampleViewModel.loadingVisibility.observe(this) { loadingVisibility ->
+            binding.loadingProgress.visibility = loadingVisibility
+        }
+        sampleViewModel.isOperationEnabled.observe(this) { isEnabled ->
+            binding.countUpBtn.isEnabled = isEnabled
+            binding.countDownBtn.isEnabled = isEnabled
+            binding.deleteCounterBtn.isEnabled = isEnabled
+        }
+
+        binding.countUpBtn.setOnClickListener { sampleViewModel.countUp() }
+        binding.countDownBtn.setOnClickListener { sampleViewModel.countDown() }
+        binding.deleteCounterBtn.setOnClickListener { sampleViewModel.deleteCounter() }
     }
 
     companion object {
