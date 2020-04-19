@@ -16,11 +16,10 @@
 package com.linecorp.lich.sample.simplecoroutine
 
 import android.os.Bundle
-import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.linecorp.lich.lifecycle.AutoResetLifecycleScope
-import com.linecorp.lich.sample.R
+import com.linecorp.lich.sample.databinding.SimpleCoroutineActivityBinding
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -34,12 +33,13 @@ class SimpleCoroutineActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.simple_coroutine_activity)
 
-        messageText = findViewById(R.id.coroutine_message)
+        val binding = SimpleCoroutineActivityBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        val someButton: Button = findViewById(R.id.start_coroutine_button)
-        someButton.setOnClickListener {
+        messageText = binding.coroutineMessage
+
+        binding.startCoroutineButton.setOnClickListener {
             startSomeTask()
         }
     }

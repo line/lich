@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".lifecyclescope.LifecycleScopeDemo1Fragment">
+    tools:context=".lifecyclescope.LifecycleScopeDemo1Fragment"
+    tools:viewBindingIgnore="true">
 
     <Button
         android:id="@+id/launch_fragment2_button"

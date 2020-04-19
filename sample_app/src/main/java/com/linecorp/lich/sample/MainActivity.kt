@@ -16,38 +16,42 @@
 package com.linecorp.lich.sample
 
 import android.content.Intent
-import android.view.View
+import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.linecorp.lich.component.component
+import com.linecorp.lich.sample.databinding.MainActivityBinding
 import com.linecorp.lich.sample.feature.bar.BarFeatureFacade
 import com.linecorp.lich.sample.feature.foo.FooFeatureFacade
 import com.linecorp.lich.sample.lifecyclescope.LifecycleScopeDemoActivity
 import com.linecorp.lich.sample.mvvm.MvvmSampleActivity
 import com.linecorp.lich.sample.simplecoroutine.SimpleCoroutineActivity
 
-class MainActivity : AppCompatActivity(R.layout.main_activity) {
+class MainActivity : AppCompatActivity() {
 
     private val fooFeatureFacade by component(FooFeatureFacade)
 
     private val barFeatureFacade by component(BarFeatureFacade)
 
-    fun launchSimpleCoroutineActivity(@Suppress("UNUSED_PARAMETER") view: View) {
-        startActivity(Intent(this, SimpleCoroutineActivity::class.java))
-    }
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
 
-    fun launchLifecycleScopeDemoActivity(@Suppress("UNUSED_PARAMETER") view: View) {
-        startActivity(Intent(this, LifecycleScopeDemoActivity::class.java))
-    }
+        val binding = MainActivityBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-    fun launchMvvmSampleActivity(@Suppress("UNUSED_PARAMETER") view: View) {
-        startActivity(MvvmSampleActivity.newIntent(this, "mvvm"))
-    }
-
-    fun launchFooFeatureActivity(@Suppress("UNUSED_PARAMETER") view: View) {
-        fooFeatureFacade.launchFooFeatureActivity()
-    }
-
-    fun launchBarFeatureActivity(@Suppress("UNUSED_PARAMETER") view: View) {
-        barFeatureFacade.launchBarFeatureActivity()
+        binding.launchSimpleCoroutine.setOnClickListener {
+            startActivity(Intent(this, SimpleCoroutineActivity::class.java))
+        }
+        binding.launchLifecyclescopeDemo.setOnClickListener {
+            startActivity(Intent(this, LifecycleScopeDemoActivity::class.java))
+        }
+        binding.launchMvvmSample.setOnClickListener {
+            startActivity(MvvmSampleActivity.newIntent(this, "mvvm"))
+        }
+        binding.launchFooFeature.setOnClickListener {
+            fooFeatureFacade.launchFooFeatureActivity()
+        }
+        binding.launchBarFeature.setOnClickListener {
+            barFeatureFacade.launchBarFeatureActivity()
+        }
     }
 }

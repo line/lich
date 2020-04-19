@@ -13,7 +13,6 @@
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
         android:layout_marginTop="16dp"
-        android:onClick="launchSimpleCoroutineActivity"
         android:text="@string/launch_simplecoroutine"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -25,7 +24,6 @@
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
         android:layout_marginTop="16dp"
-        android:onClick="launchLifecycleScopeDemoActivity"
         android:text="@string/launch_lifecyclescope"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/launch_simple_coroutine" />
@@ -37,7 +35,6 @@
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
         android:layout_marginTop="16dp"
-        android:onClick="launchMvvmSampleActivity"
         android:text="@string/launch_mvvmsample"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/launch_lifecyclescope_demo" />
@@ -49,7 +46,6 @@
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
         android:layout_marginTop="16dp"
-        android:onClick="launchFooFeatureActivity"
         android:text="@string/launch_foofeature"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/launch_mvvm_sample" />
@@ -61,7 +57,6 @@
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
         android:layout_marginTop="16dp"
-        android:onClick="launchBarFeatureActivity"
         android:text="@string/launch_barfeature"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/launch_foo_feature" />
