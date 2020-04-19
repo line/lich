@@ -16,10 +16,9 @@
 package com.linecorp.lich.sample.feature.bar
 
 import android.os.Bundle
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.observe
-import com.linecorp.lich.sample.feature.R
+import com.linecorp.lich.sample.feature.databinding.BarFeatureActivityBinding
 import com.linecorp.lich.sample.feature.viewmodel.SampleFeatureViewModel
 import com.linecorp.lich.viewmodel.viewModel
 
@@ -29,11 +28,12 @@ class BarFeatureActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.bar_feature_activity)
 
-        val messageView: TextView = findViewById(R.id.feature_message)
+        val binding = BarFeatureActivityBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
         sampleFeatureViewModel.message.observe(this) {
-            messageView.text = it
+            binding.featureMessage.text = it
         }
     }
 }
