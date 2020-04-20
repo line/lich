@@ -28,9 +28,5 @@ dependencies {
     androidTestImplementation "org.jetbrains.kotlin:kotlin-test-junit:${versions.kotlin}"
     androidTestImplementation "androidx.test:runner:${versions.androidxTestRunner}"
     androidTestImplementation "androidx.test.ext:junit:${versions.androidxTestJunit}"
-    androidTestImplementation("io.mockk:mockk-android:${versions.mockk}") {
-        exclude module: 'objenesis'
-    }
-    // Workaround for https://github.com/mockk/mockk/issues/281
-    androidTestImplementation 'org.objenesis:objenesis:2.6'
+    androidTestImplementation "io.mockk:mockk-android:${versions.mockk}"
 }
