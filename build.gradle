@@ -80,6 +80,13 @@ def configurePublication(project, type) {
                         myPublication(MavenPublication) {
                             from components.java
                             artifact sourcesJar
+                            pom.licenses {
+                                license {
+                                    name = 'Apache-2.0'
+                                    url = 'https://www.apache.org/licenses/LICENSE-2.0.txt'
+                                    distribution = 'repo'
+                                }
+                            }
                         }
                     }
                 }
@@ -94,6 +101,13 @@ def configurePublication(project, type) {
                         myPublication(MavenPublication) {
                             from components.release
                             artifact sourcesJar
+                            pom.licenses {
+                                license {
+                                    name = 'Apache-2.0'
+                                    url = 'https://www.apache.org/licenses/LICENSE-2.0.txt'
+                                    distribution = 'repo'
+                                }
+                            }
                         }
                     }
                 }
