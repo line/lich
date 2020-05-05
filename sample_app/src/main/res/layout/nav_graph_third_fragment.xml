@@ -4,83 +4,58 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".navgraph.ThirdFragment">
 
     <Button
-        android:id="@+id/launch_simple_coroutine"
+        android:id="@+id/go_to_second_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
         android:layout_marginTop="16dp"
-        android:text="@string/launch_simplecoroutine"
+        android:text="Go to SecondFragment"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
-        android:id="@+id/launch_lifecyclescope_demo"
+        android:id="@+id/up_to_first_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
         android:layout_marginTop="16dp"
-        android:text="@string/launch_lifecyclescope"
+        android:text="Up to FirstFragment"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/launch_simple_coroutine" />
+        app:layout_constraintTop_toBottomOf="@id/go_to_second_button" />
 
-    <Button
-        android:id="@+id/launch_mvvm_sample"
+    <TextView
+        android:id="@+id/nav_host_viewmodel_message"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
         android:layout_marginTop="16dp"
-        android:text="@string/launch_mvvmsample"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/launch_lifecyclescope_demo" />
+        app:layout_constraintTop_toBottomOf="@id/up_to_first_button" />
 
-    <Button
-        android:id="@+id/launch_nav_host"
+    <TextView
+        android:id="@+id/nav_graph_viewmodel_message"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
         android:layout_marginTop="16dp"
-        android:text="@string/launch_nav_host"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/launch_mvvm_sample" />
+        app:layout_constraintTop_toBottomOf="@id/nav_host_viewmodel_message" />
 
-    <Button
-        android:id="@+id/launch_nav_deep_link"
+    <TextView
+        android:id="@+id/fragment_viewmodel_message"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
         android:layout_marginTop="16dp"
-        android:text="@string/launch_nav_deep_link"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/launch_nav_host" />
-
-    <Button
-        android:id="@+id/launch_foo_feature"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="16dp"
-        android:text="@string/launch_foofeature"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/launch_nav_deep_link" />
-
-    <Button
-        android:id="@+id/launch_bar_feature"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="16dp"
-        android:text="@string/launch_barfeature"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/launch_foo_feature" />
+        app:layout_constraintTop_toBottomOf="@id/nav_graph_viewmodel_message" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

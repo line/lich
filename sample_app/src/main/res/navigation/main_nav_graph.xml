@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_nav_graph"
+    app:startDestination="@id/first_fragment">
+
+    <fragment
+        android:id="@+id/first_fragment"
+        android:name="com.linecorp.lich.sample.navgraph.FirstFragment"
+        android:label="FirstFragment"
+        tools:layout="@layout/nav_graph_first_fragment">
+        <action
+            android:id="@+id/action_to_child_graph"
+            app:destination="@id/child_nav_graph"
+            app:enterAnim="@anim/fragment_open_enter"
+            app:exitAnim="@anim/fragment_open_exit"
+            app:popEnterAnim="@anim/fragment_close_enter"
+            app:popExitAnim="@anim/fragment_close_exit" />
+    </fragment>
+
+    <action
+        android:id="@+id/action_up_to_first_fragment"
+        app:destination="@id/first_fragment"
+        app:enterAnim="@anim/fragment_close_enter"
+        app:exitAnim="@anim/fragment_close_exit"
+        app:popUpTo="@id/first_fragment"
+        app:popUpToInclusive="true" />
+
+    <include app:graph="@navigation/child_nav_graph" />
+
+</navigation>

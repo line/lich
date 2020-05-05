@@ -17,9 +17,12 @@ package com.linecorp.lich.viewmodel
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.annotation.IdRes
 import androidx.annotation.MainThread
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
+import androidx.navigation.NavBackStackEntry
+import androidx.navigation.fragment.NavHostFragment
 
 /**
  * Creates a new instance of a [Lazy] that returns an existing ViewModel or creates a new one,
@@ -100,5 +103,38 @@ fun <T : AbstractViewModel> Fragment.activityViewModel(
     factory: ViewModelFactory<T>,
     argumentsFunction: FragmentActivity.() -> Bundle? = { intent?.extras }
 ): Lazy<T> = lazy(LazyThreadSafetyMode.NONE) {
-    requireActivity().run { getViewModel(factory, argumentsFunction()) }
+    requireActivity().let { it.getViewModel(factory, it.argumentsFunction()) }
+}
+
+/**
+ * Creates a new instance of a [Lazy] that returns an existing ViewModel or creates a new one,
+ * scoped to a navigation graph present on the `NavController` back stack.
+ * You can use this ViewModel to share data between Fragments in the same navigation graph.
+ *
+ * This is a sample code:
+ * ```
+ * class FooFragment : Fragment() {
+ *
+ *     // A shared instance of FooViewModel scoped to the `foo_nav_graph` navigation graph.
+ *     private val fooNavGraphViewModel by navGraphViewModel(FooViewModel, R.id.foo_nav_graph)
+ *
+ *     // snip...
+ * }
+ * ```
+ *
+ * @param factory [ViewModelFactory] to create the ViewModel.
+ * @param navGraphId the ID of a `NavGraph` that exists on the `NavController` back stack.
+ * @param argumentsFunction a function that returns initial values for a new [SavedState] passed
+ * down to the ViewModel. If omitted, `NavBackStackEntry.getArguments()` for
+ * `NavController.getBackStackEntry(navGraphId)` is used.
+ */
+@MainThread
+fun <T : AbstractViewModel> Fragment.navGraphViewModel(
+    factory: ViewModelFactory<T>,
+    @IdRes navGraphId: Int,
+    argumentsFunction: NavBackStackEntry.() -> Bundle? = { arguments }
+): Lazy<T> = lazy(LazyThreadSafetyMode.NONE) {
+    NavHostFragment.findNavController(this).getBackStackEntry(navGraphId).let {
+        requireContext().getViewModel(it, it, factory, it.argumentsFunction())
+    }
 }

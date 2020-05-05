@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/child_nav_graph"
+    app:startDestination="@id/second_fragment">
+
+    <fragment
+        android:id="@+id/second_fragment"
+        android:name="com.linecorp.lich.sample.navgraph.SecondFragment"
+        android:label="SecondFragment"
+        tools:layout="@layout/nav_graph_second_fragment">
+        <action
+            android:id="@+id/action_to_third_fragment"
+            app:destination="@id/third_fragment"
+            app:enterAnim="@anim/fragment_open_enter"
+            app:exitAnim="@anim/fragment_open_exit"
+            app:popEnterAnim="@anim/fragment_close_enter"
+            app:popExitAnim="@anim/fragment_close_exit" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/third_fragment"
+        android:name="com.linecorp.lich.sample.navgraph.ThirdFragment"
+        android:label="ThirdFragment"
+        tools:layout="@layout/nav_graph_third_fragment">
+        <action
+            android:id="@+id/action_to_second_fragment"
+            app:destination="@id/second_fragment"
+            app:enterAnim="@anim/fragment_open_enter"
+            app:exitAnim="@anim/fragment_open_exit"
+            app:popEnterAnim="@anim/fragment_close_enter"
+            app:popExitAnim="@anim/fragment_close_exit" />
+    </fragment>
+
+</navigation>

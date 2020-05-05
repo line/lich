@@ -24,6 +24,7 @@ import com.linecorp.lich.sample.feature.bar.BarFeatureFacade
 import com.linecorp.lich.sample.feature.foo.FooFeatureFacade
 import com.linecorp.lich.sample.lifecyclescope.LifecycleScopeDemoActivity
 import com.linecorp.lich.sample.mvvm.MvvmSampleActivity
+import com.linecorp.lich.sample.navgraph.NavHostActivity
 import com.linecorp.lich.sample.simplecoroutine.SimpleCoroutineActivity
 
 class MainActivity : AppCompatActivity() {
@@ -46,6 +47,12 @@ class MainActivity : AppCompatActivity() {
         }
         binding.launchMvvmSample.setOnClickListener {
             startActivity(MvvmSampleActivity.newIntent(this, "mvvm"))
+        }
+        binding.launchNavHost.setOnClickListener {
+            startActivity(NavHostActivity.newIntent(this, "From MainActivity"))
+        }
+        binding.launchNavDeepLink.setOnClickListener {
+            NavHostActivity.launchDeepLink(this, R.id.third_fragment, "From DeepLink")
         }
         binding.launchFooFeature.setOnClickListener {
             fooFeatureFacade.launchFooFeatureActivity()

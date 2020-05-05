@@ -121,7 +121,8 @@ fun <T : AbstractViewModel> Fragment.getActivityViewModel(
     arguments: Bundle? = requireActivity().intent?.extras
 ): T = requireActivity().getViewModel(factory, arguments)
 
-private fun <T : AbstractViewModel> Context.getViewModel(
+@MainThread
+internal fun <T : AbstractViewModel> Context.getViewModel(
     viewModelStoreOwner: ViewModelStoreOwner,
     savedStateRegistryOwner: SavedStateRegistryOwner,
     factory: ViewModelFactory<T>,

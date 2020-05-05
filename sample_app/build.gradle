@@ -70,6 +70,8 @@ dependencies {
     implementation "androidx.constraintlayout:constraintlayout:${versions.androidxConstraintlayout}"
     implementation "androidx.fragment:fragment-ktx:${versions.androidxFragment}"
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:${versions.androidxLifecycle}"
+    implementation "androidx.navigation:navigation-fragment-ktx:${versions.androidxNavigation}"
+    implementation "androidx.navigation:navigation-ui-ktx:${versions.androidxNavigation}"
     implementation "androidx.room:room-ktx:${versions.androidxRoom}"
     kapt "androidx.room:room-compiler:${versions.androidxRoom}"
     implementation "com.squareup.okhttp3:okhttp:${versions.okhttp}"
