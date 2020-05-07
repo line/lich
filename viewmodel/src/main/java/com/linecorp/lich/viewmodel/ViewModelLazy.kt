@@ -21,7 +21,6 @@ import androidx.annotation.IdRes
 import androidx.annotation.MainThread
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
-import androidx.navigation.NavBackStackEntry
 import androidx.navigation.fragment.NavHostFragment
 
 /**
@@ -124,17 +123,13 @@ fun <T : AbstractViewModel> Fragment.activityViewModel(
  *
  * @param factory [ViewModelFactory] to create the ViewModel.
  * @param navGraphId the ID of a `NavGraph` that exists on the `NavController` back stack.
- * @param argumentsFunction a function that returns initial values for a new [SavedState] passed
- * down to the ViewModel. If omitted, `NavBackStackEntry.getArguments()` for
- * `NavController.getBackStackEntry(navGraphId)` is used.
  */
 @MainThread
 fun <T : AbstractViewModel> Fragment.navGraphViewModel(
     factory: ViewModelFactory<T>,
-    @IdRes navGraphId: Int,
-    argumentsFunction: NavBackStackEntry.() -> Bundle? = { arguments }
+    @IdRes navGraphId: Int
 ): Lazy<T> = lazy(LazyThreadSafetyMode.NONE) {
     NavHostFragment.findNavController(this).getBackStackEntry(navGraphId).let {
-        requireContext().getViewModel(it, it, factory, it.argumentsFunction())
+        requireContext().getViewModel(it, it, factory, it.arguments)
     }
 }
