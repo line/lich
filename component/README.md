@@ -694,23 +694,37 @@ To avoid such mistakes, it is better not to allow getting components without a `
 
 ### But I'm really frustrated that a Context is always required to get components.
 
-Okay, then you can make `getComponent(factory)` and `component(factory)` top-level functions as follows:
+Okay. Then, implement the `GlobalContext` object as follows:
 
 ```kotlin
+object GlobalContext {
+    private lateinit var application: Application
+
+    fun setup(application: Application) {
+        this.application = application
+    }
+
+    fun <T : Any> getComponent(factory: ComponentFactory<T>): T =
+        application.getComponent(factory)
+
+    fun <T : Any> component(factory: ComponentFactory<T>): Lazy<T> =
+        componentLazy(factory) { application }
+}
+
 class MyApplication : Application() {
     override fun onCreate() {
         super.onCreate()
-        myApplication = this
+        GlobalContext.setup(this)
     }
 }
+```
 
-private lateinit var myApplication: Application
+Now, you can get components like this:
 
-fun <T : Any> getComponent(factory: ComponentFactory<T>): T =
-    myApplication.getComponent(factory)
+```kotlin
+val eagerFooComponent: FooComponent = GlobalContext.getComponent(FooComponent)
 
-fun <T : Any> component(factory: ComponentFactory<T>): Lazy<T> =
-    componentLazy(factory) { myApplication }
+val lazyFooComponent: FooComponent by GlobalContext.component(FooComponent)
 ```
 
 Of course, as mentioned above, please be careful not to expose the `Context` outside components.
