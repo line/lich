@@ -9,9 +9,9 @@ import com.android.tools.lint.detector.api.Scope
 import com.android.tools.lint.detector.api.Severity
 import com.android.tools.lint.detector.api.SourceCodeScanner
 import com.android.tools.lint.detector.api.isKotlin
+import com.intellij.psi.PsiMethod
 import com.linecorp.lich.static_analysis.extensions.evaluateOrDefault
 import com.linecorp.lich.static_analysis.extensions.findClosestParentByType
-import com.intellij.psi.PsiMethod
 import org.jetbrains.uast.UCallExpression
 import org.jetbrains.uast.UField
 
@@ -51,9 +51,8 @@ class OptionalArgumentRequiredDetector : Detector(), SourceCodeScanner {
      */
     private fun isOptionalArgument(node: UCallExpression): Boolean {
         val field = node.findClosestParentByType<UField>() ?: return false
-        val argumentAnnotation = field.annotations.find {
-            it.qualifiedName == argumentAnnotationQualifiedName
-        } ?: return false
+        val argumentAnnotation =
+            field.findAnnotation(argumentAnnotationQualifiedName) ?: return false
         val isOptionalAttribute =
             argumentAnnotation.attributeValues.find { it.name == "isOptional" } ?: return false
 
