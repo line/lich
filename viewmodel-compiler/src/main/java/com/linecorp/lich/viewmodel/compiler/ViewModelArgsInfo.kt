@@ -26,7 +26,6 @@ import com.squareup.kotlinpoet.STAR
 import com.squareup.kotlinpoet.TypeName
 import com.squareup.kotlinpoet.TypeSpec
 import com.squareup.kotlinpoet.WildcardTypeName
-import com.squareup.kotlinpoet.asClassName
 import kotlinx.metadata.ClassName
 import kotlinx.metadata.Flag
 import kotlinx.metadata.Flags
@@ -56,6 +55,7 @@ private typealias KpClassName = com.squareup.kotlinpoet.ClassName
 
 internal class ViewModelArgsInfo private constructor(
     private val className: KpClassName,
+    private val originatingClassName: KpClassName,
     private val originatingElement: TypeElement,
     private val arguments: List<ArgumentInfo>,
     val errorMessages: List<String>
@@ -77,10 +77,7 @@ internal class ViewModelArgsInfo private constructor(
 
         val typeSpec = TypeSpec.classBuilder(className)
             .addOriginatingElement(originatingElement)
-            .addKdoc(
-                "A generated Args class for [%L].",
-                originatingElement.qualifiedName.toString()
-            )
+            .addKdoc("A generated Args class for [%T].", originatingClassName)
             .addSuperinterface(viewModelArgsClass)
             .primaryConstructor(constructorSpec)
             .addProperties(propertySpecs)
@@ -117,11 +114,12 @@ internal class ViewModelArgsInfo private constructor(
                 }
             ).flatten()
 
-            val className = viewModelClass.asClassName().let {
-                KpClassName(it.packageName, "${it.simpleName}Args")
-            }
+            val viewModelClassName = classVisitor.className?.toKpClassName()
+                ?: throw IllegalStateException("Failed to obtain the name of the ViewModelClass.")
+            val argsClassName = viewModelClassName.peerClass("${viewModelClassName.simpleName}Args")
             return ViewModelArgsInfo(
-                className,
+                argsClassName,
+                viewModelClassName,
                 viewModelClass,
                 resolvedArguments,
                 errorMessages
@@ -286,11 +284,17 @@ private class ArgumentInfo(val name: String, val type: TypeName, val isOptional:
 
 private class ClassVisitor(val classElement: TypeElement) : KmClassVisitor() {
 
+    var className: ClassName? = null
+
     private val allProperties: MutableList<PropertyVisitor> = mutableListOf()
 
     val resolvedArguments: MutableList<ArgumentInfo> = mutableListOf()
 
     val failedProperties: MutableList<String> = mutableListOf()
+
+    override fun visit(flags: Flags, name: ClassName) {
+        className = name
+    }
 
     override fun visitProperty(
         flags: Flags,
@@ -441,16 +445,16 @@ private open class TypeVisitor(val flags: Flags, val variance: KmVariance?) : Km
         }
     }
 
-    private fun ClassName.toKpClassName(): KpClassName? {
-        if (isLocal) return null
-        val packageName = substringBeforeLast('/', "").replace('/', '.')
-        val simpleNames = substringAfterLast('/').split('.')
-        return KpClassName(packageName, simpleNames)
-    }
-
     private object Star : TypeVisitor(flagsOf(), null) {
         override fun toTypeName(): TypeName? = STAR
     }
+}
+
+private fun ClassName.toKpClassName(): KpClassName? {
+    if (isLocal) return null
+    val packageName = substringBeforeLast('/', "").replace('/', '.')
+    val simpleNames = substringAfterLast('/').split('.')
+    return KpClassName(packageName, simpleNames)
 }
 
 private fun TypeName.eraseWildcard(): TypeName =
