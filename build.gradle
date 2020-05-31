@@ -35,7 +35,7 @@ buildscript {
         autoService             : '1.0-rc7',
         okhttp                  : '3.12.12',
         dagger                  : '2.28',
-        kotlinPoet              : '1.5.0',
+        kotlinPoet              : '1.6.0',
         thrift                  : '0.12.0',
         mockito                 : '2.28.2',
         mockitoKotlin           : '2.2.0',
