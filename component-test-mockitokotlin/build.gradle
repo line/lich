@@ -18,11 +18,6 @@ android {
         unitTests {
             // For Robolectric. See: http://robolectric.org/getting-started/
             includeAndroidResources = true
-            // Robolectric tests for API 29+ require a Java9 runtime or newer.
-            // So, for now, we run Robolectric tests for API 28 only.
-            all {
-                systemProperty 'robolectric.enabledSdks', '28'
-            }
         }
     }
 }
