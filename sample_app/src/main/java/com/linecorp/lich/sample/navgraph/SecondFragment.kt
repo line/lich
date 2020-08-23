@@ -18,7 +18,6 @@ package com.linecorp.lich.sample.navgraph
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.observe
 import androidx.navigation.Navigation
 import com.linecorp.lich.sample.R
 import com.linecorp.lich.sample.databinding.NavGraphSecondFragmentBinding
