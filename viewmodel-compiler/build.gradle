@@ -8,5 +8,7 @@ ext.publicationType = 'jar'
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib:${versions.kotlin}"
     implementation "org.jetbrains.kotlinx:kotlinx-metadata-jvm:${versions.kotlinMetadataJvm}"
-    implementation "com.squareup:kotlinpoet:${versions.kotlinPoet}"
+    implementation("com.squareup:kotlinpoet:${versions.kotlinPoet}") {
+        exclude group: 'org.jetbrains.kotlin'
+    }
 }

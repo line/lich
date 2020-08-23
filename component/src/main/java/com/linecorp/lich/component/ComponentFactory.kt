@@ -202,7 +202,9 @@ abstract class ComponentFactory<T : Any> {
         candidates: Sequence<T>
     ): T {
         val component = try {
-            candidates.maxBy { (it as? ServiceLoaderComponent)?.loadPriority ?: Int.MIN_VALUE }
+            candidates.maxByOrNull {
+                (it as? ServiceLoaderComponent)?.loadPriority ?: Int.MIN_VALUE
+            }
         } catch (e: Throwable) {
             throw FactoryDelegationException(e)
         } ?: throw FactoryDelegationException("Service implementation is not found.")

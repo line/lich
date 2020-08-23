@@ -46,7 +46,7 @@ internal val lichViewModelProvider: LichViewModelProvider =
             LichViewModelProvider::class.java,
             LichViewModelProvider::class.java.classLoader
         ).iterator()
-    }.maxBy { it.loadPriority } ?: throw Error("Failed to load LichViewModelProvider.")
+    }.maxByOrNull { it.loadPriority } ?: throw Error("Failed to load LichViewModelProvider.")
 
 fun getViewModelManager(applicationContext: Context): Any =
     lichViewModelProvider.getManager(applicationContext)

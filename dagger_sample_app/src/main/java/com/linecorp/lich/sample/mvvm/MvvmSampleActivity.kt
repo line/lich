@@ -20,7 +20,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.observe
 import com.linecorp.lich.sample.databinding.MvvmSampleActivityBinding
 import com.linecorp.lich.viewmodel.putViewModelArgs
 import com.linecorp.lich.viewmodel.viewModel

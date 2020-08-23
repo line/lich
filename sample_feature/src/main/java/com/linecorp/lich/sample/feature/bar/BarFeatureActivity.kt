@@ -17,7 +17,6 @@ package com.linecorp.lich.sample.feature.bar
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.observe
 import com.linecorp.lich.sample.feature.databinding.BarFeatureActivityBinding
 import com.linecorp.lich.sample.feature.viewmodel.SampleFeatureViewModel
 import com.linecorp.lich.viewmodel.viewModel
