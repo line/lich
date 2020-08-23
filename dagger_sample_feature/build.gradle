@@ -27,7 +27,6 @@ dependencies {
     implementation project(':component')
     implementation project(':viewmodel')
     kapt project(':viewmodel-compiler')
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:${versions.kotlin}"
     implementation "androidx.appcompat:appcompat:${versions.androidxAppcompat}"
     implementation "androidx.constraintlayout:constraintlayout:${versions.androidxConstraintlayout}"
     implementation "androidx.fragment:fragment-ktx:${versions.androidxFragment}"
