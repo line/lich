@@ -14,6 +14,10 @@ android {
         targetSdkVersion versions.targetSdk
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
     }
+
+    buildFeatures {
+        buildConfig = false
+    }
 }
 
 dependencies {
