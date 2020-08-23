@@ -1,6 +1,13 @@
 apply plugin: 'kotlin'
 apply plugin: 'kotlin-kapt'
 
+compileKotlin {
+    kotlinOptions {
+        // cf. https://github.com/uber/AutoDispose/commit/455ec23037d6e1af234d5fda9cd571c490d1b306#diff-17de65f8cfd09cee61c4b0cabbe5bf5d
+        languageVersion = "1.3"
+    }
+}
+
 dependencies {
     compileOnly "com.google.auto.service:auto-service-annotations:${versions.autoService}"
     kapt "com.google.auto.service:auto-service:${versions.autoService}"
