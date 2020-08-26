@@ -32,7 +32,7 @@ internal class ReceiveTransport : TTransport() {
     override fun read(buf: ByteArray, off: Int, len: Int): Int {
         val bytesRead = requireSource().read(buf, off, len)
         if (bytesRead < 0) {
-            throw TTransportException(TTransportException.END_OF_FILE)
+            throw TTransportException(TTransportException.END_OF_FILE, "Unexpected end of buffer.")
         }
         return bytesRead
     }
