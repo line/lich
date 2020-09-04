@@ -25,11 +25,17 @@ import java.io.IOException
 import kotlin.coroutines.resumeWithException
 
 /**
- * Executes the given [request] and converts its response using [responseMapper], then returns
- * the result.
+ * Executes the given OkHttp [request] and then handles its response with the [responseHandler].
  *
- * Since all I/O operations are executed on OkHttp's background threads, you can call this function
- * from any threads.
+ * This extension function is semantically equivalent to
+ * `OkHttpClient.newCall(request).execute().use(responseHandler)`,
+ * but with the following advantages:
+ *
+ * - All I/O operations are executed on OkHttp's background threads, and the current thread is not
+ * blocked. So you can call this function from any coroutines without using
+ * `withContext(Dispatchers.IO) { ... }`.
+ * - Handles coroutine cancellations properly. If the current coroutine is cancelled, it immediately
+ * cancels the HTTP call and throws a `CancellationException`.
  *
  * This is a sample code that fetches a content of the given URL as `String`.
  * ```
@@ -44,19 +50,19 @@ import kotlin.coroutines.resumeWithException
  * }
  * ```
  *
- * @param request an HTTP request to be performed.
- * @param responseMapper a function to convert an HTTP response to your desired object. The
- * [Response] object will be automatically closed when this function has finished. This function
- * will be called from OkHttp's background threads.
+ * @param request an OkHttp [Request] to be executed.
+ * @param responseHandler a function to process an OkHttp [Response]. The response object will be
+ * closed automatically after the function call. This function is called from a background thread.
+ * @return the result of [responseHandler].
  * @throws IOException
  */
-suspend fun <T> OkHttpClient.call(request: Request, responseMapper: (Response) -> T): T =
+suspend fun <T> OkHttpClient.call(request: Request, responseHandler: (Response) -> T): T =
     suspendCancellableCoroutine { cont ->
         val call = newCall(request)
         cont.invokeOnCancellation { call.cancel() }
         call.enqueue(object : Callback {
             override fun onResponse(call: Call, response: Response) {
-                val result = runCatching { response.use(responseMapper) }
+                val result = runCatching { response.use(responseHandler) }
                 cont.resumeWith(result)
             }
 
