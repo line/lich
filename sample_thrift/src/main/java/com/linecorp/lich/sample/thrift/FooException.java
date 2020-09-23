@@ -21,7 +21,7 @@ public class FooException extends org.apache.thrift.TException implements org.ap
   public enum _Fields implements org.apache.thrift.TFieldIdEnum {
     REASON((short)1, "reason");
 
-    private static final java.util.Map<java.lang.String, _Fields> byName = new java.util.HashMap<java.lang.String, _Fields>();
+    private static final java.util.Map<java.lang.String, _Fields> byName = new java.util.HashMap<>();
 
     static {
       for (_Fields field : java.util.EnumSet.allOf(_Fields.class)) {
@@ -80,8 +80,8 @@ public class FooException extends org.apache.thrift.TException implements org.ap
   // isset id assignments
   public static final java.util.Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
   static {
-    java.util.Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new java.util.EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
-    tmpMap.put(_Fields.REASON, new org.apache.thrift.meta_data.FieldMetaData("reason", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+    java.util.Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new java.util.EnumMap<>(_Fields.class);
+    tmpMap.put(_Fields.REASON, new org.apache.thrift.meta_data.FieldMetaData("reason", org.apache.thrift.TFieldRequirementType.DEFAULT,
         new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
     metaDataMap = java.util.Collections.unmodifiableMap(tmpMap);
     org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(FooException.class, metaDataMap);
@@ -191,13 +191,13 @@ public class FooException extends org.apache.thrift.TException implements org.ap
     if (this == that)
       return true;
 
-    boolean this_present_reason = true && this.isSetReason();
-    boolean that_present_reason = true && that.isSetReason();
+    boolean this_present_reason = this.isSetReason();
+    boolean that_present_reason = that.isSetReason();
     if (this_present_reason || that_present_reason) {
-      if (!(this_present_reason && that_present_reason))
-        return false;
-      if (!this.reason.equals(that.reason))
-        return false;
+      if (!(this_present_reason && that_present_reason)) {
+          return false;
+      }
+      return this.reason.equals(that.reason);
     }
 
     return true;
@@ -299,7 +299,7 @@ public class FooException extends org.apache.thrift.TException implements org.ap
       while (true)
       {
         schemeField = iprot.readFieldBegin();
-        if (schemeField.type == org.apache.thrift.protocol.TType.STOP) { 
+        if (schemeField.type == org.apache.thrift.protocol.TType.STOP) {
           break;
         }
         switch (schemeField.id) {
@@ -307,7 +307,7 @@ public class FooException extends org.apache.thrift.TException implements org.ap
             if (schemeField.type == org.apache.thrift.protocol.TType.STRING) {
               struct.reason = iprot.readString();
               struct.setReasonIsSet(true);
-            } else { 
+            } else {
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
             }
             break;

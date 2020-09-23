@@ -27,7 +27,7 @@ public class FooResponse implements org.apache.thrift.TBase<FooResponse, FooResp
     MESSAGE((short)2, "message"),
     COMMENT((short)3, "comment");
 
-    private static final java.util.Map<java.lang.String, _Fields> byName = new java.util.HashMap<java.lang.String, _Fields>();
+    private static final java.util.Map<java.lang.String, _Fields> byName = new java.util.HashMap<>();
 
     static {
       for (_Fields field : java.util.EnumSet.allOf(_Fields.class)) {
@@ -93,12 +93,12 @@ public class FooResponse implements org.apache.thrift.TBase<FooResponse, FooResp
   private static final _Fields optionals[] = {_Fields.COMMENT};
   public static final java.util.Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
   static {
-    java.util.Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new java.util.EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
-    tmpMap.put(_Fields.NUMBER, new org.apache.thrift.meta_data.FieldMetaData("number", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+    java.util.Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new java.util.EnumMap<>(_Fields.class);
+    tmpMap.put(_Fields.NUMBER, new org.apache.thrift.meta_data.FieldMetaData("number", org.apache.thrift.TFieldRequirementType.DEFAULT,
         new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
-    tmpMap.put(_Fields.MESSAGE, new org.apache.thrift.meta_data.FieldMetaData("message", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+    tmpMap.put(_Fields.MESSAGE, new org.apache.thrift.meta_data.FieldMetaData("message", org.apache.thrift.TFieldRequirementType.DEFAULT,
         new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
-    tmpMap.put(_Fields.COMMENT, new org.apache.thrift.meta_data.FieldMetaData("comment", org.apache.thrift.TFieldRequirementType.OPTIONAL, 
+    tmpMap.put(_Fields.COMMENT, new org.apache.thrift.meta_data.FieldMetaData("comment", org.apache.thrift.TFieldRequirementType.OPTIONAL,
         new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
     metaDataMap = java.util.Collections.unmodifiableMap(tmpMap);
     org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(FooResponse.class, metaDataMap);
@@ -304,8 +304,8 @@ public class FooResponse implements org.apache.thrift.TBase<FooResponse, FooResp
         return false;
     }
 
-    boolean this_present_message = true && this.isSetMessage();
-    boolean that_present_message = true && that.isSetMessage();
+    boolean this_present_message = this.isSetMessage();
+    boolean that_present_message = that.isSetMessage();
     if (this_present_message || that_present_message) {
       if (!(this_present_message && that_present_message))
         return false;
@@ -313,13 +313,13 @@ public class FooResponse implements org.apache.thrift.TBase<FooResponse, FooResp
         return false;
     }
 
-    boolean this_present_comment = true && this.isSetComment();
-    boolean that_present_comment = true && that.isSetComment();
+    boolean this_present_comment = this.isSetComment();
+    boolean that_present_comment = that.isSetComment();
     if (this_present_comment || that_present_comment) {
-      if (!(this_present_comment && that_present_comment))
-        return false;
-      if (!this.comment.equals(that.comment))
-        return false;
+      if (!(this_present_comment && that_present_comment)) {
+          return false;
+      }
+      return this.comment.equals(that.comment);
     }
 
     return true;
@@ -463,7 +463,7 @@ public class FooResponse implements org.apache.thrift.TBase<FooResponse, FooResp
       while (true)
       {
         schemeField = iprot.readFieldBegin();
-        if (schemeField.type == org.apache.thrift.protocol.TType.STOP) { 
+        if (schemeField.type == org.apache.thrift.protocol.TType.STOP) {
           break;
         }
         switch (schemeField.id) {
@@ -471,7 +471,7 @@ public class FooResponse implements org.apache.thrift.TBase<FooResponse, FooResp
             if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
               struct.number = iprot.readI32();
               struct.setNumberIsSet(true);
-            } else { 
+            } else {
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
             }
             break;
@@ -479,7 +479,7 @@ public class FooResponse implements org.apache.thrift.TBase<FooResponse, FooResp
             if (schemeField.type == org.apache.thrift.protocol.TType.STRING) {
               struct.message = iprot.readString();
               struct.setMessageIsSet(true);
-            } else { 
+            } else {
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
             }
             break;
@@ -487,7 +487,7 @@ public class FooResponse implements org.apache.thrift.TBase<FooResponse, FooResp
             if (schemeField.type == org.apache.thrift.protocol.TType.STRING) {
               struct.comment = iprot.readString();
               struct.setCommentIsSet(true);
-            } else { 
+            } else {
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
             }
             break;

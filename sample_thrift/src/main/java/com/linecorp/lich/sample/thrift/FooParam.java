@@ -89,9 +89,9 @@ public class FooParam implements org.apache.thrift.TBase<FooParam, FooParam._Fie
   public static final java.util.Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
   static {
     java.util.Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new java.util.EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
-    tmpMap.put(_Fields.NUMBER, new org.apache.thrift.meta_data.FieldMetaData("number", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+    tmpMap.put(_Fields.NUMBER, new org.apache.thrift.meta_data.FieldMetaData("number", org.apache.thrift.TFieldRequirementType.DEFAULT,
         new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
-    tmpMap.put(_Fields.COMMENT, new org.apache.thrift.meta_data.FieldMetaData("comment", org.apache.thrift.TFieldRequirementType.OPTIONAL, 
+    tmpMap.put(_Fields.COMMENT, new org.apache.thrift.meta_data.FieldMetaData("comment", org.apache.thrift.TFieldRequirementType.OPTIONAL,
         new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
     metaDataMap = java.util.Collections.unmodifiableMap(tmpMap);
     org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(FooParam.class, metaDataMap);
@@ -253,13 +253,13 @@ public class FooParam implements org.apache.thrift.TBase<FooParam, FooParam._Fie
         return false;
     }
 
-    boolean this_present_comment = true && this.isSetComment();
-    boolean that_present_comment = true && that.isSetComment();
+    boolean this_present_comment = this.isSetComment();
+    boolean that_present_comment = that.isSetComment();
     if (this_present_comment || that_present_comment) {
-      if (!(this_present_comment && that_present_comment))
-        return false;
-      if (!this.comment.equals(that.comment))
-        return false;
+      if (!(this_present_comment && that_present_comment)) {
+          return false;
+      }
+      return this.comment.equals(that.comment);
     }
 
     return true;
@@ -381,7 +381,7 @@ public class FooParam implements org.apache.thrift.TBase<FooParam, FooParam._Fie
       while (true)
       {
         schemeField = iprot.readFieldBegin();
-        if (schemeField.type == org.apache.thrift.protocol.TType.STOP) { 
+        if (schemeField.type == org.apache.thrift.protocol.TType.STOP) {
           break;
         }
         switch (schemeField.id) {
@@ -389,7 +389,7 @@ public class FooParam implements org.apache.thrift.TBase<FooParam, FooParam._Fie
             if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
               struct.number = iprot.readI32();
               struct.setNumberIsSet(true);
-            } else { 
+            } else {
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
             }
             break;
@@ -397,7 +397,7 @@ public class FooParam implements org.apache.thrift.TBase<FooParam, FooParam._Fie
             if (schemeField.type == org.apache.thrift.protocol.TType.STRING) {
               struct.comment = iprot.readString();
               struct.setCommentIsSet(true);
-            } else { 
+            } else {
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
             }
             break;

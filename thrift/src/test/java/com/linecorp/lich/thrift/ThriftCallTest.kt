@@ -108,17 +108,17 @@ class ThriftCallTest {
     @Test
     fun testCallFoo() = runBlocking {
         val fooResponse = FooResponse().apply {
-            setNumber(200)
-            setMessage("Response")
-            setComment("ResponseComment")
+            number = 200
+            message = "Response"
+            comment = "ResponseComment"
         }
         val result = FooService.callFoo_result().setSuccess(fooResponse)
         server.enqueue(MockResponse().setThriftResponse("callFoo", result))
         server.start()
 
         val fooParam = FooParam().apply {
-            setNumber(100)
-            setComment("RequestComment")
+            number = 100
+            comment = "RequestComment"
         }
         val actualResponse = callFoo(123, "foobar", fooParam)
 
@@ -136,8 +136,8 @@ class ThriftCallTest {
         server.start()
 
         val fooParam = FooParam().apply {
-            setNumber(100)
-            setComment("RequestComment")
+            number = 100
+            comment = "RequestComment"
         }
         try {
             callFoo(123, "foobar", fooParam)
@@ -194,7 +194,7 @@ class ThriftCallTest {
         protocol.writeMessageEnd()
 
         responseBodyTransport.flush()
-        setBody(responseBody)
+        body = responseBody
 
         return this
     }

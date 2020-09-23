@@ -71,7 +71,7 @@ class MvvmSampleActivityTest {
 
             scenario.onActivity {
                 assertTrue(mockViewModelHandle.isCreated)
-                assertEquals<String?>("counter", mockViewModelHandle.savedState["counterName"])
+                assertEquals("counter", mockViewModelHandle.savedState["counterName"])
                 assertSame(mockCounterText, mockViewModelHandle.mock.counterText)
             }
 

@@ -64,7 +64,7 @@ public class FooService {
       return;
     }
 
-    public FooResponse callFoo(long id, java.lang.String name, FooParam param) throws FooException, org.apache.thrift.TException
+    public FooResponse callFoo(long id, java.lang.String name, FooParam param) throws org.apache.thrift.TException
     {
       send_callFoo(id, name, param);
       return recv_callFoo();
@@ -182,7 +182,7 @@ public class FooService {
   public static class Processor<I extends Iface> extends org.apache.thrift.TBaseProcessor<I> implements org.apache.thrift.TProcessor {
     private static final org.slf4j.Logger _LOGGER = org.slf4j.LoggerFactory.getLogger(Processor.class.getName());
     public Processor(I iface) {
-      super(iface, getProcessMap(new java.util.HashMap<java.lang.String, org.apache.thrift.ProcessFunction<I, ? extends org.apache.thrift.TBase>>()));
+      super(iface, getProcessMap(new java.util.HashMap<>()));
     }
 
     protected Processor(I iface, java.util.Map<java.lang.String, org.apache.thrift.ProcessFunction<I, ? extends org.apache.thrift.TBase>> processMap) {
@@ -254,7 +254,7 @@ public class FooService {
   public static class AsyncProcessor<I extends AsyncIface> extends org.apache.thrift.TBaseAsyncProcessor<I> {
     private static final org.slf4j.Logger _LOGGER = org.slf4j.LoggerFactory.getLogger(AsyncProcessor.class.getName());
     public AsyncProcessor(I iface) {
-      super(iface, getProcessMap(new java.util.HashMap<java.lang.String, org.apache.thrift.AsyncProcessFunction<I, ? extends org.apache.thrift.TBase, ?>>()));
+      super(iface, getProcessMap(new java.util.HashMap<>()));
     }
 
     protected AsyncProcessor(I iface, java.util.Map<java.lang.String,  org.apache.thrift.AsyncProcessFunction<I, ? extends  org.apache.thrift.TBase, ?>> processMap) {
@@ -278,7 +278,7 @@ public class FooService {
 
       public org.apache.thrift.async.AsyncMethodCallback<Void> getResultHandler(final org.apache.thrift.server.AbstractNonblockingServer.AsyncFrameBuffer fb, final int seqid) {
         final org.apache.thrift.AsyncProcessFunction fcall = this;
-        return new org.apache.thrift.async.AsyncMethodCallback<Void>() { 
+        return new org.apache.thrift.async.AsyncMethodCallback<Void>() {
           public void onComplete(Void o) {
             ping_result result = new ping_result();
             try {
@@ -338,7 +338,7 @@ public class FooService {
 
       public org.apache.thrift.async.AsyncMethodCallback<FooResponse> getResultHandler(final org.apache.thrift.server.AbstractNonblockingServer.AsyncFrameBuffer fb, final int seqid) {
         final org.apache.thrift.AsyncProcessFunction fcall = this;
-        return new org.apache.thrift.async.AsyncMethodCallback<FooResponse>() { 
+        return new org.apache.thrift.async.AsyncMethodCallback<FooResponse>() {
           public void onComplete(FooResponse o) {
             callFoo_result result = new callFoo_result();
             result.success = o;
@@ -406,7 +406,7 @@ public class FooService {
     public enum _Fields implements org.apache.thrift.TFieldIdEnum {
 ;
 
-      private static final java.util.Map<java.lang.String, _Fields> byName = new java.util.HashMap<java.lang.String, _Fields>();
+      private static final java.util.Map<java.lang.String, _Fields> byName = new java.util.HashMap<>();
 
       static {
         for (_Fields field : java.util.EnumSet.allOf(_Fields.class)) {
@@ -461,7 +461,7 @@ public class FooService {
     }
     public static final java.util.Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
     static {
-      java.util.Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new java.util.EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
+      java.util.Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new java.util.EnumMap<>(_Fields.class);
       metaDataMap = java.util.Collections.unmodifiableMap(tmpMap);
       org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(ping_args.class, metaDataMap);
     }
@@ -599,7 +599,7 @@ public class FooService {
         while (true)
         {
           schemeField = iprot.readFieldBegin();
-          if (schemeField.type == org.apache.thrift.protocol.TType.STOP) { 
+          if (schemeField.type == org.apache.thrift.protocol.TType.STOP) {
             break;
           }
           switch (schemeField.id) {
@@ -660,7 +660,7 @@ public class FooService {
     public enum _Fields implements org.apache.thrift.TFieldIdEnum {
 ;
 
-      private static final java.util.Map<java.lang.String, _Fields> byName = new java.util.HashMap<java.lang.String, _Fields>();
+      private static final java.util.Map<java.lang.String, _Fields> byName = new java.util.HashMap<>();
 
       static {
         for (_Fields field : java.util.EnumSet.allOf(_Fields.class)) {
@@ -715,7 +715,7 @@ public class FooService {
     }
     public static final java.util.Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
     static {
-      java.util.Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new java.util.EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
+      java.util.Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new java.util.EnumMap<>(_Fields.class);
       metaDataMap = java.util.Collections.unmodifiableMap(tmpMap);
       org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(ping_result.class, metaDataMap);
     }
@@ -853,7 +853,7 @@ public class FooService {
         while (true)
         {
           schemeField = iprot.readFieldBegin();
-          if (schemeField.type == org.apache.thrift.protocol.TType.STOP) { 
+          if (schemeField.type == org.apache.thrift.protocol.TType.STOP) {
             break;
           }
           switch (schemeField.id) {
@@ -922,7 +922,7 @@ public class FooService {
       NAME((short)2, "name"),
       PARAM((short)3, "param");
 
-      private static final java.util.Map<java.lang.String, _Fields> byName = new java.util.HashMap<java.lang.String, _Fields>();
+      private static final java.util.Map<java.lang.String, _Fields> byName = new java.util.HashMap<>();
 
       static {
         for (_Fields field : java.util.EnumSet.allOf(_Fields.class)) {
@@ -987,12 +987,12 @@ public class FooService {
     private byte __isset_bitfield = 0;
     public static final java.util.Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
     static {
-      java.util.Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new java.util.EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
-      tmpMap.put(_Fields.ID, new org.apache.thrift.meta_data.FieldMetaData("id", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+      java.util.Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new java.util.EnumMap<>(_Fields.class);
+      tmpMap.put(_Fields.ID, new org.apache.thrift.meta_data.FieldMetaData("id", org.apache.thrift.TFieldRequirementType.DEFAULT,
           new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I64          , "FooId")));
-      tmpMap.put(_Fields.NAME, new org.apache.thrift.meta_data.FieldMetaData("name", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+      tmpMap.put(_Fields.NAME, new org.apache.thrift.meta_data.FieldMetaData("name", org.apache.thrift.TFieldRequirementType.DEFAULT,
           new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
-      tmpMap.put(_Fields.PARAM, new org.apache.thrift.meta_data.FieldMetaData("param", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+      tmpMap.put(_Fields.PARAM, new org.apache.thrift.meta_data.FieldMetaData("param", org.apache.thrift.TFieldRequirementType.DEFAULT,
           new org.apache.thrift.meta_data.StructMetaData(org.apache.thrift.protocol.TType.STRUCT, FooParam.class)));
       metaDataMap = java.util.Collections.unmodifiableMap(tmpMap);
       org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(callFoo_args.class, metaDataMap);
@@ -1198,8 +1198,8 @@ public class FooService {
           return false;
       }
 
-      boolean this_present_name = true && this.isSetName();
-      boolean that_present_name = true && that.isSetName();
+      boolean this_present_name = this.isSetName();
+      boolean that_present_name = that.isSetName();
       if (this_present_name || that_present_name) {
         if (!(this_present_name && that_present_name))
           return false;
@@ -1207,13 +1207,13 @@ public class FooService {
           return false;
       }
 
-      boolean this_present_param = true && this.isSetParam();
-      boolean that_present_param = true && that.isSetParam();
+      boolean this_present_param = this.isSetParam();
+      boolean that_present_param = that.isSetParam();
       if (this_present_param || that_present_param) {
-        if (!(this_present_param && that_present_param))
-          return false;
-        if (!this.param.equals(that.param))
-          return false;
+        if (!(this_present_param && that_present_param)) {
+            return false;
+        }
+        return this.param.equals(that.param);
       }
 
       return true;
@@ -1358,7 +1358,7 @@ public class FooService {
         while (true)
         {
           schemeField = iprot.readFieldBegin();
-          if (schemeField.type == org.apache.thrift.protocol.TType.STOP) { 
+          if (schemeField.type == org.apache.thrift.protocol.TType.STOP) {
             break;
           }
           switch (schemeField.id) {
@@ -1366,7 +1366,7 @@ public class FooService {
               if (schemeField.type == org.apache.thrift.protocol.TType.I64) {
                 struct.id = iprot.readI64();
                 struct.setIdIsSet(true);
-              } else { 
+              } else {
                 org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
               }
               break;
@@ -1374,7 +1374,7 @@ public class FooService {
               if (schemeField.type == org.apache.thrift.protocol.TType.STRING) {
                 struct.name = iprot.readString();
                 struct.setNameIsSet(true);
-              } else { 
+              } else {
                 org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
               }
               break;
@@ -1383,7 +1383,7 @@ public class FooService {
                 struct.param = new FooParam();
                 struct.param.read(iprot);
                 struct.setParamIsSet(true);
-              } else { 
+              } else {
                 org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
               }
               break;
@@ -1496,7 +1496,7 @@ public class FooService {
       SUCCESS((short)0, "success"),
       E((short)1, "e");
 
-      private static final java.util.Map<java.lang.String, _Fields> byName = new java.util.HashMap<java.lang.String, _Fields>();
+      private static final java.util.Map<java.lang.String, _Fields> byName = new java.util.HashMap<>();
 
       static {
         for (_Fields field : java.util.EnumSet.allOf(_Fields.class)) {
@@ -1557,10 +1557,10 @@ public class FooService {
     // isset id assignments
     public static final java.util.Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
     static {
-      java.util.Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new java.util.EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
-      tmpMap.put(_Fields.SUCCESS, new org.apache.thrift.meta_data.FieldMetaData("success", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+      java.util.Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new java.util.EnumMap<>(_Fields.class);
+      tmpMap.put(_Fields.SUCCESS, new org.apache.thrift.meta_data.FieldMetaData("success", org.apache.thrift.TFieldRequirementType.DEFAULT,
           new org.apache.thrift.meta_data.StructMetaData(org.apache.thrift.protocol.TType.STRUCT, FooResponse.class)));
-      tmpMap.put(_Fields.E, new org.apache.thrift.meta_data.FieldMetaData("e", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+      tmpMap.put(_Fields.E, new org.apache.thrift.meta_data.FieldMetaData("e", org.apache.thrift.TFieldRequirementType.DEFAULT,
           new org.apache.thrift.meta_data.StructMetaData(org.apache.thrift.protocol.TType.STRUCT, FooException.class)));
       metaDataMap = java.util.Collections.unmodifiableMap(tmpMap);
       org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(callFoo_result.class, metaDataMap);
@@ -1714,8 +1714,8 @@ public class FooService {
       if (this == that)
         return true;
 
-      boolean this_present_success = true && this.isSetSuccess();
-      boolean that_present_success = true && that.isSetSuccess();
+      boolean this_present_success = this.isSetSuccess();
+      boolean that_present_success = that.isSetSuccess();
       if (this_present_success || that_present_success) {
         if (!(this_present_success && that_present_success))
           return false;
@@ -1723,13 +1723,13 @@ public class FooService {
           return false;
       }
 
-      boolean this_present_e = true && this.isSetE();
-      boolean that_present_e = true && that.isSetE();
+      boolean this_present_e = this.isSetE();
+      boolean that_present_e = that.isSetE();
       if (this_present_e || that_present_e) {
-        if (!(this_present_e && that_present_e))
-          return false;
-        if (!this.e.equals(that.e))
-          return false;
+        if (!(this_present_e && that_present_e)) {
+            return false;
+        }
+        return this.e.equals(that.e);
       }
 
       return true;
@@ -1856,7 +1856,7 @@ public class FooService {
         while (true)
         {
           schemeField = iprot.readFieldBegin();
-          if (schemeField.type == org.apache.thrift.protocol.TType.STOP) { 
+          if (schemeField.type == org.apache.thrift.protocol.TType.STOP) {
             break;
           }
           switch (schemeField.id) {
@@ -1865,7 +1865,7 @@ public class FooService {
                 struct.success = new FooResponse();
                 struct.success.read(iprot);
                 struct.setSuccessIsSet(true);
-              } else { 
+              } else {
                 org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
               }
               break;
@@ -1874,7 +1874,7 @@ public class FooService {
                 struct.e = new FooException();
                 struct.e.read(iprot);
                 struct.setEIsSet(true);
-              } else { 
+              } else {
                 org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
               }
               break;
