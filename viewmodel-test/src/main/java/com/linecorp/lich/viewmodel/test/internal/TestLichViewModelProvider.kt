@@ -77,7 +77,7 @@ class TestLichViewModelProvider : DefaultLichViewModelProvider() {
         private val mockFactories: ConcurrentHashMap<ViewModelFactory<*>, MockFactory> =
             ConcurrentHashMap()
 
-        internal fun <T : AbstractViewModel> newViewModelFor(
+        fun <T : AbstractViewModel> newViewModelFor(
             factory: ViewModelFactory<T>,
             savedState: SavedState,
             viewModelStoreOwner: ViewModelStoreOwner
