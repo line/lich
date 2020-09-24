@@ -58,7 +58,7 @@ class TestComponentProvider : DebugComponentProvider() {
 
         private val mocks: ConcurrentHashMap<ComponentFactory<*>, Any> = ConcurrentHashMap()
 
-        internal fun <T : Any> getComponent(factory: ComponentFactory<T>): T =
+        fun <T : Any> getComponent(factory: ComponentFactory<T>): T =
             getMockComponent(factory) ?: getRealComponent(factory)
 
         override fun <T : Any> setComponent(factory: ComponentFactory<T>, component: T) {
