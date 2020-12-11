@@ -167,9 +167,9 @@ private class ArgumentInfo(val name: String, val type: TypeName, val isOptional:
         if (methodName == null) {
             builder.addStatement("TODO(%S)", "Unsupported type: Cannot put $name to Bundle.")
         } else if (isOptional) {
-            builder.addStatement("if (%N != null) %L(%S, %N)", name, methodName, name, name)
+            builder.addStatement("if (%N != null) %N(%S, %N)", name, methodName, name, name)
         } else {
-            builder.addStatement("%L(%S, %N)", methodName, name, name)
+            builder.addStatement("%N(%S, %N)", methodName, name, name)
         }
     }
 
