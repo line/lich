@@ -164,12 +164,13 @@ private class ArgumentInfo(val name: String, val type: TypeName, val isOptional:
 
     fun addPutValueStatement(builder: FunSpec.Builder) {
         val methodName = putMethodName
-        if (methodName == null) {
-            builder.addStatement("TODO(%S)", "Unsupported type: Cannot put $name to Bundle.")
-        } else if (isOptional) {
-            builder.addStatement("if (%N != null) %N(%S, %N)", name, methodName, name, name)
-        } else {
-            builder.addStatement("%N(%S, %N)", methodName, name, name)
+        when {
+            methodName == null ->
+                builder.addStatement("TODO(%S)", "Unsupported type: Cannot put $name to Bundle.")
+            isOptional ->
+                builder.addStatement("if (%N != null) %N(%S, %N)", name, methodName, name, name)
+            else ->
+                builder.addStatement("%N(%S, %N)", methodName, name, name)
         }
     }
 
