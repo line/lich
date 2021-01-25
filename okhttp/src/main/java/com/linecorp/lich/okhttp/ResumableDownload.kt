@@ -26,6 +26,36 @@ import java.io.IOException
  * Saves the response body to the given [WritableResource] with handling a single-part partial
  * response defined in [RFC 7233](https://tools.ietf.org/html/rfc7233).
  *
+ * This is a sample code that performs a *resumable download* using Range requests defined in
+ * RFC 7233.
+ * ```
+ * suspend fun performResumableDownload(url: HttpUrl, fileToSave: File) {
+ *     val resourceToSave = fileToSave.asWritableResource()
+ *     val request = Request.Builder()
+ *         .url(url)
+ *         .setRangeHeader(resourceToSave.length)
+ *         .build()
+ *     okHttpClient.callWithCounting(request) { response ->
+ *         response.saveToResourceWithSupportingResumption(resourceToSave)
+ *     }.collect { state ->
+ *         when (state) {
+ *             is Uploading -> Unit
+ *             is Downloading ->
+ *                 println("Downloading: ${state.bytesTransferred} bytes downloaded." +
+ *                     state.progressPercentage?.let { " ($it%)" }.orEmpty())
+ *             is Success ->
+ *                 if (state.data)
+ *                     println("The download is complete. TotalLength=${state.bytesDownloaded}")
+ *                 else
+ *                     println("The HTTP call was successful, but the content may have a remaining part.\n" +
+ *                         "To complete the download, call this function again.")
+ *             is Failure ->
+ *                 println("Failure: ${state.exception}\nTo resume the download, call this function again.")
+ *         }
+ *     }
+ * }
+ * ```
+ *
  * @param resourceToSave the resource to save the downloaded content.
  * @return `true` if the download of the entire content is completed. `false` if the response is
  * `206 Partial Content` and there may be remaining undownloaded content.

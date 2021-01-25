@@ -45,38 +45,52 @@ import java.io.IOException
  * Creates a [Flow] that executes an HTTP call with counting the number of bytes transferred in its
  * request and response body. Through the [Flow], you can see the progress of the HTTP call.
  *
- * This is a sample code that sends the contents of `fileToUpload` as a HTTP POST request and
- * writes the response body to `fileToDownload`.
- *
+ * This is a sample code that sends the content of `fileToUpload` as an HTTP POST method.
  * ```
- * val url: HttpUrl
- * val fileToUpload: File
- * val fileToDownload: File
- *
- * coroutineScope.launch {
+ * suspend fun performUpload(url: HttpUrl, fileToUpload: File) {
  *     val request = Request.Builder()
  *         .url(url)
  *         .post(RequestBody.create(MediaType.get("application/octet-stream"), fileToUpload))
  *         .build()
- *     okHttpClient.callWithCounting(request) { response ->
+ *     okHttpClient.callWithCounting(request, countDownload = false) { response ->
  *         if (!response.isSuccessful) {
- *             throw IOException("HTTP Response code: ${response.code()}")
+ *             throw ResponseStatusException(response.code())
  *         }
- *         Okio.sink(fileToDownload).use { fileSink ->
- *             checkNotNull(response.body()).source().readAll(fileSink)
- *         }
- *         Unit
  *     }.collect { state ->
  *         when (state) {
  *             is Uploading ->
  *                 println("Uploading: ${state.bytesTransferred} bytes sent." +
  *                     state.progressPercentage?.let { " ($it%)" }.orEmpty())
+ *             is Downloading -> Unit
+ *             is Success ->
+ *                 println("The upload is complete. TotalLength=${state.bytesUploaded}")
+ *             is Failure ->
+ *                 println("Failure: ${state.exception}")
+ *         }
+ *     }
+ * }
+ * ```
+ *
+ * This is a sample code that downloads the content of `url` using an HTTP GET method, and saves it
+ * to `fileToSave`.
+ * ```
+ * suspend fun performDownload(url: HttpUrl, fileToSave: File) {
+ *     val request = Request.Builder().url(url).build()
+ *     okHttpClient.callWithCounting<Unit>(request) { response ->
+ *         if (response.code() != StatusCode.OK) {
+ *             throw ResponseStatusException(response.code())
+ *         }
+ *         Okio.sink(fileToSave).use {
+ *             checkNotNull(response.body()).source().readAll(it)
+ *         }
+ *     }.collect { state ->
+ *         when (state) {
+ *             is Uploading -> Unit
  *             is Downloading ->
  *                 println("Downloading: ${state.bytesTransferred} bytes received." +
  *                     state.progressPercentage?.let { " ($it%)" }.orEmpty())
  *             is Success ->
- *                 println("Success: ${state.bytesUploaded} bytes sent" +
- *                     " and ${state.bytesDownloaded} bytes received.")
+ *                 println("The download is complete. TotalLength=${state.bytesDownloaded}")
  *             is Failure ->
  *                 println("Failure: ${state.exception}")
  *         }
