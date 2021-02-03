@@ -14,8 +14,8 @@ repositories {
 - [component](component) - Lightweight framework for managing singleton components on Android apps.
 - [viewmodel](viewmodel) - Lightweight framework for managing ViewModels.
 - [lifecycle](lifecycle) - A small library for Android Jetpack Lifecycle.
-- [okhttp](okhttp) - Coroutine-aware extension for OkHttp.
-- [thrift](thrift) - Coroutine-aware extension for Apache Thrift.
+- [okhttp](okhttp) - Coroutine-aware extensions for OkHttp.
+- [thrift](thrift) - Coroutine-aware extensions for Apache Thrift.
 
 ## Sample App
 
