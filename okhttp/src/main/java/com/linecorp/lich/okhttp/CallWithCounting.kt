@@ -232,7 +232,7 @@ sealed class CallState<out T> {
  * A [RequestBody] that replaces the original one to count the number of bytes uploaded.
  */
 private class CountingRequestBody(
-    private val delegate: RequestBody,
+    val delegate: RequestBody,
     private val channel: SendChannel<CallState.Uploading>
 ) : RequestBody() {
 
@@ -350,18 +350,30 @@ private class CountingCallback<T>(
     }
 
     private fun processResponse(response: Response): CallState.Success<T> {
+        val responseBuilderForHandler = response.newBuilder()
+
+        val request = response.request()
+        val requestBody = request.body()
+        if (requestBody is CountingRequestBody) {
+            // Restore the original request body.
+            val restoredRequest = request.newBuilder()
+                .method(request.method(), requestBody.delegate)
+                .build()
+            responseBuilderForHandler.request(restoredRequest)
+        }
+
         val countingSource = mayCreateCountingSource(response)
-        val responseForHandler = if (countingSource != null) {
+        if (countingSource != null) {
             val originalBody = checkNotNull(response.body())
             val countingResponseBody = ResponseBody.create(
                 originalBody.contentType(),
                 originalBody.contentLength(),
                 Okio.buffer(countingSource)
             )
-            response.newBuilder().body(countingResponseBody).build()
-        } else response
+            responseBuilderForHandler.body(countingResponseBody)
+        }
 
-        val data = responseHandler(responseForHandler)
+        val data = responseHandler(responseBuilderForHandler.build())
 
         val bytesUploaded = countingRequestBody?.bytesUploaded ?: -1
         val bytesDownloaded = when {

@@ -38,6 +38,7 @@ import kotlin.math.min
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 import kotlin.test.assertNull
+import kotlin.test.assertSame
 import kotlin.test.assertTrue
 import kotlin.test.fail
 
@@ -242,6 +243,7 @@ class CallWithCountingTest {
             countDownload = false
         ) { response ->
             assertTrue(response.isSuccessful)
+            assertSame(chunkedRequestBody, response.request().body())
             checkNotNull(response.body()).string()
         }.toList()
 
