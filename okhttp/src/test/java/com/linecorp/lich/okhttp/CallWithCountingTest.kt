@@ -33,7 +33,6 @@ import okio.BufferedSink
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
-import java.io.IOException
 import java.util.concurrent.TimeUnit
 import kotlin.math.min
 import kotlin.test.assertEquals
@@ -51,9 +50,7 @@ class CallWithCountingTest {
     @Before
     fun setUp() {
         server = MockWebServer()
-        okHttpClient = OkHttpClient.Builder()
-            .retryOnConnectionFailure(false)
-            .build()
+        okHttpClient = OkHttpClient()
     }
 
     @After
@@ -112,6 +109,69 @@ class CallWithCountingTest {
         callStateList.last().let { lastState ->
             assertTrue(lastState is Success)
             assertTrue(data contentEquals lastState.data)
+            assertEquals(-1, lastState.bytesUploaded)
+            assertEquals(20000, lastState.bytesDownloaded)
+        }
+    }
+
+    @Test
+    fun testPartialContent() = runBlocking {
+        val data = ByteArray(10000) { it.toByte() }
+
+        server.enqueue(MockResponse().apply {
+            setResponseCode(StatusCode.PARTIAL_CONTENT)
+            setHeader("Content-Range", "bytes 10000-19999/20000")
+            body = Buffer().write(data)
+            throttleBody(1000, 50, TimeUnit.MILLISECONDS)
+        })
+        server.start()
+
+        val request = Request.Builder()
+            .url(server.url("/foo"))
+            .setRangeHeader(10000)
+            .build()
+        assertEquals("bytes=10000-", request.header("Range"))
+        val callStateList = okHttpClient.callWithCounting(request) { response ->
+            assertEquals(StatusCode.PARTIAL_CONTENT, response.code())
+            checkNotNull(response.body()).bytes()
+        }.toList()
+
+        callStateList.subList(0, callStateList.size - 1).forEach { state ->
+            assertTrue(state is Downloading)
+            assertTrue(state.bytesTransferred >= 10000)
+            assertEquals(20000, state.bytesTotal)
+        }
+        callStateList.last().let { lastState ->
+            assertTrue(lastState is Success)
+            assertTrue(data contentEquals lastState.data)
+            assertEquals(-1, lastState.bytesUploaded)
+            assertEquals(20000, lastState.bytesDownloaded)
+        }
+    }
+
+    @Test
+    fun testRangeNotSatisfiable() = runBlocking {
+        server.enqueue(MockResponse().apply {
+            setResponseCode(StatusCode.RANGE_NOT_SATISFIABLE)
+            setHeader("Content-Range", "bytes */20000")
+            setBody("Range Not Satisfiable.")
+        })
+        server.start()
+
+        val request = Request.Builder()
+            .url(server.url("/foo"))
+            .setRangeHeader(20000)
+            .build()
+        assertEquals("bytes=20000-", request.header("Range"))
+        val callStateList = okHttpClient.callWithCounting(request) { response ->
+            assertEquals(StatusCode.RANGE_NOT_SATISFIABLE, response.code())
+            checkNotNull(response.body()).string()
+        }.toList()
+
+        assertEquals(1, callStateList.size)
+        callStateList.last().let { lastState ->
+            assertTrue(lastState is Success)
+            assertEquals("Range Not Satisfiable.", lastState.data)
             assertEquals(-1, lastState.bytesUploaded)
             assertEquals(20000, lastState.bytesDownloaded)
         }
@@ -234,7 +294,7 @@ class CallWithCountingTest {
         val request = Request.Builder().url(server.url("/foo")).build()
         val callStateList = okHttpClient.callWithCounting(request) { response ->
             if (!response.isSuccessful) {
-                throw IOException("HTTP Response code: ${response.code()}")
+                throw ResponseStatusException(response.code())
             }
             fail("Not reached.")
         }.toList()
@@ -242,7 +302,7 @@ class CallWithCountingTest {
         assertEquals(1, callStateList.size)
         callStateList.last().let { lastState ->
             assertTrue(lastState is Failure)
-            assertEquals("HTTP Response code: 500", lastState.exception.message)
+            assertTrue(lastState.exception is ResponseStatusException)
         }
     }
 
