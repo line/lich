@@ -2,7 +2,12 @@ apply plugin: 'kotlin'
 apply plugin: 'maven-publish'
 
 version = VERSION_NAME_THRIFT
-ext.publicationType = 'jar'
+ext.publication = [
+    type       : 'jar',
+    name       : 'Lich Thrift',
+    description: 'Coroutine-aware extensions for Apache Thrift.',
+    url        : 'https://github.com/line/lich/tree/master/thrift',
+]
 
 dependencies {
     implementation project(':okhttp')

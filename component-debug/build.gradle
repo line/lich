@@ -3,7 +3,12 @@ apply plugin: 'kotlin-android'
 apply plugin: 'maven-publish'
 
 version = VERSION_NAME_COMPONENT
-ext.publicationType = 'aar'
+ext.publication = [
+    type       : 'aar',
+    name       : 'Lich Component (for debugging)',
+    description: 'Lightweight framework for managing singleton components on Android apps.',
+    url        : 'https://github.com/line/lich/tree/master/component',
+]
 
 android {
     compileSdkVersion versions.compileSdk

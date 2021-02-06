@@ -59,17 +59,17 @@ allprojects {
         jcenter()
     }
     afterEvaluate {
-        if (ext.has('publicationType')) {
+        if (ext.has('publication')) {
             afterEvaluate {
-                configurePublication(project, ext.publicationType)
+                configurePublication(project, ext.publication)
             }
         }
     }
 }
 
-def configurePublication(project, type) {
+def configurePublication(project, publication) {
     configure(project) {
-        switch (type) {
+        switch (publication.type) {
             case 'jar':
                 task sourcesJar(type: Jar) {
                     archiveClassifier = 'sources'
@@ -80,13 +80,6 @@ def configurePublication(project, type) {
                         myPublication(MavenPublication) {
                             from components.java
                             artifact sourcesJar
-                            pom.licenses {
-                                license {
-                                    name = 'Apache-2.0'
-                                    url = 'https://www.apache.org/licenses/LICENSE-2.0.txt'
-                                    distribution = 'repo'
-                                }
-                            }
                         }
                     }
                 }
@@ -101,21 +94,46 @@ def configurePublication(project, type) {
                         myPublication(MavenPublication) {
                             from components.release
                             artifact sourcesJar
-                            pom.licenses {
-                                license {
-                                    name = 'Apache-2.0'
-                                    url = 'https://www.apache.org/licenses/LICENSE-2.0.txt'
-                                    distribution = 'repo'
-                                }
-                            }
                         }
                     }
                 }
                 break
             default:
-                throw new InvalidUserDataException("Unknown publicationType: $type")
+                throw new InvalidUserDataException("Unknown publication type: $publication.type")
         }
         publishing {
+            publications {
+                myPublication(MavenPublication) {
+                    pom {
+                        name = publication.name
+                        description = publication.description
+                        url = publication.url
+                        licenses {
+                            license {
+                                name = 'The Apache License, Version 2.0'
+                                url = 'https://www.apache.org/licenses/LICENSE-2.0.txt'
+                                distribution = 'repo'
+                            }
+                        }
+                        developers {
+                            developer {
+                                name = 'LINE Corporation'
+                                email = 'dl_oss_dev@linecorp.com'
+                                url = 'https://engineering.linecorp.com/en/'
+                            }
+                        }
+                        scm {
+                            connection = 'scm:git:https://github.com/line/lich.git'
+                            developerConnection = 'scm:git:https://github.com/line/lich.git'
+                            url = 'https://github.com/line/lich'
+                        }
+                        issueManagement {
+                            system = 'GitHub'
+                            url = 'https://github.com/line/lich/issues'
+                        }
+                    }
+                }
+            }
             repositories {
                 maven {
                     url = findProperty('publishingRepositoryUrl') ?: "$rootDir/repo"
