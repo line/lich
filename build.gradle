@@ -83,7 +83,7 @@ def configurePublication(project, publication) {
                 }
                 publishing {
                     publications {
-                        myPublication(MavenPublication) {
+                        maven(MavenPublication) {
                             from components.java
                             artifact sourcesJar
                             artifact javadocJar
@@ -102,7 +102,7 @@ def configurePublication(project, publication) {
                 }
                 publishing {
                     publications {
-                        myPublication(MavenPublication) {
+                        maven(MavenPublication) {
                             from components.release
                             artifact sourcesJar
                             artifact javadocJar
@@ -115,7 +115,7 @@ def configurePublication(project, publication) {
         }
         publishing {
             publications {
-                myPublication(MavenPublication) {
+                maven(MavenPublication) {
                     pom {
                         name = publication.name
                         description = publication.description
@@ -156,7 +156,7 @@ def configurePublication(project, publication) {
             def signingKey = findProperty('signingKey')
             def signingPassword = findProperty('signingPassword')
             useInMemoryPgpKeys(signingKey, signingPassword)
-            sign publishing.publications.myPublication
+            sign publishing.publications.maven
         }
     }
 }
