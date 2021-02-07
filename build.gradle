@@ -148,11 +148,18 @@ def configurePublication(project, publication) {
             }
             repositories {
                 maven {
-                    url = findProperty('publishingRepositoryUrl') ?: "$rootDir/repo"
+                    url = findProperty('repositoryUrl') ?: project.version.endsWith('SNAPSHOT') ?
+                        'https://oss.sonatype.org/content/repositories/snapshots/' :
+                        'https://oss.sonatype.org/service/local/staging/deploy/maven2/'
+                    credentials {
+                        username = findProperty('repositoryUsername')
+                        password = findProperty('repositoryPassword')
+                    }
                 }
             }
         }
         signing {
+            required { findProperty('repositoryUrl') == null }
             def signingKey = findProperty('signingKey')
             def signingPassword = findProperty('signingPassword')
             useInMemoryPgpKeys(signingKey, signingPassword)
@@ -163,8 +170,4 @@ def configurePublication(project, publication) {
 
 task clean(type: Delete) {
     delete rootProject.buildDir
-}
-
-task cleanRepo(type: Delete) {
-    delete "$rootDir/repo"
 }
