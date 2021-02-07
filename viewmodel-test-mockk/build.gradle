@@ -1,11 +1,17 @@
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
+apply plugin: 'org.jetbrains.dokka'
 apply plugin: 'maven-publish'
-apply plugin: 'com.jfrog.bintray'
+apply plugin: 'signing'
 
 version = VERSION_NAME_VIEWMODEL
-ext.publicationType = 'aar'
+ext.publication = [
+    type       : 'aar',
+    name       : 'Lich ViewModel (for testing with MockK)',
+    description: 'Lightweight framework for managing ViewModels.',
+    url        : 'https://github.com/line/lich/tree/master/viewmodel',
+]
 
 android {
     compileSdkVersion versions.compileSdk

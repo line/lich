@@ -41,6 +41,7 @@ buildscript {
         mockitoKotlin           : '2.2.0',
         mockk                   : '1.10.0',
         robolectric             : '4.4',
+        dokka                   : '1.4.20',
     ]
     repositories {
         google()
@@ -49,7 +50,7 @@ buildscript {
     dependencies {
         classpath "com.android.tools.build:gradle:${versions.androidGradlePlugin}"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${versions.kotlin}"
-        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.5'
+        classpath "org.jetbrains.dokka:dokka-gradle-plugin:${versions.dokka}"
     }
 }
 
@@ -60,34 +61,32 @@ allprojects {
         jcenter()
     }
     afterEvaluate {
-        if (ext.has('publicationType')) {
+        if (ext.has('publication')) {
             afterEvaluate {
-                configurePublication(project, ext.publicationType)
+                configurePublication(project, ext.publication)
             }
         }
     }
 }
 
-def configurePublication(project, type) {
+def configurePublication(project, publication) {
     configure(project) {
-        switch (type) {
+        switch (publication.type) {
             case 'jar':
                 task sourcesJar(type: Jar) {
                     archiveClassifier = 'sources'
                     from sourceSets.main.allSource
                 }
+                task javadocJar(type: Jar) {
+                    archiveClassifier = 'javadoc'
+                    from dokkaJavadoc
+                }
                 publishing {
                     publications {
-                        myPublication(MavenPublication) {
+                        maven(MavenPublication) {
                             from components.java
                             artifact sourcesJar
-                            pom.licenses {
-                                license {
-                                    name = 'Apache-2.0'
-                                    url = 'https://www.apache.org/licenses/LICENSE-2.0.txt'
-                                    distribution = 'repo'
-                                }
-                            }
+                            artifact javadocJar
                         }
                     }
                 }
@@ -97,55 +96,78 @@ def configurePublication(project, type) {
                     archiveClassifier = 'sources'
                     from android.sourceSets.main.java.srcDirs
                 }
+                task javadocJar(type: Jar) {
+                    archiveClassifier = 'javadoc'
+                    from dokkaJavadoc
+                }
                 publishing {
                     publications {
-                        myPublication(MavenPublication) {
+                        maven(MavenPublication) {
                             from components.release
                             artifact sourcesJar
-                            pom.licenses {
-                                license {
-                                    name = 'Apache-2.0'
-                                    url = 'https://www.apache.org/licenses/LICENSE-2.0.txt'
-                                    distribution = 'repo'
-                                }
-                            }
+                            artifact javadocJar
                         }
                     }
                 }
                 break
             default:
-                throw new InvalidUserDataException("Unknown publicationType: $type")
+                throw new InvalidUserDataException("Unknown publication type: $publication.type")
         }
         publishing {
+            publications {
+                maven(MavenPublication) {
+                    pom {
+                        name = publication.name
+                        description = publication.description
+                        url = publication.url
+                        licenses {
+                            license {
+                                name = 'The Apache License, Version 2.0'
+                                url = 'https://www.apache.org/licenses/LICENSE-2.0.txt'
+                                distribution = 'repo'
+                            }
+                        }
+                        developers {
+                            developer {
+                                name = 'LINE Corporation'
+                                email = 'dl_oss_dev@linecorp.com'
+                                url = 'https://engineering.linecorp.com/en/'
+                            }
+                        }
+                        scm {
+                            connection = 'scm:git:https://github.com/line/lich.git'
+                            developerConnection = 'scm:git:https://github.com/line/lich.git'
+                            url = 'https://github.com/line/lich'
+                        }
+                        issueManagement {
+                            system = 'GitHub'
+                            url = 'https://github.com/line/lich/issues'
+                        }
+                    }
+                }
+            }
             repositories {
                 maven {
-                    url = findProperty('publishingRepositoryUrl') ?: "$rootDir/repo"
+                    url = findProperty('repositoryUrl') ?: project.version.endsWith('SNAPSHOT') ?
+                        'https://oss.sonatype.org/content/repositories/snapshots/' :
+                        'https://oss.sonatype.org/service/local/staging/deploy/maven2/'
+                    credentials {
+                        username = findProperty('repositoryUsername')
+                        password = findProperty('repositoryPassword')
+                    }
                 }
             }
         }
-        bintray {
-            user = findProperty('bintrayUser') ?: ''
-            key = findProperty('bintrayApiKey') ?: ''
-            publications = ['myPublication']
-            publish = true
-            pkg {
-                userOrg = 'line'
-                repo = 'lich'
-                name = project.name
-                websiteUrl = 'https://github.com/line/lich'
-                issueTrackerUrl = 'https://github.com/line/lich/issues'
-                vcsUrl = 'https://github.com/line/lich.git'
-                licenses = ['Apache-2.0']
-                publicDownloadNumbers = true
-            }
+        signing {
+            required { findProperty('repositoryUrl') == null }
+            def signingKey = findProperty('signingKey')
+            def signingPassword = findProperty('signingPassword')
+            useInMemoryPgpKeys(signingKey, signingPassword)
+            sign publishing.publications.maven
         }
     }
 }
 
 task clean(type: Delete) {
     delete rootProject.buildDir
-}
-
-task cleanRepo(type: Delete) {
-    delete "$rootDir/repo"
 }

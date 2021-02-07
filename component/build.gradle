@@ -1,10 +1,16 @@
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
+apply plugin: 'org.jetbrains.dokka'
 apply plugin: 'maven-publish'
-apply plugin: 'com.jfrog.bintray'
+apply plugin: 'signing'
 
 version = VERSION_NAME_COMPONENT
-ext.publicationType = 'aar'
+ext.publication = [
+    type       : 'aar',
+    name       : 'Lich Component (main)',
+    description: 'Lightweight framework for managing singleton components on Android apps.',
+    url        : 'https://github.com/line/lich/tree/master/component',
+]
 
 android {
     compileSdkVersion versions.compileSdk
