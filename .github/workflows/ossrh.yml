@@ -14,8 +14,8 @@ jobs:
           java-version: 11
       - name: Run publish
         env:
-          ORG_GRADLE_PROJECT_repositoryUsername: ${{ secrets.repositoryUsername }}
-          ORG_GRADLE_PROJECT_repositoryPassword: ${{ secrets.repositoryPassword }}
-          ORG_GRADLE_PROJECT_signingKey: ${{ secrets.signingKey }}
-          ORG_GRADLE_PROJECT_signingPassword: ${{ secrets.signingPassword }}
+          ORG_GRADLE_PROJECT_repositoryUsername: ${{ secrets.OSSRH_USERNAME }}
+          ORG_GRADLE_PROJECT_repositoryPassword: ${{ secrets.OSSRH_PASSWORD }}
+          ORG_GRADLE_PROJECT_signingKey: ${{ secrets.SIGNING_KEY }}
+          ORG_GRADLE_PROJECT_signingPassword: ${{ secrets.SIGNING_PASSWORD }}
         run: ./gradlew publish
