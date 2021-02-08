@@ -152,16 +152,16 @@ def configurePublication(project, publication) {
                         'https://oss.sonatype.org/content/repositories/snapshots/' :
                         'https://oss.sonatype.org/service/local/staging/deploy/maven2/'
                     credentials {
-                        username = findProperty('repositoryUsername')
-                        password = findProperty('repositoryPassword')
+                        username = findProperty('repositoryUsername') ?: ''
+                        password = findProperty('repositoryPassword') ?: ''
                     }
                 }
             }
         }
         signing {
-            required { findProperty('repositoryUrl') == null }
             def signingKey = findProperty('signingKey')
             def signingPassword = findProperty('signingPassword')
+            required { signingKey != null && signingPassword != null }
             useInMemoryPgpKeys(signingKey, signingPassword)
             sign publishing.publications.maven
         }
