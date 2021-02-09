@@ -1,6 +1,6 @@
 # Lich Component
 
-[ ![Download](https://api.bintray.com/packages/line/lich/component/images/download.svg) ](https://bintray.com/line/lich/component/_latestVersion)
+[ ![Maven Central](https://badgen.net/maven/v/maven-central/com.linecorp.lich/component) ](https://search.maven.org/artifact/com.linecorp.lich/component)
 
 Lightweight framework for managing singleton components on Android apps.
 

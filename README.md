@@ -1,13 +1,10 @@
 # Lich
 
+[ ![CI](https://github.com/line/lich/workflows/CI/badge.svg?branch=master&event=push) ](https://github.com/line/lich/actions?query=workflow%3ACI+branch%3Amaster+event%3Apush)
+
 **Lich** is a library collection that enhances the development of Android apps.
 
-All the libraries are available on JCenter.
-```groovy
-repositories {
-    jcenter()
-}
-```
+All the libraries are available on [Maven Central](https://search.maven.org/search?q=g:com.linecorp.lich).
 
 ## Libraries
 

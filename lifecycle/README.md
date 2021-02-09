@@ -1,6 +1,6 @@
 # Lich Lifecycle
 
-[ ![Download](https://api.bintray.com/packages/line/lich/lifecycle/images/download.svg) ](https://bintray.com/line/lich/lifecycle/_latestVersion)
+[ ![Maven Central](https://badgen.net/maven/v/maven-central/com.linecorp.lich/lifecycle) ](https://search.maven.org/artifact/com.linecorp.lich/lifecycle)
 
 A small library for Android Jetpack Lifecycle.
 

@@ -1,6 +1,6 @@
 # Lich OkHttp
 
-[ ![Download](https://api.bintray.com/packages/line/lich/okhttp/images/download.svg) ](https://bintray.com/line/lich/okhttp/_latestVersion)
+[ ![Maven Central](https://badgen.net/maven/v/maven-central/com.linecorp.lich/okhttp) ](https://search.maven.org/artifact/com.linecorp.lich/okhttp)
 
 Coroutine-aware extensions for [OkHttp](https://square.github.io/okhttp/).
 

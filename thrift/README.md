@@ -1,6 +1,6 @@
 # Lich Thrift
 
-[ ![Download](https://api.bintray.com/packages/line/lich/thrift/images/download.svg) ](https://bintray.com/line/lich/thrift/_latestVersion)
+[ ![Maven Central](https://badgen.net/maven/v/maven-central/com.linecorp.lich/thrift) ](https://search.maven.org/artifact/com.linecorp.lich/thrift)
 
 A small library for [Apache Thrift](https://thrift.apache.org/).
 

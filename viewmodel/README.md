@@ -1,6 +1,6 @@
 # Lich ViewModel
 
-[ ![Download](https://api.bintray.com/packages/line/lich/viewmodel/images/download.svg) ](https://bintray.com/line/lich/viewmodel/_latestVersion)
+[ ![Maven Central](https://badgen.net/maven/v/maven-central/com.linecorp.lich/viewmodel) ](https://search.maven.org/artifact/com.linecorp.lich/viewmodel)
 
 Lightweight framework for managing ViewModels in the same way as [Lich Component](../component).
 
