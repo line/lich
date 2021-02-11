@@ -15,8 +15,8 @@
  */
 package com.linecorp.lich.okhttp
 
-import okio.Okio
 import okio.Sink
+import okio.sink
 import java.io.File
 
 /**
@@ -48,8 +48,7 @@ interface WritableResource {
             override val length: Long
                 get() = file.length()
 
-            override fun newSink(append: Boolean): Sink =
-                if (append) Okio.appendingSink(file) else Okio.sink(file)
+            override fun newSink(append: Boolean): Sink = file.sink(append)
         }
     }
 }

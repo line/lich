@@ -18,6 +18,7 @@ package com.linecorp.lich.thrift.internal
 import com.linecorp.lich.okhttp.call
 import com.linecorp.lich.thrift.ThriftCallHandler
 import okhttp3.MediaType
+import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.RequestBody
 import okhttp3.Response
@@ -50,7 +51,7 @@ internal class ThriftCall<T : TServiceClient, R>(
 
     private fun handleResponse(response: Response): R {
         thriftCallHandler.throwExceptionIfError(response)
-        val source = response.body()?.source() ?: throw IOException("No response body.")
+        val source = response.body?.source() ?: throw IOException("No response body.")
         return readResponseFrom(source)
     }
 
@@ -94,11 +95,11 @@ internal class ThriftCall<T : TServiceClient, R>(
                 buffer = it
             }
 
-        override fun contentType(): MediaType? =
+        override fun contentType(): MediaType =
             MEDIA_TYPE_THRIFT
 
         override fun contentLength(): Long =
-            populateBuffer().size()
+            populateBuffer().size
 
         override fun writeTo(sink: BufferedSink) {
             // Since readAll() consumes all bytes from the source, we clone it first.
@@ -107,6 +108,6 @@ internal class ThriftCall<T : TServiceClient, R>(
     }
 
     companion object {
-        private val MEDIA_TYPE_THRIFT: MediaType = MediaType.get("application/x-thrift")
+        private val MEDIA_TYPE_THRIFT: MediaType = "application/x-thrift".toMediaType()
     }
 }
