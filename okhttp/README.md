@@ -27,9 +27,9 @@ suspend fun fetchContentAsString(url: String): String {
     val request = Request.Builder().url(url).build()
     return okHttpClient.call(request) { response ->
         if (!response.isSuccessful) {
-            throw ResponseStatusException(response.code())
+            throw ResponseStatusException(response.code)
         }
-        checkNotNull(response.body()).string()
+        checkNotNull(response.body).string()
     }
 }
 ```
@@ -41,11 +41,11 @@ This is a sample code that sends the content of `fileToUpload` as an HTTP POST m
 suspend fun performUpload(url: HttpUrl, fileToUpload: File) {
     val request = Request.Builder()
         .url(url)
-        .post(RequestBody.create(MediaType.get("application/octet-stream"), fileToUpload))
+        .post(fileToUpload.asRequestBody("application/octet-stream".toMediaType()))
         .build()
     okHttpClient.callWithCounting(request, countDownload = false) { response ->
         if (!response.isSuccessful) {
-            throw ResponseStatusException(response.code())
+            throw ResponseStatusException(response.code)
         }
     }.collect { state ->
         when (state) {
@@ -69,11 +69,11 @@ This is a sample code that downloads the content of `url` using an HTTP GET meth
 suspend fun performDownload(url: HttpUrl, fileToSave: File) {
     val request = Request.Builder().url(url).build()
     okHttpClient.callWithCounting<Unit>(request) { response ->
-        if (response.code() != StatusCode.OK) {
-            throw ResponseStatusException(response.code())
+        if (response.code != StatusCode.OK) {
+            throw ResponseStatusException(response.code)
         }
-        Okio.sink(fileToSave).use {
-            checkNotNull(response.body()).source().readAll(it)
+        fileToSave.sink().use {
+            checkNotNull(response.body).source().readAll(it)
         }
     }.collect { state ->
         when (state) {
