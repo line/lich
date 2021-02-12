@@ -105,7 +105,7 @@ abstract class AbstractThriftCallHandler<T : TServiceClient>(
      * HTTP OK (200).
      */
     override fun throwExceptionIfError(response: Response) {
-        val responseCode = response.code()
+        val responseCode = response.code
         if (responseCode != HTTP_STATUS_OK) {
             throw TTransportException("HTTP Response code: $responseCode")
         }

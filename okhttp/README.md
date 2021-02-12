@@ -11,7 +11,7 @@ dependencies {
 }
 ```
 
-- [OkHttpClient.call()](src/main/java/com/linecorp/lich/okhttp/OkHttpExtensions.kt) - A suspending
+- [OkHttpClient.call()](src/main/java/com/linecorp/lich/okhttp/Call.kt) - A suspending
 function to send an HTTP request and receive its response.
 - [OkHttpClient.callWithCounting()](src/main/java/com/linecorp/lich/okhttp/CallWithCounting.kt) -
 Creates a `Flow` that executes an HTTP call with counting the number of bytes transferred in its
@@ -27,12 +27,29 @@ suspend fun fetchContentAsString(url: String): String {
     val request = Request.Builder().url(url).build()
     return okHttpClient.call(request) { response ->
         if (!response.isSuccessful) {
-            throw ResponseStatusException(response.code())
+            throw ResponseStatusException(response.code)
         }
-        checkNotNull(response.body()).string()
+        checkNotNull(response.body).string()
     }
 }
 ```
+
+This is an example that calls a JSON API and parses the response using [Gson](https://github.com/google/gson).
+```kotlin
+suspend fun fetchFooJson(url: String): Foo {
+    val request = Request.Builder().url(url).build()
+    return okHttpClient.call(request) { response ->
+        if (!response.isSuccessful) {
+            throw ResponseStatusException(response.code)
+        }
+        gson.fromJson(checkNotNull(response.body).charStream(), Foo::class.java)
+    }
+}
+```
+
+NOTE: You *don't* need to use `withContext(Dispatchers.IO) { ... }` in the above code.
+The `response` handler of the `call` function is always executed on OkHttp's background threads,
+and the caller thread is never blocked.
 
 ## File upload
 
@@ -41,11 +58,11 @@ This is a sample code that sends the content of `fileToUpload` as an HTTP POST m
 suspend fun performUpload(url: HttpUrl, fileToUpload: File) {
     val request = Request.Builder()
         .url(url)
-        .post(RequestBody.create(MediaType.get("application/octet-stream"), fileToUpload))
+        .post(fileToUpload.asRequestBody("application/octet-stream".toMediaType()))
         .build()
     okHttpClient.callWithCounting(request, countDownload = false) { response ->
         if (!response.isSuccessful) {
-            throw ResponseStatusException(response.code())
+            throw ResponseStatusException(response.code)
         }
     }.collect { state ->
         when (state) {
@@ -69,11 +86,11 @@ This is a sample code that downloads the content of `url` using an HTTP GET meth
 suspend fun performDownload(url: HttpUrl, fileToSave: File) {
     val request = Request.Builder().url(url).build()
     okHttpClient.callWithCounting<Unit>(request) { response ->
-        if (response.code() != StatusCode.OK) {
-            throw ResponseStatusException(response.code())
+        if (response.code != StatusCode.OK) {
+            throw ResponseStatusException(response.code)
         }
-        Okio.sink(fileToSave).use {
-            checkNotNull(response.body()).source().readAll(it)
+        fileToSave.sink().use {
+            checkNotNull(response.body).source().readAll(it)
         }
     }.collect { state ->
         when (state) {

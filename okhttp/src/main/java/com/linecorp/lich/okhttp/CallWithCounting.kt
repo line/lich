@@ -31,14 +31,14 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody
 import okhttp3.Response
-import okhttp3.ResponseBody
+import okhttp3.ResponseBody.Companion.asResponseBody
 import okio.Buffer
 import okio.BufferedSink
 import okio.ForwardingSink
 import okio.ForwardingSource
-import okio.Okio
 import okio.Sink
 import okio.Source
+import okio.buffer
 import java.io.IOException
 
 /**
@@ -50,11 +50,11 @@ import java.io.IOException
  * suspend fun performUpload(url: HttpUrl, fileToUpload: File) {
  *     val request = Request.Builder()
  *         .url(url)
- *         .post(RequestBody.create(MediaType.get("application/octet-stream"), fileToUpload))
+ *         .post(fileToUpload.asRequestBody("application/octet-stream".toMediaType()))
  *         .build()
  *     okHttpClient.callWithCounting(request, countDownload = false) { response ->
  *         if (!response.isSuccessful) {
- *             throw ResponseStatusException(response.code())
+ *             throw ResponseStatusException(response.code)
  *         }
  *     }.collect { state ->
  *         when (state) {
@@ -77,11 +77,11 @@ import java.io.IOException
  * suspend fun performDownload(url: HttpUrl, fileToSave: File) {
  *     val request = Request.Builder().url(url).build()
  *     okHttpClient.callWithCounting<Unit>(request) { response ->
- *         if (response.code() != StatusCode.OK) {
- *             throw ResponseStatusException(response.code())
+ *         if (response.code != StatusCode.OK) {
+ *             throw ResponseStatusException(response.code)
  *         }
- *         Okio.sink(fileToSave).use {
- *             checkNotNull(response.body()).source().readAll(it)
+ *         fileToSave.sink().use {
+ *             checkNotNull(response.body).source().readAll(it)
  *         }
  *     }.collect { state ->
  *         when (state) {
@@ -121,7 +121,7 @@ fun <T> OkHttpClient.callWithCounting(
 ): Flow<CallState<T>> {
     val unthrottledFlow = callbackFlow<CallState<T>> {
         val countingRequestBody =
-            request.takeIf { countUpload }?.body()?.let { CountingRequestBody(it, channel) }
+            request.takeIf { countUpload }?.body?.let { CountingRequestBody(it, channel) }
         val call = newCall(countingRequestBody?.injectTo(request) ?: request)
         call.enqueue(
             CountingCallback(
@@ -239,7 +239,7 @@ private class CountingRequestBody(
     var bytesUploaded: Long = 0
 
     fun injectTo(request: Request): Request =
-        request.newBuilder().method(request.method(), this).build()
+        request.newBuilder().method(request.method, this).build()
 
     override fun contentType(): MediaType? = delegate.contentType()
 
@@ -248,7 +248,7 @@ private class CountingRequestBody(
     override fun writeTo(sink: BufferedSink) {
         val countingSink = CountingSink(sink, contentLength(), channel)
 
-        val countingBufferedSink = Okio.buffer(countingSink)
+        val countingBufferedSink = countingSink.buffer()
         delegate.writeTo(countingBufferedSink)
         if (countingBufferedSink.isOpen) {
             countingBufferedSink.emit()
@@ -256,6 +256,11 @@ private class CountingRequestBody(
 
         bytesUploaded = countingSink.bytesUploaded
     }
+
+    override fun isOneShot(): Boolean = delegate.isOneShot()
+
+    // CountingRequestBody cannot be duplex.
+    override fun isDuplex(): Boolean = false
 }
 
 /**
@@ -352,24 +357,21 @@ private class CountingCallback<T>(
     private fun processResponse(response: Response): CallState.Success<T> {
         val responseBuilderForHandler = response.newBuilder()
 
-        val request = response.request()
-        val requestBody = request.body()
+        val request = response.request
+        val requestBody = request.body
         if (requestBody is CountingRequestBody) {
             // Restore the original request body.
             val restoredRequest = request.newBuilder()
-                .method(request.method(), requestBody.delegate)
+                .method(request.method, requestBody.delegate)
                 .build()
             responseBuilderForHandler.request(restoredRequest)
         }
 
         val countingSource = mayCreateCountingSource(response)
         if (countingSource != null) {
-            val originalBody = checkNotNull(response.body())
-            val countingResponseBody = ResponseBody.create(
-                originalBody.contentType(),
-                originalBody.contentLength(),
-                Okio.buffer(countingSource)
-            )
+            val originalBody = checkNotNull(response.body)
+            val countingResponseBody = countingSource.buffer()
+                .asResponseBody(originalBody.contentType(), originalBody.contentLength())
             responseBuilderForHandler.body(countingResponseBody)
         }
 
@@ -379,7 +381,7 @@ private class CountingCallback<T>(
         val bytesDownloaded = when {
             countingSource != null -> countingSource.bytesDownloaded
             countDownload && handlePartialResponse &&
-                response.code() == StatusCode.RANGE_NOT_SATISFIABLE ->
+                response.code == StatusCode.RANGE_NOT_SATISFIABLE ->
                 response.mayGetTotalLengthOfUnsatisfiedRange() ?: -1
             else -> -1
         }
@@ -389,10 +391,10 @@ private class CountingCallback<T>(
     private fun mayCreateCountingSource(response: Response): CountingSource? {
         if (!countDownload || !response.isSuccessful) return null
 
-        val originalBody = checkNotNull(response.body())
+        val originalBody = checkNotNull(response.body)
         val originalSource = originalBody.source()
         val contentRange =
-            if (handlePartialResponse && response.code() == StatusCode.PARTIAL_CONTENT) {
+            if (handlePartialResponse && response.code == StatusCode.PARTIAL_CONTENT) {
                 response.mayGetSinglePartContentRange()
             } else null
         return if (contentRange != null) {

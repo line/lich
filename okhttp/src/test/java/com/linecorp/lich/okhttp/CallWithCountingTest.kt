@@ -26,6 +26,7 @@ import okhttp3.MediaType
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
 import okio.Buffer
@@ -64,7 +65,7 @@ class CallWithCountingTest {
         val data = ByteArray(20000) { it.toByte() }
 
         server.enqueue(MockResponse().apply {
-            body = Buffer().write(data)
+            setBody(Buffer().write(data))
             throttleBody(1000, 50, TimeUnit.MILLISECONDS)
         })
         server.start()
@@ -72,7 +73,7 @@ class CallWithCountingTest {
         val request = Request.Builder().url(server.url("/foo")).build()
         val callStateList = okHttpClient.callWithCounting(request) { response ->
             assertTrue(response.isSuccessful)
-            checkNotNull(response.body()).bytes()
+            checkNotNull(response.body).bytes()
         }.toList()
 
         callStateList.subList(0, callStateList.size - 1).forEach { state ->
@@ -100,7 +101,7 @@ class CallWithCountingTest {
         val request = Request.Builder().url(server.url("/foo")).build()
         val callStateList = okHttpClient.callWithCounting(request) { response ->
             assertTrue(response.isSuccessful)
-            checkNotNull(response.body()).bytes()
+            checkNotNull(response.body).bytes()
         }.toList()
 
         callStateList.subList(0, callStateList.size - 1).forEach { state ->
@@ -122,7 +123,7 @@ class CallWithCountingTest {
         server.enqueue(MockResponse().apply {
             setResponseCode(StatusCode.PARTIAL_CONTENT)
             setHeader("Content-Range", "bytes 10000-19999/20000")
-            body = Buffer().write(data)
+            setBody(Buffer().write(data))
             throttleBody(1000, 50, TimeUnit.MILLISECONDS)
         })
         server.start()
@@ -133,8 +134,8 @@ class CallWithCountingTest {
             .build()
         assertEquals("bytes=10000-", request.header("Range"))
         val callStateList = okHttpClient.callWithCounting(request) { response ->
-            assertEquals(StatusCode.PARTIAL_CONTENT, response.code())
-            checkNotNull(response.body()).bytes()
+            assertEquals(StatusCode.PARTIAL_CONTENT, response.code)
+            checkNotNull(response.body).bytes()
         }.toList()
 
         callStateList.subList(0, callStateList.size - 1).forEach { state ->
@@ -165,8 +166,8 @@ class CallWithCountingTest {
             .build()
         assertEquals("bytes=20000-", request.header("Range"))
         val callStateList = okHttpClient.callWithCounting(request) { response ->
-            assertEquals(StatusCode.RANGE_NOT_SATISFIABLE, response.code())
-            checkNotNull(response.body()).string()
+            assertEquals(StatusCode.RANGE_NOT_SATISFIABLE, response.code)
+            checkNotNull(response.body).string()
         }.toList()
 
         assertEquals(1, callStateList.size)
@@ -190,14 +191,14 @@ class CallWithCountingTest {
 
         val request = Request.Builder()
             .url(server.url("/foo"))
-            .post(RequestBody.create(null, data))
+            .post(data.toRequestBody())
             .build()
         val callStateList = okHttpClient.callWithCounting(
             request,
             countDownload = false
         ) { response ->
             assertTrue(response.isSuccessful)
-            checkNotNull(response.body()).string()
+            checkNotNull(response.body).string()
         }.toList()
 
         callStateList.subList(0, callStateList.size - 1).forEach { state ->
@@ -229,7 +230,7 @@ class CallWithCountingTest {
             override fun writeTo(sink: BufferedSink) {
                 val buffer = Buffer().write(data)
                 while (!buffer.exhausted()) {
-                    sink.write(buffer, min(buffer.size(), 300L))
+                    sink.write(buffer, min(buffer.size, 300L))
                     sink.emit()
                 }
             }
@@ -243,8 +244,8 @@ class CallWithCountingTest {
             countDownload = false
         ) { response ->
             assertTrue(response.isSuccessful)
-            assertSame(chunkedRequestBody, response.request().body())
-            checkNotNull(response.body()).string()
+            assertSame(chunkedRequestBody, response.request.body)
+            checkNotNull(response.body).string()
         }.toList()
 
         callStateList.subList(0, callStateList.size - 1).forEach { state ->
@@ -272,7 +273,7 @@ class CallWithCountingTest {
 
         val request = Request.Builder()
             .url(server.url("/foo"))
-            .post(RequestBody.create(null, data))
+            .post(data.toRequestBody())
             .build()
         val callStateListOrNull = withTimeoutOrNull(200) {
             okHttpClient.callWithCounting(
@@ -280,7 +281,7 @@ class CallWithCountingTest {
                 countDownload = false
             ) { response ->
                 assertTrue(response.isSuccessful)
-                checkNotNull(response.body()).string()
+                checkNotNull(response.body).string()
             }.toList()
         }
         server.takeRequest()
@@ -296,7 +297,7 @@ class CallWithCountingTest {
         val request = Request.Builder().url(server.url("/foo")).build()
         val callStateList = okHttpClient.callWithCounting(request) { response ->
             if (!response.isSuccessful) {
-                throw ResponseStatusException(response.code())
+                throw ResponseStatusException(response.code)
             }
             fail("Not reached.")
         }.toList()

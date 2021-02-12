@@ -43,9 +43,9 @@ import kotlin.coroutines.resumeWithException
  *     val request = Request.Builder().url(url).build()
  *     return okHttpClient.call(request) { response ->
  *         if (!response.isSuccessful) {
- *             throw ResponseStatusException(response.code())
+ *             throw ResponseStatusException(response.code)
  *         }
- *         checkNotNull(response.body()).string()
+ *         checkNotNull(response.body).string()
  *     }
  * }
  * ```

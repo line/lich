@@ -33,7 +33,7 @@ buildscript {
         androidxTestJunit       : '1.1.2',
         androidxTestEspresso    : '3.3.0',
         autoService             : '1.0-rc7',
-        okhttp                  : '3.12.13',
+        okhttp                  : '4.9.1',
         dagger                  : '2.31.2',
         kotlinPoet              : '1.7.2',
         thrift                  : '0.12.0',

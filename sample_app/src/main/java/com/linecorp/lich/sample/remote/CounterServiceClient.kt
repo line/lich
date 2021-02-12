@@ -19,6 +19,7 @@ import android.content.Context
 import android.util.Log
 import com.linecorp.lich.component.ComponentFactory
 import com.linecorp.lich.component.component
+import com.linecorp.lich.okhttp.ResponseStatusException
 import com.linecorp.lich.okhttp.call
 import com.linecorp.lich.sample.GlobalOkHttpClient
 import okhttp3.Request
@@ -45,10 +46,10 @@ class CounterServiceClient private constructor(context: Context) {
         val request = Request.Builder().url(FAKE_SERVICE_URL).build()
         return okHttpClient.call(request) { response ->
             if (!response.isSuccessful) {
-                throw IOException("HTTP Response code: ${response.code()}")
+                throw ResponseStatusException(response.code)
             }
             try {
-                val entries = JSONArray(checkNotNull(response.body()).string())
+                val entries = JSONArray(checkNotNull(response.body).string())
                 entries.length()
             } catch (e: JSONException) {
                 throw IOException(e)

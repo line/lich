@@ -70,7 +70,7 @@ fun Response.saveToResourceWithSupportingResumption(resourceToSave: WritableReso
     val sink: Sink
     val isLastPart: Boolean
 
-    when (code()) {
+    when (code) {
         StatusCode.OK -> {
             // The response body contains the entire content.
             sink = resourceToSave.newSink(append = false)
@@ -95,10 +95,10 @@ fun Response.saveToResourceWithSupportingResumption(resourceToSave: WritableReso
             // The entire content was already downloaded to the resource.
             return true
         }
-        else -> throw ResponseStatusException(code())
+        else -> throw ResponseStatusException(code)
     }
 
-    sink.use { checkNotNull(body()).source().readAll(it) }
+    sink.use { checkNotNull(body).source().readAll(it) }
 
     return isLastPart
 }
