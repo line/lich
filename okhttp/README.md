@@ -34,6 +34,23 @@ suspend fun fetchContentAsString(url: String): String {
 }
 ```
 
+This is an example that calls a JSON API and parses the response using [Gson](https://github.com/google/gson).
+```kotlin
+suspend fun fetchFooJson(url: String): Foo {
+    val request = Request.Builder().url(url).build()
+    return okHttpClient.call(request) { response ->
+        if (!response.isSuccessful) {
+            throw ResponseStatusException(response.code)
+        }
+        gson.fromJson(checkNotNull(response.body).charStream(), Foo::class.java)
+    }
+}
+```
+
+NOTE: You *don't* need to use `withContext(Dispatchers.IO) { ... }` in the above code.
+The `response` handler of the `call` function is always executed on OkHttp's background threads,
+and the caller thread is never blocked.
+
 ## File upload
 
 This is a sample code that sends the content of `fileToUpload` as an HTTP POST method.
