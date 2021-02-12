@@ -51,8 +51,11 @@ buildscript {
         classpath "com.android.tools.build:gradle:${versions.androidGradlePlugin}"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${versions.kotlin}"
         classpath "org.jetbrains.dokka:dokka-gradle-plugin:${versions.dokka}"
+        classpath "io.codearte.gradle.nexus:gradle-nexus-staging-plugin:0.22.0"
     }
 }
+
+apply plugin: 'io.codearte.nexus-staging'
 
 allprojects {
     group = 'com.linecorp.lich'
@@ -166,6 +169,11 @@ def configurePublication(project, publication) {
             sign publishing.publications.maven
         }
     }
+}
+
+nexusStaging {
+    packageGroup = 'com.linecorp'
+    stagingProfileId = '465b0f4eecd582'
 }
 
 task clean(type: Delete) {

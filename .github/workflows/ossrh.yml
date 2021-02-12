@@ -2,6 +2,9 @@ name: Deploy to OSSRH
 
 on:
   workflow_dispatch:
+    inputs:
+      cond_release:
+        description: 'Type "release" to release artifacts to Maven Central.'
 
 jobs:
   deploy:
@@ -12,10 +15,16 @@ jobs:
       - uses: actions/setup-java@v1
         with:
           java-version: 11
-      - name: Run publish
+      - name: Deploy artifacts
         env:
           ORG_GRADLE_PROJECT_repositoryUsername: ${{ secrets.OSSRH_USERNAME }}
           ORG_GRADLE_PROJECT_repositoryPassword: ${{ secrets.OSSRH_PASSWORD }}
           ORG_GRADLE_PROJECT_signingKey: ${{ secrets.SIGNING_KEY }}
           ORG_GRADLE_PROJECT_signingPassword: ${{ secrets.SIGNING_PASSWORD }}
         run: ./gradlew publish
+      - name: Release to Maven Central
+        if: ${{ github.event.inputs.cond_release == 'release' }}
+        env:
+          ORG_GRADLE_PROJECT_nexusUsername: ${{ secrets.OSSRH_USERNAME }}
+          ORG_GRADLE_PROJECT_nexusPassword: ${{ secrets.OSSRH_PASSWORD }}
+        run: ./gradlew closeAndReleaseRepository
