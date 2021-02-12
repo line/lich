@@ -11,7 +11,7 @@ dependencies {
 }
 ```
 
-- [OkHttpClient.call()](src/main/java/com/linecorp/lich/okhttp/OkHttpExtensions.kt) - A suspending
+- [OkHttpClient.call()](src/main/java/com/linecorp/lich/okhttp/Call.kt) - A suspending
 function to send an HTTP request and receive its response.
 - [OkHttpClient.callWithCounting()](src/main/java/com/linecorp/lich/okhttp/CallWithCounting.kt) -
 Creates a `Flow` that executes an HTTP call with counting the number of bytes transferred in its
