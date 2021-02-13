@@ -42,7 +42,11 @@ suspend fun fetchFooJson(url: String): Foo {
         if (!response.isSuccessful) {
             throw ResponseStatusException(response.code)
         }
-        gson.fromJson(checkNotNull(response.body).charStream(), Foo::class.java)
+        try {
+            gson.fromJson(checkNotNull(response.body).charStream(), Foo::class.java)
+        } catch (e: JsonParseException) {
+            throw IOException(e)
+        }
     }
 }
 ```
