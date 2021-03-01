@@ -7,7 +7,7 @@ version = VERSION_NAME_THRIFT
 ext.publication = [
     type       : 'jar',
     name       : 'Lich Thrift',
-    description: 'Coroutine-aware extensions for Apache Thrift.',
+    description: 'A library for using Apache Thrift in combination with OkHttp.',
     url        : 'https://github.com/line/lich/tree/master/thrift',
 ]
 

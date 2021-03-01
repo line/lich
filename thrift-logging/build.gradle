@@ -9,7 +9,7 @@ ext.publication = [
     type       : 'aar',
     name       : 'Lich Thrift Logging',
     description: 'Transparent logging library for Lich Thrift.',
-    url        : 'https://github.com/line/lich/tree/master/thrift-logging',
+    url        : 'https://github.com/line/lich/tree/master/thrift',
 ]
 
 android {

@@ -12,7 +12,7 @@ All the libraries are available on [Maven Central](https://search.maven.org/sear
 - [viewmodel](viewmodel) - Lightweight framework for managing ViewModels.
 - [lifecycle](lifecycle) - A small library for Android Jetpack Lifecycle.
 - [okhttp](okhttp) - Coroutine-aware extensions for OkHttp.
-- [thrift](thrift) - Coroutine-aware extensions for Apache Thrift.
+- [thrift](thrift) - A library for using Apache Thrift in combination with OkHttp.
 
 ## Sample App
 

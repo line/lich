@@ -2,7 +2,7 @@
 
 [ ![Maven Central](https://badgen.net/maven/v/maven-central/com.linecorp.lich/thrift) ](https://search.maven.org/artifact/com.linecorp.lich/thrift)
 
-A small library for [Apache Thrift](https://thrift.apache.org/).
+A library for using [Apache Thrift](https://thrift.apache.org/) in combination with [OkHttp](https://square.github.io/okhttp/).
 
 ```groovy
 // build.gradle
@@ -11,46 +11,60 @@ dependencies {
 }
 ```
 
-This library provides the following APIs.
+The basic usage is just to implement a class that inherits
+[AbstractThriftServiceClient](src/main/java/com/linecorp/lich/thrift/AbstractThriftServiceClient.kt).
 
-- [OkHttpClient.callThrift()](src/main/java/com/linecorp/lich/thrift/ThriftExtensions.kt) - A
-suspending function to call a remote Thrift service over HTTP.
-- [ThriftCallHandler](src/main/java/com/linecorp/lich/thrift/ThriftCallHandler.kt) - A handler
-responsible for creating instances of `TServiceClient` and handling HTTP requests for Thrift Service
-calls.
-- [AbstractThriftCallHandler](src/main/java/com/linecorp/lich/thrift/AbstractThriftCallHandler.kt) -
-Skeleton of `ThriftCallHandler`.
+For example, the code that calls [FooService](../sample_thrift/src/main/thrift/FooService.thrift)
+can be implemented as follows:
 
-This is a sample code to call [FooService](../sample_thrift/src/main/thrift/FooService.thrift):
 ```kotlin
-class MyThriftCallHandler<T : TServiceClient>(
-    serviceClientFactory: TServiceClientFactory<T>,
-    endpointPath: String
-) : AbstractThriftCallHandler<T>(serviceClientFactory) {
+class FooServiceClient(
+    override val okHttpClient: OkHttpClient,
+    override val endpointUrl: HttpUrl
+) : AbstractThriftServiceClient<FooService.Client>() {
 
-    override val endpointUrl: HttpUrl = endpointUrlBase.resolve(endpointPath)
-        ?: throw IllegalArgumentException("Invalid path: $endpointPath")
-
-    companion object {
-        val endpointUrlBase: HttpUrl = HttpUrl.get("https://api.example.com")
-    }
-}
-
-class FooServiceClient(private val okHttpClient: OkHttpClient) {
-
-    private val handler: ThriftCallHandler<FooService.Client> =
-        MyThriftCallHandler(FooService.Client.Factory(), "/foo")
+    override val thriftClientFactory: ThriftClientFactory<FooService.Client> =
+        ThriftClientFactory(FooService.Client.Factory())
 
     suspend fun ping() =
-        okHttpClient.callThrift(handler,
-            { send_ping() },
-            { recv_ping() }
-        )
+        call({ send_ping() }, { recv_ping() })
 
     suspend fun callFoo(id: Long, name: String, param: FooParam): FooResponse =
-        okHttpClient.callThrift(handler,
-            { send_callFoo(id, name, param) },
-            { recv_callFoo() }
-        )
+        call({ send_callFoo(id, name, param) }, { recv_callFoo() })
+}
+
+val fooServiceClient = FooServiceClient(OkHttpClient(), "https://api.example.com/foo".toHttpUrl())
+fooServiceClient.ping()
+```
+
+## Transparent logging
+
+[thrift-logging](../thrift-logging) provides transparent logging with dynamic code generation.
+
+```groovy
+// build.gradle
+dependencies {
+    debugImplementation 'com.linecorp.lich:thrift-logging:x.x.x'
+}
+```
+
+```kotlin
+val thriftLogger = object : ThriftLogger {
+    override fun logSend(namespace: String, service: String, function: String, args: TBase<*, *>) {
+        Log.d("ThriftLogger", "$service.send_$function: $args")
+    }
+
+    override fun logReceive(namespace: String, service: String, function: String, result: TBase<*, *>) {
+        Log.d("ThriftLogger", "$service.recv_$function: $result")
+    }
+}
+val thriftLogEnabler = ThriftLogEnabler(context, thriftLogger)
+
+class FooServiceClient : AbstractThriftServiceClient<FooService.Client>() {
+
+    override val thriftClientFactory: ThriftClientFactory<FooService.Client> =
+        thriftLogEnabler.enableLogging(ThriftClientFactory(FooService.Client.Factory()))
+
+    // snip...
 }
 ```
