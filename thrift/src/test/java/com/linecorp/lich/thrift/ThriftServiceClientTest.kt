@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 LINE Corporation
+ * Copyright 2021 LINE Corporation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,14 +15,12 @@
  */
 package com.linecorp.lich.thrift
 
+import com.linecorp.lich.okhttp.ResponseStatusException
 import com.linecorp.lich.sample.thrift.FooException
 import com.linecorp.lich.sample.thrift.FooParam
 import com.linecorp.lich.sample.thrift.FooResponse
 import com.linecorp.lich.sample.thrift.FooService
-import com.linecorp.lich.thrift.internal.ReceiveTransport
-import com.linecorp.lich.thrift.internal.SendTransport
 import kotlinx.coroutines.runBlocking
-import okhttp3.HttpUrl
 import okhttp3.OkHttpClient
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
@@ -34,30 +32,24 @@ import org.apache.thrift.TSerializable
 import org.apache.thrift.protocol.TCompactProtocol
 import org.apache.thrift.protocol.TMessage
 import org.apache.thrift.protocol.TMessageType
-import org.apache.thrift.protocol.TProtocolException
 import org.apache.thrift.transport.TTransportException
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 import kotlin.test.assertTrue
-import kotlin.test.fail
 
-class ThriftCallTest {
+class ThriftServiceClientTest {
 
     private lateinit var server: MockWebServer
-
-    private lateinit var handler: ThriftCallHandler<FooService.Client>
 
     private lateinit var okHttpClient: OkHttpClient
 
     @Before
     fun setUp() {
         server = MockWebServer()
-        handler = Handler(server)
-        okHttpClient = OkHttpClient.Builder()
-            .retryOnConnectionFailure(false)
-            .build()
+        okHttpClient = OkHttpClient()
     }
 
     @After
@@ -71,7 +63,7 @@ class ThriftCallTest {
         server.enqueue(MockResponse().setThriftResponse("ping", result))
         server.start()
 
-        callPing()
+        newClient().ping()
 
         val args = FooService.ping_args()
         verifyRequest(server.takeRequest(), "ping", args)
@@ -83,10 +75,9 @@ class ThriftCallTest {
         server.enqueue(MockResponse().setThriftResponse("ping", exception))
         server.start()
 
-        try {
-            callPing()
-            fail()
-        } catch (e: TApplicationException) {
+        assertFailsWith<TApplicationException> {
+            newClient().ping()
+        }.let { e ->
             assertEquals(exception.type, e.type)
             assertEquals(exception.message, e.message)
         }
@@ -97,11 +88,12 @@ class ThriftCallTest {
         server.enqueue(MockResponse().setResponseCode(500))
         server.start()
 
-        try {
-            callPing()
-            fail()
-        } catch (e: TTransportException) {
-            assertEquals("HTTP Response code: 500", e.message)
+        assertFailsWith<TTransportException> {
+            newClient().ping()
+        }.let { e ->
+            val cause = e.cause
+            assertTrue(cause is ResponseStatusException)
+            assertEquals(500, cause.code)
         }
     }
 
@@ -120,7 +112,7 @@ class ThriftCallTest {
             setNumber(100)
             setComment("RequestComment")
         }
-        val actualResponse = callFoo(123, "foobar", fooParam)
+        val actualResponse = newClient().callFoo(123, "foobar", fooParam)
 
         assertEquals(fooResponse, actualResponse)
 
@@ -139,51 +131,23 @@ class ThriftCallTest {
             setNumber(100)
             setComment("RequestComment")
         }
-        try {
-            callFoo(123, "foobar", fooParam)
-            fail()
-        } catch (e: FooException) {
+        assertFailsWith<FooException> {
+            newClient().callFoo(123, "foobar", fooParam)
+        }.let { e ->
             assertEquals(fooException, e)
         }
     }
 
-    @Test
-    fun testExceptionOnSend() = runBlocking {
-        server.start()
-
-        try {
-            okHttpClient.callThrift(handler,
-                { throw TProtocolException("Failed to serialize your request.") },
-                { recv_callFoo() }
-            )
-            fail()
-        } catch (e: TProtocolException) {
-            assertEquals("Failed to serialize your request.", e.message)
-        }
-
-        assertEquals(0, server.requestCount)
-    }
-
-    private suspend fun callPing(): Unit =
-        okHttpClient.callThrift(handler,
-            { send_ping() },
-            { recv_ping() }
-        )
-
-    private suspend fun callFoo(id: Long, name: String, param: FooParam): FooResponse =
-        okHttpClient.callThrift(handler,
-            { send_callFoo(id, name, param) },
-            { recv_callFoo() }
-        )
+    private fun newClient(): FooServiceClient =
+        FooServiceClient(okHttpClient, server.url("/foo"))
 
     private fun MockResponse.setThriftResponse(
         methodName: String,
         result: TSerializable
     ): MockResponse {
-        val responseBody = Buffer()
-        val responseBodyTransport = SendTransport().apply { sink = responseBody }
-        val protocol = TCompactProtocol(responseBodyTransport)
+        val buffer = Buffer()
 
+        val protocol = TCompactProtocol(OkioTransport(sendSink = buffer))
         val messageType = if (result is TApplicationException) {
             TMessageType.EXCEPTION
         } else {
@@ -193,38 +157,30 @@ class ThriftCallTest {
         result.write(protocol)
         protocol.writeMessageEnd()
 
-        responseBodyTransport.flush()
-        setBody(responseBody)
+        setBody(buffer)
 
         return this
     }
 
-    private fun <T> verifyRequest(
+    private fun <T : TBase<*, *>> verifyRequest(
         request: RecordedRequest,
         methodName: String,
         expectedArgs: T
-    ) where T : TSerializable, T : TBase<*, *> {
+    ) {
         assertEquals("POST", request.method)
         assertEquals("/foo", request.path)
 
-        val requestBodyTransport = ReceiveTransport().apply { source = request.body }
-        val protocol = TCompactProtocol(requestBodyTransport)
+        val protocol = TCompactProtocol(OkioTransport(receiveSource = request.body))
 
         assertEquals(TMessage(methodName, TMessageType.CALL, 1), protocol.readMessageBegin())
 
-        val requestArgs = expectedArgs.deepCopy().apply {
-            clear()
-            read(protocol)
+        val requestArgs = expectedArgs.deepCopy().also {
+            it.clear()
+            it.read(protocol)
         }
         assertEquals(expectedArgs, requestArgs)
 
         protocol.readMessageEnd()
         assertTrue(request.body.exhausted())
-    }
-
-    private class Handler(private val server: MockWebServer) :
-        AbstractThriftCallHandler<FooService.Client>(FooService.Client.Factory()) {
-        override val endpointUrl: HttpUrl
-            get() = server.url("/foo")
     }
 }

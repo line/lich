@@ -29,6 +29,8 @@ import org.apache.thrift.transport.TTransportException
 /**
  * Skeleton of [ThriftCallHandler].
  *
+ * NOTE: This class is deprecated. Please migrate to [AbstractThriftServiceClient].
+ *
  * This is an example of a `ThriftCallHandler` instance.
  * ```
  * class MyThriftCallHandler<T : TServiceClient>(
@@ -50,6 +52,7 @@ import org.apache.thrift.transport.TTransportException
  *
  * @see okhttp3.OkHttpClient.callThrift
  */
+@Deprecated("Please migrate to AbstractThriftServiceClient.")
 abstract class AbstractThriftCallHandler<T : TServiceClient>(
     private val serviceClientFactory: TServiceClientFactory<T>,
     private val sendProtocolFactory: TProtocolFactory = defaultProtocolFactory,
