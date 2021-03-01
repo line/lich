@@ -37,6 +37,7 @@ buildscript {
         dagger                  : '2.31.2',
         kotlinPoet              : '1.7.2',
         thrift                  : '0.13.0',
+        dexmaker                : '2.28.1',
         mockito                 : '2.28.2',
         mockitoKotlin           : '2.2.0',
         mockk                   : '1.10.0',
