@@ -25,8 +25,11 @@ import org.apache.thrift.transport.TTransport
  * A handler responsible for creating instances of [TServiceClient] and handling HTTP requests
  * for Thrift Service calls.
  *
+ * NOTE: This interface is deprecated. Please migrate to [AbstractThriftServiceClient].
+ *
  * @see AbstractThriftCallHandler
  */
+@Deprecated("Please migrate to AbstractThriftServiceClient.")
 interface ThriftCallHandler<T : TServiceClient> {
     /**
      * Returns a new instance of [T] using the specified send / receive transports.

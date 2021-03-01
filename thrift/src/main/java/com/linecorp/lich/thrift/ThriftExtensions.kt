@@ -15,8 +15,7 @@
  */
 package com.linecorp.lich.thrift
 
-import com.linecorp.lich.thrift.internal.SendRequestException
-import com.linecorp.lich.thrift.internal.ThriftCall
+import com.linecorp.lich.okhttp.call
 import okhttp3.OkHttpClient
 import org.apache.thrift.TException
 import org.apache.thrift.TServiceClient
@@ -25,6 +24,8 @@ import java.io.IOException
 
 /**
  * Makes a call to a Thrift Service.
+ *
+ * NOTE: This function is deprecated. Please migrate to [AbstractThriftServiceClient].
  *
  * The transport protocol of this function is compatible with [org.apache.thrift.transport.THttpClient].
  * Any IOExceptions will be thrown as [TTransportException]s.
@@ -61,14 +62,23 @@ import java.io.IOException
  * @throws TException
  * @see AbstractThriftCallHandler
  */
+@Deprecated("Please migrate to AbstractThriftServiceClient.")
 suspend fun <T : TServiceClient, R> OkHttpClient.callThrift(
     thriftCallHandler: ThriftCallHandler<T>,
     sendRequest: T.() -> Unit,
     receiveResponse: T.() -> R
-): R = try {
-    ThriftCall(this, thriftCallHandler, sendRequest, receiveResponse).call()
-} catch (e: SendRequestException) {
-    throw e.source
-} catch (e: IOException) {
-    throw TTransportException(e)
+): R {
+    val thriftClientFactory = ThriftClientFactory { transport ->
+        thriftCallHandler.newServiceClient(transport, transport)
+    }
+    val requestBody = ThriftRequestBody(thriftClientFactory, sendRequest)
+    val request = thriftCallHandler.newRequest(requestBody)
+    return try {
+        call(request) { response ->
+            thriftCallHandler.throwExceptionIfError(response)
+            response.receiveThriftResponse(receiveResponse)
+        }
+    } catch (e: IOException) {
+        throw TTransportException(e)
+    }
 }
