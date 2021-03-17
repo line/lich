@@ -17,12 +17,14 @@ package com.linecorp.lich.component.internal
 
 import android.content.Context
 import android.os.StrictMode
+import com.google.auto.service.AutoService
 import com.linecorp.lich.component.ComponentFactory
 import java.util.concurrent.CountDownLatch
 
 /**
  * A simple and fast implementation of [ComponentProvider].
  */
+@AutoService(ComponentProvider::class)
 internal class DefaultComponentProvider : ComponentProvider {
 
     override val loadPriority: Int
