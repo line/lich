@@ -1,6 +1,7 @@
 apply plugin: 'com.android.dynamic-feature'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
+apply plugin: 'com.google.devtools.ksp'
 
 android {
     compileSdkVersion versions.compileSdk
@@ -26,7 +27,7 @@ dependencies {
     implementation project(':sample_app')
     implementation project(':component')
     implementation project(':viewmodel')
-    kapt project(':viewmodel-compiler')
+    ksp project(':viewmodel-compiler')
     implementation "androidx.appcompat:appcompat:${versions.androidxAppcompat}"
     implementation "androidx.constraintlayout:constraintlayout:${versions.androidxConstraintlayout}"
     implementation "androidx.fragment:fragment-ktx:${versions.androidxFragment}"
