@@ -52,6 +52,7 @@ buildscript {
     dependencies {
         classpath "com.android.tools.build:gradle:${versions.androidGradlePlugin}"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${versions.kotlin}"
+        classpath "com.google.devtools.ksp:com.google.devtools.ksp.gradle.plugin:${versions.ksp}"
         classpath "org.jetbrains.dokka:dokka-gradle-plugin:${versions.dokka}"
         classpath "io.codearte.gradle.nexus:gradle-nexus-staging-plugin:0.22.0"
     }
