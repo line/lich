@@ -31,6 +31,10 @@ internal object ViewModelArgsWriter {
         viewModelInfo.toFileSpec(originatingElement).writeTo(filer)
     }
 
+    fun writeToAppendable(viewModelInfo: ViewModelInfo, appendable: Appendable) {
+        viewModelInfo.toFileSpec().writeTo(appendable)
+    }
+
     private fun ViewModelInfo.toFileSpec(originatingElement: Element? = null): FileSpec {
         val constructorSpec = FunSpec.constructorBuilder().apply {
             arguments.forEach { addParameter(it.toConstructorParameterSpec()) }
