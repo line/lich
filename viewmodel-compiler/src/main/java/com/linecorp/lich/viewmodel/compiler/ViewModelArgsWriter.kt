@@ -45,7 +45,7 @@ internal object ViewModelArgsWriter {
         val toBundleFunSpec = FunSpec.builder("toBundle")
             .addModifiers(KModifier.OVERRIDE)
             .returns(bundleClass)
-            .beginControlFlow("return %T().apply", bundleClass).also { builder ->
+            .beginControlFlow("return %T().also", bundleClass).also { builder ->
                 arguments.forEach { it.addStatementTo(builder) }
             }.endControlFlow()
             .build()
@@ -78,9 +78,15 @@ internal object ViewModelArgsWriter {
             putMethodName == null ->
                 builder.addStatement("TODO(%S)", "Cannot put `$name` to Bundle directly.")
             isOptional ->
-                builder.addStatement("if (%N != null) %N(%S, %N)", name, putMethodName, name, name)
+                builder.addStatement(
+                    "if (this.%N != null) it.%N(%S, this.%N)",
+                    name,
+                    putMethodName,
+                    name,
+                    name
+                )
             else ->
-                builder.addStatement("%N(%S, %N)", putMethodName, name, name)
+                builder.addStatement("it.%N(%S, this.%N)", putMethodName, name, name)
         }
     }
 
