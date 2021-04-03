@@ -240,8 +240,7 @@ class InitializingSavedStateDelegate<T>(private val savedState: SavedState, priv
 /**
  * A delegate provider for [SavedState.required].
  */
-// #29 In Kotlin 1.3.70, `provideDelegate` cannot be compiled in inline classes.
-class RequiringSavedStateDelegate<T>(val savedState: SavedState) {
+class RequiringSavedStateDelegate<T>(private val savedState: SavedState) {
     @Suppress("NOTHING_TO_INLINE")
     inline operator fun provideDelegate(
         thisRef: Any?,
@@ -258,25 +257,31 @@ class RequiringSavedStateDelegate<T>(val savedState: SavedState) {
 /**
  * A property delegate that is guaranteed to have a value for the name.
  */
-@Suppress("EXPERIMENTAL_FEATURE_WARNING")
-inline class InitializedSavedState<T>(val savedState: SavedState) {
+class InitializedSavedState<T>(private val savedState: SavedState) {
     @Suppress("NOTHING_TO_INLINE")
     @MainThread
     inline operator fun getValue(thisRef: Any?, property: KProperty<*>): T =
-        savedState.getForExistingKey(property.name)
+        get(property.name)
 
     @Suppress("NOTHING_TO_INLINE")
     @MainThread
     inline operator fun setValue(thisRef: Any?, property: KProperty<*>, value: T) {
-        savedState[property.name] = value
+        set(property.name, value)
+    }
+
+    @PublishedApi
+    internal fun get(key: String): T = savedState.getForExistingKey(key)
+
+    @PublishedApi
+    internal fun set(key: String, value: T) {
+        savedState[key] = value
     }
 }
 
 /**
  * A delegate provider for [SavedState.liveData] without `initialValue`.
  */
-// #29 In Kotlin 1.3.70, `provideDelegate` cannot be compiled in inline classes.
-class SavedStateLiveDataDelegate<T>(val savedState: SavedState) {
+class SavedStateLiveDataDelegate<T>(private val savedState: SavedState) {
     @Suppress("NOTHING_TO_INLINE")
     inline operator fun provideDelegate(
         thisRef: Any?,
@@ -310,8 +315,7 @@ class SavedStateLiveDataWithInitialDelegate<T>(
  * A property delegate that was provided by [SavedStateLiveDataDelegate] or
  * [SavedStateLiveDataWithInitialDelegate].
  */
-@Suppress("EXPERIMENTAL_FEATURE_WARNING")
-inline class SavedStateLiveData<T>(val liveData: MutableLiveData<T>) {
+class SavedStateLiveData<T>(@PublishedApi internal val liveData: MutableLiveData<T>) {
     @Suppress("NOTHING_TO_INLINE")
     inline operator fun getValue(thisRef: Any?, property: KProperty<*>): MutableLiveData<T> =
         liveData
