@@ -21,6 +21,10 @@ All the libraries are available on [Maven Central](https://search.maven.org/sear
 - [dagger_sample_app](dagger_sample_app) - A sample application to demonstrate integration of Lich and [Dagger2](https://dagger.dev/).
 - [dagger_sample_feature](dagger_sample_feature) - A sample feature module for `dagger_sample_app`.
 
+## Material
+
+- (In Japanese) https://speakerdeck.com/line_developers/kotlin-lich
+
 ## License
 
 ```text
