@@ -165,7 +165,7 @@ class KspViewModelArgsProcessor : SymbolProcessor {
     private fun KSType.toTypeName(): TypeName? {
         val rawType = declaration.toRawClassName() ?: return null
         val typeArguments = arguments.map { it.toTypeName() ?: return null }
-        // TODO: cf. https://github.com/google/ksp/issues/325
+        // TODO: cf. https://github.com/google/ksp/issues/366
         //val outerTypeName = outerType?.toTypeName() as? ParameterizedTypeName
         val nonNullType = when {
             //outerTypeName != null -> outerTypeName.nestedClass(rawType.simpleName, typeArguments)
