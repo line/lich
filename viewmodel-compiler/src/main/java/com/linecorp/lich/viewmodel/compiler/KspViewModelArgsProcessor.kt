@@ -109,8 +109,12 @@ class KspViewModelArgsProcessor : SymbolProcessor {
             return null
         }
 
-        val putMethodName =
-            resolvePutMethodName(argumentType, argumentTypeName, isOptional, resolver)
+        val putMethodName = resolvePutMethodName(
+            argumentType.makeNotNullable(),
+            argumentTypeName,
+            isOptional,
+            resolver
+        )
         if (putMethodName == null) {
             logger.warn("Type `$argumentTypeName` cannot be put into a Bundle.", this)
         }
@@ -133,7 +137,7 @@ class KspViewModelArgsProcessor : SymbolProcessor {
             val superType = resolver.getClassDeclarationByName(qualifiedName) ?: return false
             val argumentType = type.arguments.firstOrNull()
                 ?.takeUnless { it.variance == Variance.CONTRAVARIANT }
-                ?.type?.resolve() ?: return false
+                ?.type?.resolve()?.makeNotNullable() ?: return false
             return superType.asStarProjectedType().isAssignableFrom(argumentType)
         }
 
@@ -161,7 +165,7 @@ class KspViewModelArgsProcessor : SymbolProcessor {
     private fun KSType.toTypeName(): TypeName? {
         val rawType = declaration.toRawClassName() ?: return null
         val typeArguments = arguments.map { it.toTypeName() ?: return null }
-        // TODO: cf. https://github.com/google/ksp/issues/325
+        // TODO: cf. https://github.com/google/ksp/issues/366
         //val outerTypeName = outerType?.toTypeName() as? ParameterizedTypeName
         val nonNullType = when {
             //outerTypeName != null -> outerTypeName.nestedClass(rawType.simpleName, typeArguments)

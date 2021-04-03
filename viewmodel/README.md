@@ -194,15 +194,15 @@ class FooViewModel(private val context: Context, savedState: SavedState) : Abstr
 Then, the following class is generated.
 
 ```kotlin
-class FooViewModelArgs(
-    val userName: String,
-    val amount: Int? = null,
-    val message: String? = null
+public class FooViewModelArgs(
+    public val userName: String,
+    public val amount: Int? = null,
+    public val message: String? = null
 ) : ViewModelArgs {
-    override fun toBundle(): Bundle = Bundle().apply {
-        putString("userName", userName)
-        if (amount != null) putInt("amount", amount)
-        if (message != null) putString("message", message)
+    public override fun toBundle(): Bundle = Bundle().also {
+        it.putString("userName", this.userName)
+        if (this.amount != null) it.putInt("amount", this.amount)
+        if (this.message != null) it.putString("message", this.message)
     }
 }
 ```

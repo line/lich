@@ -41,17 +41,17 @@ package com.linecorp.lich.viewmodel
  *
  * The above code will generate an Args class like this:
  * ```
- * class FooViewModelArgs(
- *     val userName: String,
- *     val tags: Array<String>? = null,
- *     val attachment: Parcelable?,
- *     val message: CharSequence
+ * public class FooViewModelArgs(
+ *     public val userName: String,
+ *     public val tags: Array<String>? = null,
+ *     public val attachment: Parcelable?,
+ *     public val message: CharSequence
  * ) : ViewModelArgs {
- *     override fun toBundle(): Bundle = Bundle().apply {
- *         putString("userName", userName)
- *         if (tags != null) putSerializable("tags", tags)
- *         putParcelable("attachment", attachment)
- *         putCharSequence("message", message)
+ *     public override fun toBundle(): Bundle = Bundle().also {
+ *         it.putString("userName", this.userName)
+ *         if (this.tags != null) it.putSerializable("tags", this.tags)
+ *         it.putParcelable("attachment", this.attachment)
+ *         it.putCharSequence("message", this.message)
  *     }
  * }
  * ```
