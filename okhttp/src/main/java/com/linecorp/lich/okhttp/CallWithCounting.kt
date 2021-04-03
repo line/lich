@@ -135,7 +135,7 @@ fun <T> OkHttpClient.callWithCounting(
         awaitClose(call::cancel)
     }.conflate()
     return if (throttleMillis > 0) {
-        unthrottledFlow.onEach { if (it is CallState.Progress) delay(throttleMillis) }
+        unthrottledFlow.onEach { if (it is TransferProgress) delay(throttleMillis) }
     } else unthrottledFlow
 }
 
@@ -148,6 +148,10 @@ sealed class CallState<out T> {
     /**
      * Common interface for [Uploading] and [Downloading].
      */
+    @Deprecated(
+        "Use `TransferProgress` instead.",
+        ReplaceWith("TransferProgress", "com.linecorp.lich.okhttp.TransferProgress")
+    )
     interface Progress {
         /**
          * The number of bytes that have been sent / received so far.
@@ -163,6 +167,11 @@ sealed class CallState<out T> {
          * Percentage of transferred bytes to the entire content. (`0..100`)
          * If [bytesTotal] is unknown, this value is `null`.
          */
+        @Deprecated(
+            "Use `TransferProgress.progressPercentage` instead.",
+            ReplaceWith("progressPercentage", "com.linecorp.lich.okhttp.progressPercentage"),
+            DeprecationLevel.HIDDEN
+        )
         val progressPercentage: Int?
             get() = when {
                 bytesTotal <= 0 -> null
@@ -180,7 +189,7 @@ sealed class CallState<out T> {
      * @property bytesTotal The length of the request body specified in the `Content-Length` header.
      */
     class Uploading(override val bytesTransferred: Long, override val bytesTotal: Long) :
-        CallState<Nothing>(), Progress
+        CallState<Nothing>(), TransferProgress, Progress
 
     /**
      * An intermediate state indicating that the HTTP response body is being received.
@@ -197,7 +206,7 @@ sealed class CallState<out T> {
      * `Content-Length` header.
      */
     class Downloading(override val bytesTransferred: Long, override val bytesTotal: Long) :
-        CallState<Nothing>(), Progress
+        CallState<Nothing>(), TransferProgress, Progress
 
     /**
      * A final state indicating that the HTTP call completed successfully.
@@ -227,6 +236,35 @@ sealed class CallState<out T> {
      */
     class Failure(val exception: IOException) : CallState<Nothing>()
 }
+
+/**
+ * Common interface for [CallState.Uploading] and [CallState.Downloading].
+ */
+interface TransferProgress {
+    /**
+     * The number of bytes that have been sent / received so far.
+     */
+    val bytesTransferred: Long
+
+    /**
+     * The number of bytes of the entire content. If it is unknown, this value is `-1`.
+     */
+    val bytesTotal: Long
+}
+
+/**
+ * Percentage of transferred bytes to the entire content. (`0..100`)
+ * If [TransferProgress.bytesTotal] is unknown, this value is `null`.
+ */
+val TransferProgress.progressPercentage: Int?
+    get() {
+        val total = bytesTotal
+        return when {
+            total <= 0 -> null
+            total <= Long.MAX_VALUE / 100 -> (bytesTransferred * 100 / total).toInt()
+            else -> (bytesTransferred / (total / 100)).toInt() // Avoid overflow.
+        }
+    }
 
 /**
  * A [RequestBody] that replaces the original one to count the number of bytes uploaded.
