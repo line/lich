@@ -13,7 +13,7 @@ ext.publication = [
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib:${versions.kotlin}"
-    implementation "com.google.devtools.ksp:symbol-processing-api:${versions.ksp}"
+    compileOnly "com.google.devtools.ksp:symbol-processing-api:${versions.ksp}"
     implementation "org.jetbrains.kotlinx:kotlinx-metadata-jvm:${versions.kotlinMetadataJvm}"
     implementation("com.squareup:kotlinpoet:${versions.kotlinPoet}") {
         exclude group: 'org.jetbrains.kotlin'
