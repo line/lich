@@ -146,50 +146,16 @@ fun <T> OkHttpClient.callWithCounting(
  */
 sealed class CallState<out T> {
     /**
-     * Common interface for [Uploading] and [Downloading].
-     */
-    @Deprecated(
-        "Use `TransferProgress` instead.",
-        ReplaceWith("TransferProgress", "com.linecorp.lich.okhttp.TransferProgress")
-    )
-    interface Progress {
-        /**
-         * The number of bytes that have been sent / received so far.
-         */
-        val bytesTransferred: Long
-
-        /**
-         * The number of bytes of the entire content. If it is unknown, this value is `-1`.
-         */
-        val bytesTotal: Long
-
-        /**
-         * Percentage of transferred bytes to the entire content. (`0..100`)
-         * If [bytesTotal] is unknown, this value is `null`.
-         */
-        @Deprecated(
-            "Use `TransferProgress.progressPercentage` instead.",
-            ReplaceWith("progressPercentage", "com.linecorp.lich.okhttp.progressPercentage"),
-            DeprecationLevel.HIDDEN
-        )
-        val progressPercentage: Int?
-            get() = when {
-                bytesTotal <= 0 -> null
-                bytesTotal <= Long.MAX_VALUE / 100 -> (bytesTransferred * 100 / bytesTotal).toInt()
-                else -> (bytesTransferred / (bytesTotal / 100)).toInt() // Avoid overflow.
-            }
-    }
-
-    /**
      * An intermediate state indicating that the HTTP request body is being sent.
      *
      * This state is not emitted if the `countUpload` parameter is `false` or the `request` has no body.
      *
      * @property bytesTransferred The number of bytes that have been sent as the request body so far.
      * @property bytesTotal The length of the request body specified in the `Content-Length` header.
+     * @see progressPercentage
      */
     class Uploading(override val bytesTransferred: Long, override val bytesTotal: Long) :
-        CallState<Nothing>(), TransferProgress, Progress
+        CallState<Nothing>(), TransferProgress
 
     /**
      * An intermediate state indicating that the HTTP response body is being received.
@@ -204,9 +170,10 @@ sealed class CallState<out T> {
      * a single-part `206 Partial Content` response, this value is the total length of the
      * `Content-Range` header. Otherwise, this is the length of the response body specified in the
      * `Content-Length` header.
+     * @see progressPercentage
      */
     class Downloading(override val bytesTransferred: Long, override val bytesTotal: Long) :
-        CallState<Nothing>(), TransferProgress, Progress
+        CallState<Nothing>(), TransferProgress
 
     /**
      * A final state indicating that the HTTP call completed successfully.
