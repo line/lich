@@ -16,34 +16,41 @@
 package com.linecorp.lich.viewmodel
 
 import android.content.Intent
-import android.os.Bundle
-import androidx.activity.ComponentActivity
 import androidx.fragment.app.Fragment
+import com.linecorp.lich.savedstate.putViewModelArgs as putViewModelArgs2
+import com.linecorp.lich.savedstate.setViewModelArgs as setViewModelArgs2
 
 /**
  * A base interface for classes generated from [GenerateArgs].
  */
-interface ViewModelArgs {
-    /**
-     * Returns a [Bundle] that contains the values of this class.
-     */
-    fun toBundle(): Bundle
-}
+@Deprecated(
+    "Moved to `com.linecorp.lich.savedstate` package.",
+    ReplaceWith("ViewModelArgs", "com.linecorp.lich.savedstate.ViewModelArgs")
+)
+typealias ViewModelArgs = com.linecorp.lich.savedstate.ViewModelArgs
 
 /**
  * Adds the given [viewModelArgs] to the intent.
- *
- * The [viewModelArgs] will be the default argument of [ComponentActivity.viewModel],
- * [ComponentActivity.getViewModel], [Fragment.activityViewModel] and [Fragment.getActivityViewModel].
  */
+@Deprecated(
+    "Moved to `com.linecorp.lich.savedstate` package.",
+    ReplaceWith(
+        "this.putViewModelArgs(viewModelArgs)",
+        "com.linecorp.lich.savedstate.putViewModelArgs"
+    )
+)
 fun Intent.putViewModelArgs(viewModelArgs: ViewModelArgs): Intent =
-    putExtras(viewModelArgs.toBundle())
+    putViewModelArgs2(viewModelArgs)
 
 /**
  * Sets the given [viewModelArgs] to the Fragment.
- *
- * The [viewModelArgs] will be the default argument of [Fragment.viewModel] and [Fragment.getViewModel].
  */
-fun Fragment.setViewModelArgs(viewModelArgs: ViewModelArgs) {
-    arguments = viewModelArgs.toBundle()
-}
+@Deprecated(
+    "Moved to `com.linecorp.lich.savedstate` package.",
+    ReplaceWith(
+        "this.setViewModelArgs(viewModelArgs)",
+        "com.linecorp.lich.savedstate.setViewModelArgs"
+    )
+)
+fun Fragment.setViewModelArgs(viewModelArgs: ViewModelArgs) =
+    setViewModelArgs2(viewModelArgs)

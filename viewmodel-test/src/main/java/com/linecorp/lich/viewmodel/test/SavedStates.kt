@@ -17,7 +17,7 @@
 
 package com.linecorp.lich.viewmodel.test
 
-import androidx.lifecycle.SavedStateHandle
+import com.linecorp.lich.savedstate.createSavedStateHandleForTesting
 import com.linecorp.lich.viewmodel.SavedState
 import com.linecorp.lich.viewmodel.ViewModelArgs
 
@@ -25,13 +25,25 @@ import com.linecorp.lich.viewmodel.ViewModelArgs
  * Creates a [SavedState] with the specified contents, given as a list of pairs
  * where the first value is the key and the second is the value.
  */
+@Deprecated(
+    "Use `createSavedStateHandleForTesting` instead.",
+    ReplaceWith(
+        "createSavedStateHandleForTesting(*pairs)",
+        "com.linecorp.lich.savedstate.createSavedStateHandleForTesting"
+    )
+)
 fun createSavedStateForTesting(vararg pairs: Pair<String, *>): SavedState =
-    SavedState(SavedStateHandle(mapOf(*pairs)))
+    SavedState(createSavedStateHandleForTesting(*pairs))
 
 /**
  * Creates a [SavedState] initialized with the given [viewModelArgs].
  */
+@Deprecated(
+    "Use `createSavedStateHandleForTesting` instead.",
+    ReplaceWith(
+        "createSavedStateHandleForTesting(viewModelArgs)",
+        "com.linecorp.lich.savedstate.createSavedStateHandleForTesting"
+    )
+)
 fun createSavedStateForTesting(viewModelArgs: ViewModelArgs): SavedState =
-    viewModelArgs.toBundle().let { bundle ->
-        SavedState(SavedStateHandle(bundle.keySet().associateWith { bundle.get(it) }))
-    }
+    SavedState(createSavedStateHandleForTesting(viewModelArgs))

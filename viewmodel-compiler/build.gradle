@@ -7,15 +7,11 @@ version = VERSION_NAME_VIEWMODEL
 ext.publication = [
     type       : 'jar',
     name       : 'Lich ViewModel (annotation processor)',
-    description: 'Lightweight framework for managing ViewModels.',
+    description: 'Deprecated. Use `com.linecorp.lich:savedstate-compiler` instead.',
     url        : 'https://github.com/line/lich/tree/master/viewmodel',
 ]
 
 dependencies {
+    implementation project(':savedstate-compiler')
     implementation "org.jetbrains.kotlin:kotlin-stdlib:${versions.kotlin}"
-    compileOnly "com.google.devtools.ksp:symbol-processing-api:${versions.ksp}"
-    implementation "org.jetbrains.kotlinx:kotlinx-metadata-jvm:${versions.kotlinMetadataJvm}"
-    implementation("com.squareup:kotlinpoet:${versions.kotlinPoet}") {
-        exclude group: 'org.jetbrains.kotlin'
-    }
 }

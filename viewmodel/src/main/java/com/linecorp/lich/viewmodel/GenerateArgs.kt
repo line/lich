@@ -17,48 +17,9 @@ package com.linecorp.lich.viewmodel
 
 /**
  * An annotation to generate an *Args* class for the specified ViewModel class.
- *
- * This is a sample code:
- * ```
- * @GenerateArgs
- * class FooViewModel(savedState: SavedState) : AbstractViewModel() {
- *
- *     @Argument
- *     private val userName: String by savedState.required()
- *
- *     @Argument(isOptional = true)
- *     private val tags: Array<String> by savedState.initial(arrayOf("normal"))
- *
- *     @Argument
- *     private var attachment: Parcelable? by savedState
- *
- *     @Argument
- *     private val message: MutableLiveData<CharSequence> by savedState.liveData()
- *
- *     // snip...
- * }
- * ```
- *
- * The above code will generate an Args class like this:
- * ```
- * public class FooViewModelArgs(
- *     public val userName: String,
- *     public val tags: Array<String>? = null,
- *     public val attachment: Parcelable?,
- *     public val message: CharSequence
- * ) : ViewModelArgs {
- *     public override fun toBundle(): Bundle = Bundle().also {
- *         it.putString("userName", this.userName)
- *         if (this.tags != null) it.putSerializable("tags", this.tags)
- *         it.putParcelable("attachment", this.attachment)
- *         it.putCharSequence("message", this.message)
- *     }
- * }
- * ```
- *
- * @see Argument
- * @see ViewModelArgs
  */
-@Target(AnnotationTarget.CLASS)
-@Retention(AnnotationRetention.SOURCE)
-annotation class GenerateArgs
+@Deprecated(
+    "Moved to `com.linecorp.lich.savedstate` package.",
+    ReplaceWith("GenerateArgs", "com.linecorp.lich.savedstate.GenerateArgs")
+)
+typealias GenerateArgs = com.linecorp.lich.savedstate.GenerateArgs

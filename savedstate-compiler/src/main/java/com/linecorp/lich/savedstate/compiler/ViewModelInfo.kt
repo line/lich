@@ -35,6 +35,8 @@ internal class ViewModelArgumentInfo(
 
 internal const val GENERATE_ARGS_ANNOTATION_NAME = "com.linecorp.lich.savedstate.GenerateArgs"
 internal const val ARGUMENT_ANNOTATION_NAME = "com.linecorp.lich.savedstate.Argument"
+internal const val DEPRECATED_GENERATE_ARGS_ANNOTATION_NAME = "com.linecorp.lich.viewmodel.GenerateArgs"
+internal const val DEPRECATED_ARGUMENT_ANNOTATION_NAME = "com.linecorp.lich.viewmodel.Argument"
 internal const val IS_OPTIONAL_PARAM_NAME = "isOptional"
 
 internal val liveDataClasses: List<String> = listOf(
