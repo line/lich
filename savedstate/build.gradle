@@ -1,0 +1,42 @@
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
+apply plugin: 'org.jetbrains.dokka'
+apply plugin: 'maven-publish'
+apply plugin: 'signing'
+
+version = VERSION_NAME_SAVEDSTATE
+ext.publication = [
+    type       : 'aar',
+    name       : 'Lich SavedState (main)',
+    description: 'Property delegates for easy access to SavedStateHandle values.',
+    url        : 'https://github.com/line/lich/tree/master/savedstate',
+]
+
+android {
+    compileSdkVersion versions.compileSdk
+
+    defaultConfig {
+        minSdkVersion versions.minSdk
+        targetSdkVersion versions.targetSdk
+        testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
+    }
+
+    buildFeatures {
+        buildConfig = false
+    }
+}
+
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:${versions.kotlin}"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-savedstate:${versions.androidxLifecycle}"
+    //noinspection KtxExtensionAvailable
+    compileOnly "androidx.fragment:fragment:${versions.androidxFragment}"
+    lintPublish project(':static-analysis')
+
+    kaptAndroidTest project(':savedstate-compiler')
+    androidTestImplementation "androidx.fragment:fragment:${versions.androidxFragment}"
+    androidTestImplementation "org.jetbrains.kotlin:kotlin-test-junit:${versions.kotlin}"
+    androidTestImplementation "androidx.test:runner:${versions.androidxTestRunner}"
+    androidTestImplementation "androidx.test.ext:junit:${versions.androidxTestJunit}"
+}
