@@ -16,49 +16,25 @@
 package com.linecorp.lich.viewmodel
 
 import androidx.annotation.MainThread
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
+import com.linecorp.lich.savedstate.getValue
+import com.linecorp.lich.savedstate.initial
+import com.linecorp.lich.savedstate.liveData
+import com.linecorp.lich.savedstate.liveDataWithInitial
+import com.linecorp.lich.savedstate.required
+import com.linecorp.lich.savedstate.setValue
 import kotlin.reflect.KProperty
 
 /**
  * A handle to saved state passed down to [AbstractViewModel].
- *
- * This is a key-value map that will let you write and retrieve objects to and from the saved state.
- * These values will persist after the process is killed by the system and remain available via the
- * same object.
- *
- * You can specify initial values of [SavedState] via the `arguments` parameter of the functions
- * such as [Fragment.viewModel]. In addition, there are several property delegates for easy access
- * to the values. Here is an example using these features:
- *
- * ```
- * val fooViewModel by fragment.viewModel(FooViewModel) {
- *     Bundle().apply {
- *         putString("userId", "abc123")
- *         putInt("balance", 999)
- *     }
- * }
- *
- * class FooViewModel(savedState: SavedState) : AbstractViewModel() {
- *     // This property is set to "abc123".
- *     val userId: String by savedState.required()
- *
- *     // The initial value of this MutableLiveData is 999.
- *     val balance: MutableLiveData<Int> by savedState.liveData()
- *
- *     // The initial value of this property is 0.
- *     var amount: Int by savedState.initial(0)
- *
- *     companion object : ViewModelFactory<FooViewModel>() {
- *         override fun createViewModel(context: Context, savedState: SavedState): FooViewModel =
- *             FooViewModel(savedState)
- *     }
- * }
- * ```
  */
+@Deprecated(
+    "Use `SavedStateHandle` directly.",
+    ReplaceWith("SavedStateHandle", "androidx.lifecycle.SavedStateHandle")
+)
 @MainThread
-class SavedState(private val savedStateHandle: SavedStateHandle) {
+class SavedState(val savedStateHandle: SavedStateHandle) {
     /**
      * Returns a view of the keys contained in this [SavedState].
      */
@@ -88,13 +64,6 @@ class SavedState(private val savedStateHandle: SavedStateHandle) {
     operator fun <T> set(key: String, value: T) {
         savedStateHandle.set(key, value)
     }
-
-    @PublishedApi
-    @Suppress("UNCHECKED_CAST", "RemoveExplicitTypeArguments")
-    internal fun <T> getForExistingKey(key: String): T =
-        savedStateHandle.get<T>(key) as T
-
-    // To keep the invariant of InitializedSavedState, we don't provide remove() function.
 
     /**
      * Returns a [MutableLiveData] that accesses the value associated with the given [key].
@@ -131,7 +100,7 @@ class SavedState(private val savedStateHandle: SavedStateHandle) {
     @Suppress("NOTHING_TO_INLINE")
     @MainThread
     inline operator fun <T> getValue(thisRef: Any?, property: KProperty<*>): T? =
-        this[property.name]
+        savedStateHandle.getValue(thisRef, property)
 
     /**
      * A property delegate to access the value associated with the name of the property.
@@ -139,9 +108,8 @@ class SavedState(private val savedStateHandle: SavedStateHandle) {
      */
     @Suppress("NOTHING_TO_INLINE")
     @MainThread
-    inline operator fun <T> setValue(thisRef: Any?, property: KProperty<*>, value: T) {
-        this[property.name] = value
-    }
+    inline operator fun <T> setValue(thisRef: Any?, property: KProperty<*>, value: T) =
+        savedStateHandle.setValue(thisRef, property, value)
 
     /**
      * Provides a property delegate initialized with the given [value] unless specified by `arguments`
@@ -158,7 +126,7 @@ class SavedState(private val savedStateHandle: SavedStateHandle) {
      */
     @MainThread
     fun <T> initial(value: T): InitializingSavedStateDelegate<T> =
-        InitializingSavedStateDelegate(this, value)
+        savedStateHandle.initial(value)
 
     /**
      * Provides a property delegate that confirms the value is specified by `arguments` of the functions
@@ -176,7 +144,7 @@ class SavedState(private val savedStateHandle: SavedStateHandle) {
      */
     @MainThread
     fun <T> required(): RequiringSavedStateDelegate<T> =
-        RequiringSavedStateDelegate(this)
+        savedStateHandle.required()
 
     /**
      * Provides a property delegate of a [MutableLiveData] that accesses the value associated with
@@ -193,7 +161,7 @@ class SavedState(private val savedStateHandle: SavedStateHandle) {
      */
     @MainThread
     fun <T> liveData(): SavedStateLiveDataDelegate<T> =
-        SavedStateLiveDataDelegate(this)
+        savedStateHandle.liveData()
 
     /**
      * Provides a property delegate of a [MutableLiveData] that accesses the value associated with
@@ -211,112 +179,67 @@ class SavedState(private val savedStateHandle: SavedStateHandle) {
      * }
      * ```
      */
+    @Deprecated(
+        "Renamed to `liveDataWithInitial`.",
+        ReplaceWith("this.liveDataWithInitial(initialValue)")
+    )
     @MainThread
     fun <T> liveData(initialValue: T): SavedStateLiveDataWithInitialDelegate<T> =
-        SavedStateLiveDataWithInitialDelegate(this, initialValue)
-}
+        savedStateHandle.liveDataWithInitial(initialValue)
 
-// Implementation details of the property delegates.
-
-/**
- * A delegate provider for [SavedState.initial].
- */
-class InitializingSavedStateDelegate<T>(private val savedState: SavedState, private val value: T) {
-    @Suppress("NOTHING_TO_INLINE")
-    inline operator fun provideDelegate(
-        thisRef: Any?,
-        property: KProperty<*>
-    ): InitializedSavedState<T> = initialize(property.name)
-
-    @PublishedApi
-    internal fun initialize(key: String): InitializedSavedState<T> {
-        if (key !in savedState) {
-            savedState[key] = value
-        }
-        return InitializedSavedState(savedState)
-    }
-}
-
-/**
- * A delegate provider for [SavedState.required].
- */
-class RequiringSavedStateDelegate<T>(private val savedState: SavedState) {
-    @Suppress("NOTHING_TO_INLINE")
-    inline operator fun provideDelegate(
-        thisRef: Any?,
-        property: KProperty<*>
-    ): InitializedSavedState<T> = checkExistence(property.name)
-
-    @PublishedApi
-    internal fun checkExistence(key: String): InitializedSavedState<T> {
-        check(key in savedState) { "$key is not specified in the arguments." }
-        return InitializedSavedState(savedState)
-    }
-}
-
-/**
- * A property delegate that is guaranteed to have a value for the name.
- */
-class InitializedSavedState<T>(private val savedState: SavedState) {
-    @Suppress("NOTHING_TO_INLINE")
+    /**
+     * Provides a property delegate of a [MutableLiveData] that accesses the value associated with
+     * the name of the property.
+     *
+     * Its value is initialized with [initialValue] unless specified by `arguments` of the functions
+     * such as `Fragment.viewModel`.
+     *
+     * ```
+     * class FooViewModel(savedState: SavedState) : AbstractViewModel() {
+     *
+     *     // A delegated property of a `MutableLiveData` that accesses the value associated with "fooParam".
+     *     // The value is initialized with "abc" unless specified by `arguments`.
+     *     val fooParam: MutableLiveData<String> by savedState.liveDataWithInitial("abc")
+     * }
+     * ```
+     */
     @MainThread
-    inline operator fun getValue(thisRef: Any?, property: KProperty<*>): T =
-        get(property.name)
-
-    @Suppress("NOTHING_TO_INLINE")
-    @MainThread
-    inline operator fun setValue(thisRef: Any?, property: KProperty<*>, value: T) {
-        set(property.name, value)
-    }
-
-    @PublishedApi
-    internal fun get(key: String): T = savedState.getForExistingKey(key)
-
-    @PublishedApi
-    internal fun set(key: String, value: T) {
-        savedState[key] = value
-    }
+    fun <T> liveDataWithInitial(initialValue: T): SavedStateLiveDataWithInitialDelegate<T> =
+        savedStateHandle.liveDataWithInitial(initialValue)
 }
 
-/**
- * A delegate provider for [SavedState.liveData] without `initialValue`.
- */
-class SavedStateLiveDataDelegate<T>(private val savedState: SavedState) {
-    @Suppress("NOTHING_TO_INLINE")
-    inline operator fun provideDelegate(
-        thisRef: Any?,
-        property: KProperty<*>
-    ): SavedStateLiveData<T> = getSavedStateLiveData(property.name)
+@Deprecated(
+    "Moved to `com.linecorp.lich.savedstate` package.",
+    ReplaceWith(
+        "InitializingSavedStateDelegate<T>",
+        "com.linecorp.lich.savedstate.InitializingSavedStateDelegate"
+    )
+)
+typealias InitializingSavedStateDelegate<T> = com.linecorp.lich.savedstate.InitializingSavedStateDelegate<T>
 
-    @PublishedApi
-    internal fun getSavedStateLiveData(key: String): SavedStateLiveData<T> =
-        SavedStateLiveData(savedState.getLiveData(key))
-}
+@Deprecated(
+    "Moved to `com.linecorp.lich.savedstate` package.",
+    ReplaceWith(
+        "RequiringSavedStateDelegate<T>",
+        "com.linecorp.lich.savedstate.RequiringSavedStateDelegate"
+    )
+)
+typealias RequiringSavedStateDelegate<T> = com.linecorp.lich.savedstate.RequiringSavedStateDelegate<T>
 
-/**
- * A delegate provider for [SavedState.liveData] with `initialValue`.
- */
-class SavedStateLiveDataWithInitialDelegate<T>(
-    private val savedState: SavedState,
-    private val initialValue: T
-) {
-    @Suppress("NOTHING_TO_INLINE")
-    inline operator fun provideDelegate(
-        thisRef: Any?,
-        property: KProperty<*>
-    ): SavedStateLiveData<T> = getSavedStateLiveData(property.name)
+@Deprecated(
+    "Moved to `com.linecorp.lich.savedstate` package.",
+    ReplaceWith(
+        "SavedStateLiveDataDelegate<T>",
+        "com.linecorp.lich.savedstate.SavedStateLiveDataDelegate"
+    )
+)
+typealias SavedStateLiveDataDelegate<T> = com.linecorp.lich.savedstate.SavedStateLiveDataDelegate<T>
 
-    @PublishedApi
-    internal fun getSavedStateLiveData(key: String): SavedStateLiveData<T> =
-        SavedStateLiveData(savedState.getLiveData(key, initialValue))
-}
-
-/**
- * A property delegate that was provided by [SavedStateLiveDataDelegate] or
- * [SavedStateLiveDataWithInitialDelegate].
- */
-class SavedStateLiveData<T>(@PublishedApi internal val liveData: MutableLiveData<T>) {
-    @Suppress("NOTHING_TO_INLINE")
-    inline operator fun getValue(thisRef: Any?, property: KProperty<*>): MutableLiveData<T> =
-        liveData
-}
+@Deprecated(
+    "Moved to `com.linecorp.lich.savedstate` package.",
+    ReplaceWith(
+        "SavedStateLiveDataWithInitialDelegate<T>",
+        "com.linecorp.lich.savedstate.SavedStateLiveDataWithInitialDelegate"
+    )
+)
+typealias SavedStateLiveDataWithInitialDelegate<T> = com.linecorp.lich.savedstate.SavedStateLiveDataWithInitialDelegate<T>

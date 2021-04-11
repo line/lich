@@ -17,11 +17,9 @@ package com.linecorp.lich.viewmodel
 
 /**
  * An annotation for declaring a property as an argument of a [ViewModelArgs] class.
- *
- * See [GenerateArgs] for details.
- *
- * @param isOptional true if this argument is optional.
  */
-@Target(AnnotationTarget.PROPERTY)
-@Retention(AnnotationRetention.SOURCE)
-annotation class Argument(val isOptional: Boolean = false)
+@Deprecated(
+    "Moved to `com.linecorp.lich.savedstate` package.",
+    ReplaceWith("Argument", "com.linecorp.lich.savedstate.Argument")
+)
+typealias Argument = com.linecorp.lich.savedstate.Argument
