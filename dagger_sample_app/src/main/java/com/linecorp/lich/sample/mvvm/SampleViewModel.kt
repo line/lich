@@ -18,14 +18,15 @@ package com.linecorp.lich.sample.mvvm
 import android.content.Context
 import androidx.annotation.MainThread
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.map
 import com.linecorp.lich.component.getComponent
 import com.linecorp.lich.sample.ApplicationGraph
 import com.linecorp.lich.sample.R
+import com.linecorp.lich.savedstate.Argument
+import com.linecorp.lich.savedstate.GenerateArgs
+import com.linecorp.lich.savedstate.required
 import com.linecorp.lich.viewmodel.AbstractViewModel
-import com.linecorp.lich.viewmodel.Argument
-import com.linecorp.lich.viewmodel.GenerateArgs
-import com.linecorp.lich.viewmodel.SavedState
 import com.linecorp.lich.viewmodel.ViewModelFactory
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -34,7 +35,7 @@ import javax.inject.Inject
 @MainThread
 class SampleViewModel @Inject constructor(
     private val context: Context,
-    savedState: SavedState,
+    savedState: SavedStateHandle,
     private val counterUseCase: CounterUseCase
 ) : AbstractViewModel() {
 
@@ -77,8 +78,12 @@ class SampleViewModel @Inject constructor(
     }
 
     companion object : ViewModelFactory<SampleViewModel>() {
-        override fun createViewModel(context: Context, savedState: SavedState): SampleViewModel =
-            context.getComponent(ApplicationGraph).viewModelsGraphFactory().create(savedState)
+        override fun createViewModel(
+            context: Context,
+            savedStateHandle: SavedStateHandle
+        ): SampleViewModel =
+            context.getComponent(ApplicationGraph).viewModelsGraphFactory()
+                .create(savedStateHandle)
                 .sampleViewModel().also {
                     it.loadData()
                 }

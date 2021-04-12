@@ -19,6 +19,7 @@ import android.content.Context
 import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.linecorp.lich.savedstate.createSavedStateHandleForTesting
 import org.junit.After
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -37,13 +38,13 @@ class ViewModelMocksTest {
     @Test
     fun simpleMocking() {
         setMockViewModel(ViewModelX) { _, _ ->
-            val mockSavedState = createSavedStateForTesting(
+            val mockSavedState = createSavedStateHandleForTesting(
                 ViewModelXArgs(message = "Mocked X.")
             )
             ViewModelX(mockSavedState)
         }
         setMockViewModel(ViewModelY) { _, _ ->
-            val mockSavedState = createSavedStateForTesting(
+            val mockSavedState = createSavedStateHandleForTesting(
                 ViewModelYArgs(message = "Mocked Y.")
             )
             ViewModelY(mockSavedState)
@@ -68,7 +69,7 @@ class ViewModelMocksTest {
         setMockViewModel(ViewModelX) { viewModelStoreOwner, savedState ->
             when (viewModelStoreOwner) {
                 is TestActivity -> {
-                    val mockSavedState = createSavedStateForTesting(
+                    val mockSavedState = createSavedStateHandleForTesting(
                         ViewModelXArgs(message = "Mocked for TestActivity.")
                     )
                     ViewModelX(mockSavedState)
@@ -97,13 +98,13 @@ class ViewModelMocksTest {
     @Test
     fun clearMock() {
         setMockViewModel(ViewModelX) { _, _ ->
-            val mockSavedState = createSavedStateForTesting(
+            val mockSavedState = createSavedStateHandleForTesting(
                 ViewModelXArgs(message = "Mocked X.")
             )
             ViewModelX(mockSavedState)
         }
         setMockViewModel(ViewModelY) { _, _ ->
-            val mockSavedState = createSavedStateForTesting(
+            val mockSavedState = createSavedStateHandleForTesting(
                 ViewModelYArgs(message = "Mocked Y.")
             )
             ViewModelY(mockSavedState)
@@ -136,13 +137,13 @@ class ViewModelMocksTest {
     @Test
     fun clearAll() {
         setMockViewModel(ViewModelX) { _, _ ->
-            val mockSavedState = createSavedStateForTesting(
+            val mockSavedState = createSavedStateHandleForTesting(
                 "message" to "Mocked X."
             )
             ViewModelX(mockSavedState)
         }
         setMockViewModel(ViewModelY) { _, _ ->
-            val mockSavedState = createSavedStateForTesting(
+            val mockSavedState = createSavedStateHandleForTesting(
                 "message" to "Mocked Y."
             )
             ViewModelY(mockSavedState)

@@ -15,8 +15,8 @@
  */
 package com.linecorp.lich.sample
 
+import androidx.lifecycle.SavedStateHandle
 import com.linecorp.lich.sample.mvvm.SampleViewModel
-import com.linecorp.lich.viewmodel.SavedState
 import dagger.BindsInstance
 import dagger.Subcomponent
 
@@ -30,6 +30,6 @@ interface AppViewModelsGraph {
 
     @Subcomponent.Factory
     interface Factory {
-        fun create(@BindsInstance savedState: SavedState): AppViewModelsGraph
+        fun create(@BindsInstance savedStateHandle: SavedStateHandle): AppViewModelsGraph
     }
 }

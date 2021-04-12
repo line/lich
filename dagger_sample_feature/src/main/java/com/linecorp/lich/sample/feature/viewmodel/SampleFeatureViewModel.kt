@@ -17,19 +17,20 @@ package com.linecorp.lich.sample.feature.viewmodel
 
 import android.content.Context
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.SavedStateHandle
 import com.linecorp.lich.component.getComponent
 import com.linecorp.lich.sample.feature.SampleFeatureGraph
 import com.linecorp.lich.sample.feature.repository.SampleFeatureRepository
+import com.linecorp.lich.savedstate.Argument
+import com.linecorp.lich.savedstate.GenerateArgs
+import com.linecorp.lich.savedstate.required
 import com.linecorp.lich.viewmodel.AbstractViewModel
-import com.linecorp.lich.viewmodel.Argument
-import com.linecorp.lich.viewmodel.GenerateArgs
-import com.linecorp.lich.viewmodel.SavedState
 import com.linecorp.lich.viewmodel.ViewModelFactory
 import javax.inject.Inject
 
 @GenerateArgs
 class SampleFeatureViewModel @Inject constructor(
-    savedState: SavedState,
+    savedState: SavedStateHandle,
     private val sampleFeatureRepository: SampleFeatureRepository
 ) : AbstractViewModel() {
 
@@ -42,9 +43,10 @@ class SampleFeatureViewModel @Inject constructor(
     companion object : ViewModelFactory<SampleFeatureViewModel>() {
         override fun createViewModel(
             context: Context,
-            savedState: SavedState
+            savedStateHandle: SavedStateHandle
         ): SampleFeatureViewModel =
-            context.getComponent(SampleFeatureGraph).viewModelsGraphFactory().create(savedState)
+            context.getComponent(SampleFeatureGraph).viewModelsGraphFactory()
+                .create(savedStateHandle)
                 .sampleFeatureViewModel()
     }
 }

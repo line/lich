@@ -34,7 +34,7 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-viewmodel-savedstate:${versions.androidxLifecycle}"
     implementation "androidx.test:core:${versions.androidxTestCore}"
 
-    kaptAndroidTest project(':viewmodel-compiler')
+    kaptAndroidTest project(':savedstate-compiler')
     androidTestImplementation "androidx.fragment:fragment:${versions.androidxFragment}"
     androidTestImplementation "org.jetbrains.kotlin:kotlin-test-junit:${versions.kotlin}"
     androidTestImplementation "androidx.test:runner:${versions.androidxTestRunner}"

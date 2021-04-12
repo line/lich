@@ -16,16 +16,17 @@
 package com.linecorp.lich.viewmodel.test.mockk
 
 import android.content.Context
+import androidx.lifecycle.SavedStateHandle
+import com.linecorp.lich.savedstate.Argument
+import com.linecorp.lich.savedstate.GenerateArgs
+import com.linecorp.lich.savedstate.required
 import com.linecorp.lich.viewmodel.AbstractViewModel
-import com.linecorp.lich.viewmodel.Argument
-import com.linecorp.lich.viewmodel.GenerateArgs
-import com.linecorp.lich.viewmodel.SavedState
 import com.linecorp.lich.viewmodel.ViewModelFactory
 
 // Mocking of final classes is only supported for Android P or later.
 // https://mockk.io/ANDROID.html
 @GenerateArgs
-class BarViewModel(savedState: SavedState) : AbstractViewModel() {
+class BarViewModel(savedState: SavedStateHandle) : AbstractViewModel() {
 
     @Argument
     private var itemCount: Int by savedState.required()
@@ -39,7 +40,9 @@ class BarViewModel(savedState: SavedState) : AbstractViewModel() {
     }
 
     companion object : ViewModelFactory<BarViewModel>() {
-        override fun createViewModel(context: Context, savedState: SavedState): BarViewModel =
-            BarViewModel(savedState)
+        override fun createViewModel(
+            context: Context,
+            savedStateHandle: SavedStateHandle
+        ): BarViewModel = BarViewModel(savedStateHandle)
     }
 }

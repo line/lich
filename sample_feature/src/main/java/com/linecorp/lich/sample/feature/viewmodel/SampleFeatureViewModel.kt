@@ -17,18 +17,19 @@ package com.linecorp.lich.sample.feature.viewmodel
 
 import android.content.Context
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.SavedStateHandle
 import com.linecorp.lich.component.component
 import com.linecorp.lich.sample.feature.repository.SampleFeatureRepository
+import com.linecorp.lich.savedstate.Argument
+import com.linecorp.lich.savedstate.GenerateArgs
+import com.linecorp.lich.savedstate.required
 import com.linecorp.lich.viewmodel.AbstractViewModel
-import com.linecorp.lich.viewmodel.Argument
-import com.linecorp.lich.viewmodel.GenerateArgs
-import com.linecorp.lich.viewmodel.SavedState
 import com.linecorp.lich.viewmodel.ViewModelFactory
 
 @GenerateArgs
 class SampleFeatureViewModel private constructor(
     context: Context,
-    savedState: SavedState
+    savedState: SavedStateHandle
 ) : AbstractViewModel() {
 
     private val sampleFeatureRepository by context.component(SampleFeatureRepository)
@@ -42,7 +43,7 @@ class SampleFeatureViewModel private constructor(
     companion object : ViewModelFactory<SampleFeatureViewModel>() {
         override fun createViewModel(
             context: Context,
-            savedState: SavedState
-        ): SampleFeatureViewModel = SampleFeatureViewModel(context, savedState)
+            savedStateHandle: SavedStateHandle
+        ): SampleFeatureViewModel = SampleFeatureViewModel(context, savedStateHandle)
     }
 }

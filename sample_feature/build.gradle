@@ -27,7 +27,7 @@ dependencies {
     implementation project(':sample_app')
     implementation project(':component')
     implementation project(':viewmodel')
-    ksp project(':viewmodel-compiler')
+    ksp project(':savedstate-compiler')
     implementation "androidx.appcompat:appcompat:${versions.androidxAppcompat}"
     implementation "androidx.constraintlayout:constraintlayout:${versions.androidxConstraintlayout}"
     implementation "androidx.fragment:fragment-ktx:${versions.androidxFragment}"

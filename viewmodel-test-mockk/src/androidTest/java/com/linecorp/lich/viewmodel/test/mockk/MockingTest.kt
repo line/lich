@@ -51,8 +51,8 @@ class MockingTest {
                 assertTrue(mockHandle.isCreated)
                 assertSame(mockHandle.viewModelStoreOwner, activity)
                 assertSame(mockHandle.mock, activity.fooViewModel)
-                assertEquals(setOf("itemCount"), mockHandle.savedState.keys)
-                assertEquals<Int?>(10, mockHandle.savedState["itemCount"])
+                assertEquals(setOf("itemCount"), mockHandle.savedStateHandle.keys())
+                assertEquals(10, mockHandle.savedStateHandle["itemCount"])
 
                 verify(exactly = 1) { mockHandle.mock.greeting() }
                 verify(exactly = 0) { mockHandle.mock.countItem() }
@@ -79,8 +79,8 @@ class MockingTest {
                 assertTrue(mockHandle.isCreated)
                 assertSame(mockHandle.viewModelStoreOwner, activity)
                 assertSame(mockHandle.mock, activity.barViewModel)
-                assertEquals(setOf("itemCount"), mockHandle.savedState.keys)
-                assertEquals<Int?>(20, mockHandle.savedState["itemCount"])
+                assertEquals(setOf("itemCount"), mockHandle.savedStateHandle.keys())
+                assertEquals(20, mockHandle.savedStateHandle["itemCount"])
 
                 verify(exactly = 1) { mockHandle.mock.greeting() }
                 verify(exactly = 0) { mockHandle.mock.countItem() }
@@ -103,7 +103,7 @@ class MockingTest {
                 assertTrue(mockHandle.isCreated)
                 assertSame(mockHandle.viewModelStoreOwner, activity)
                 assertSame(mockHandle.mock, activity.fooViewModel)
-                assertEquals<Int?>(10, mockHandle.savedState["itemCount"])
+                assertEquals(10, mockHandle.savedStateHandle["itemCount"])
 
                 verify(exactly = 1) { mockHandle.mock.greeting() }
                 verify(exactly = 0) { mockHandle.mock.countItem() }
@@ -129,7 +129,7 @@ class MockingTest {
                 assertTrue(mockHandle.isCreated)
                 assertSame(mockHandle.viewModelStoreOwner, activity)
                 assertSame(mockHandle.mock, activity.barViewModel)
-                assertEquals<Int?>(20, mockHandle.savedState["itemCount"])
+                assertEquals(20, mockHandle.savedStateHandle["itemCount"])
 
                 verify(exactly = 1) { mockHandle.mock.greeting() }
                 verify(exactly = 0) { mockHandle.mock.countItem() }
