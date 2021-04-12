@@ -47,7 +47,7 @@ import com.linecorp.lich.viewmodel.internal.lichViewModelProvider
  * ```
  *
  * @param factory [ViewModelFactory] to create the ViewModel.
- * @param arguments initial values for a new [SavedState] passed down to the ViewModel.
+ * @param arguments initial values for a new `SavedStateHandle` passed down to the ViewModel.
  * If omitted, the value of `getIntent()?.getExtras()` for this Activity is used.
  */
 @JvmOverloads
@@ -78,7 +78,7 @@ fun <T : AbstractViewModel> ComponentActivity.getViewModel(
  * ```
  *
  * @param factory [ViewModelFactory] to create the ViewModel.
- * @param arguments initial values for a new [SavedState] passed down to the ViewModel.
+ * @param arguments initial values for a new `SavedStateHandle` passed down to the ViewModel.
  * If omitted, the value of `getArguments()` for this Fragment is used.
  */
 @JvmOverloads
@@ -111,7 +111,7 @@ fun <T : AbstractViewModel> Fragment.getViewModel(
  * ```
  *
  * @param factory [ViewModelFactory] to create the ViewModel.
- * @param arguments initial values for a new [SavedState] passed down to the ViewModel.
+ * @param arguments initial values for a new `SavedStateHandle` passed down to the ViewModel.
  * If omitted, the value of `getIntent()?.getExtras()` for the host Activity is used.
  */
 @JvmOverloads

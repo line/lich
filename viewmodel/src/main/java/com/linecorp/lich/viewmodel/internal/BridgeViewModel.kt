@@ -19,15 +19,12 @@ import androidx.annotation.MainThread
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import com.linecorp.lich.viewmodel.AbstractViewModel
-import com.linecorp.lich.viewmodel.SavedState
 
 /**
  * A class that bridges a [ViewModel] of Android Architecture Components and our [AbstractViewModel].
  */
 @MainThread
-internal class BridgeViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
-
-    internal val savedState: SavedState = SavedState(savedStateHandle)
+internal class BridgeViewModel(internal val savedStateHandle: SavedStateHandle) : ViewModel() {
 
     internal var viewModel: AbstractViewModel? = null
 

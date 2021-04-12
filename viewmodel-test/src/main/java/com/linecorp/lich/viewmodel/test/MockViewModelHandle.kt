@@ -15,6 +15,7 @@
  */
 package com.linecorp.lich.viewmodel.test
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModelStoreOwner
 import com.linecorp.lich.viewmodel.AbstractViewModel
 import com.linecorp.lich.viewmodel.SavedState
@@ -25,13 +26,15 @@ import com.linecorp.lich.viewmodel.ViewModelFactory
  *
  * @param mockProducer a function to create a new mock instance.
  */
-class MockViewModelHandle<T : AbstractViewModel>(private val mockProducer: (SavedState) -> T) {
+class MockViewModelHandle<T : AbstractViewModel>(
+    private val mockProducer: (SavedStateHandle) -> T
+) {
 
     private var _mock: T? = null
 
     private var _viewModelStoreOwner: ViewModelStoreOwner? = null
 
-    private var _savedState: SavedState? = null
+    private var _savedStateHandle: SavedStateHandle? = null
 
     /**
      * True if at least one mock ViewModel instance was created for this handle.
@@ -54,19 +57,26 @@ class MockViewModelHandle<T : AbstractViewModel>(private val mockProducer: (Save
         get() = _viewModelStoreOwner ?: throwNotCreatedException()
 
     /**
-     * The [SavedState] for which [mock] was created.
+     * The [SavedStateHandle] for which [mock] was created.
      */
+    val savedStateHandle: SavedStateHandle
+        get() = _savedStateHandle ?: throwNotCreatedException()
+
+    @Deprecated("Use `savedStateHandle` instead.", ReplaceWith("savedStateHandle"))
     val savedState: SavedState
-        get() = _savedState ?: throwNotCreatedException()
+        get() = SavedState(savedStateHandle)
 
     private fun throwNotCreatedException(): Nothing =
         throw IllegalStateException("Mock ViewModel is not created yet.")
 
-    private fun createMock(viewModelStoreOwner: ViewModelStoreOwner, savedState: SavedState): T {
-        val mock = mockProducer(savedState)
+    private fun createMock(
+        viewModelStoreOwner: ViewModelStoreOwner,
+        savedStateHandle: SavedStateHandle
+    ): T {
+        val mock = mockProducer(savedStateHandle)
         _mock = mock
         _viewModelStoreOwner = viewModelStoreOwner
-        _savedState = savedState
+        _savedStateHandle = savedStateHandle
         return mock
     }
 

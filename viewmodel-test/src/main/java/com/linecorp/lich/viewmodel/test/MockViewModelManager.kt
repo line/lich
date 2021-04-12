@@ -18,10 +18,10 @@
 package com.linecorp.lich.viewmodel.test
 
 import android.content.Context
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.test.core.app.ApplicationProvider
 import com.linecorp.lich.viewmodel.AbstractViewModel
-import com.linecorp.lich.viewmodel.SavedState
 import com.linecorp.lich.viewmodel.ViewModelFactory
 import com.linecorp.lich.viewmodel.internal.getViewModelManager
 
@@ -36,7 +36,7 @@ interface MockViewModelManager {
      * Sets [mockFactory] as a factory function of mock ViewModels for [factory].
      *
      * When creating a new ViewModel instance, [mockFactory] will be called with the [ViewModelStoreOwner]
-     * (e.g. Activity, Fragment) and a [SavedState]. Then, the instance returned by [mockFactory] is
+     * (e.g. Activity, Fragment) and a [SavedStateHandle]. Then, the instance returned by [mockFactory] is
      * registered to the [ViewModelStoreOwner].
      *
      * @param factory a [ViewModelFactory] to be mocked.
@@ -44,7 +44,7 @@ interface MockViewModelManager {
      */
     fun <T : AbstractViewModel> setMockViewModel(
         factory: ViewModelFactory<T>,
-        mockFactory: (ViewModelStoreOwner, SavedState) -> T
+        mockFactory: (ViewModelStoreOwner, SavedStateHandle) -> T
     )
 
     /**
@@ -56,7 +56,7 @@ interface MockViewModelManager {
 
     /**
      * Creates a new ViewModel for the given [factory].
-     * The created ViewModel will have the given [savedState].
+     * The created ViewModel will have the given [savedStateHandle].
      *
      * This function returns a "real" instance of the ViewModel regardless of [setMockViewModel].
      * For example, a `mockFactory` of [setMockViewModel] may use this function for "spying" a real
@@ -64,7 +64,7 @@ interface MockViewModelManager {
      */
     fun <T : AbstractViewModel> createRealViewModel(
         factory: ViewModelFactory<T>,
-        savedState: SavedState
+        savedStateHandle: SavedStateHandle
     ): T
 
     /**
