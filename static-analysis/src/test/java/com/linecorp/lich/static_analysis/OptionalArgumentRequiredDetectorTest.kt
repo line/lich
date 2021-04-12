@@ -31,10 +31,10 @@ class OptionalArgumentRequiredDetectorTest :
             .run()
             .expect(
                 """
-                src/com/linecorp/lich/viewmodel/ArgumentTest.kt:5: Error: Optional argument initialized as required. [ArgumentInitializationInconsistency]
-    val test: Int by savedState.required()
-                                ~~~~~~~~
-1 errors, 0 warnings""".trimIndent()
+                src/com/linecorp/lich/savedstate/ArgumentTest.kt:5: Error: Optional argument initialized as required. [ArgumentInitializationInconsistency]
+                    val test: Int by savedStateHandle.required()
+                                                      ~~~~~~~~
+                1 errors, 0 warnings""".trimIndent()
             )
     }
 
