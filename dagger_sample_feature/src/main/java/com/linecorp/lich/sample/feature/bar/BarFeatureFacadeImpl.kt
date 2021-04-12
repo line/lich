@@ -20,7 +20,7 @@ import android.content.Intent
 import com.google.auto.service.AutoService
 import com.linecorp.lich.component.ServiceLoaderComponent
 import com.linecorp.lich.sample.feature.viewmodel.SampleFeatureViewModelArgs
-import com.linecorp.lich.viewmodel.putViewModelArgs
+import com.linecorp.lich.savedstate.putViewModelArgs
 
 /**
  * The implementation of [BarFeatureFacade].

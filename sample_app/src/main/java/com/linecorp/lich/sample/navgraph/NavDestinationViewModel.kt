@@ -18,32 +18,33 @@ package com.linecorp.lich.sample.navgraph
 import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.map
+import com.linecorp.lich.savedstate.Argument
+import com.linecorp.lich.savedstate.GenerateArgs
+import com.linecorp.lich.savedstate.liveDataWithInitial
 import com.linecorp.lich.viewmodel.AbstractViewModel
-import com.linecorp.lich.viewmodel.Argument
-import com.linecorp.lich.viewmodel.GenerateArgs
-import com.linecorp.lich.viewmodel.SavedState
 import com.linecorp.lich.viewmodel.ViewModelFactory
 import java.util.concurrent.atomic.AtomicInteger
 
 @GenerateArgs
 class NavDestinationViewModel private constructor(
     val instanceName: String,
-    savedState: SavedState
+    savedState: SavedStateHandle
 ) : AbstractViewModel() {
 
     @Argument(isOptional = true)
-    private val argument: MutableLiveData<String> by savedState.liveData("not set")
+    private val argument: MutableLiveData<String> by savedState.liveDataWithInitial("not set")
 
     val message: LiveData<String> = argument.map { "$instanceName ($it)" }
 
     companion object : ViewModelFactory<NavDestinationViewModel>() {
         override fun createViewModel(
             context: Context,
-            savedState: SavedState
+            savedStateHandle: SavedStateHandle
         ): NavDestinationViewModel = NavDestinationViewModel(
             "NavDestination #${instanceCounter.incrementAndGet()}",
-            savedState
+            savedStateHandle
         )
 
         private val instanceCounter: AtomicInteger = AtomicInteger()

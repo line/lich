@@ -15,7 +15,7 @@
  */
 package com.linecorp.lich.sample.feature.viewmodel
 
-import com.linecorp.lich.viewmodel.SavedState
+import androidx.lifecycle.SavedStateHandle
 import dagger.BindsInstance
 import dagger.Subcomponent
 
@@ -29,6 +29,6 @@ interface SampleFeatureViewModelsGraph {
 
     @Subcomponent.Factory
     interface Factory {
-        fun create(@BindsInstance savedState: SavedState): SampleFeatureViewModelsGraph
+        fun create(@BindsInstance savedStateHandle: SavedStateHandle): SampleFeatureViewModelsGraph
     }
 }

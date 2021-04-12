@@ -27,7 +27,7 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import com.linecorp.lich.sample.R
-import com.linecorp.lich.viewmodel.putViewModelArgs
+import com.linecorp.lich.savedstate.putViewModelArgs
 
 class NavHostActivity : AppCompatActivity(R.layout.nav_host_activity) {
 
