@@ -19,6 +19,7 @@ import android.content.Context
 import androidx.activity.ComponentActivity
 import androidx.annotation.MainThread
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.SavedStateHandle
 
 /**
  * A class to declare a factory of a ViewModel.
@@ -26,13 +27,13 @@ import androidx.fragment.app.Fragment
  *
  * This is a sample code:
  * ```
- * class FooViewModel(private val context: Context, savedState: SavedState) : AbstractViewModel() {
+ * class FooViewModel(private val context: Context, savedStateHandle: SavedStateHandle) : AbstractViewModel() {
  *
  *     // snip...
  *
  *     companion object : ViewModelFactory<FooViewModel>() {
- *         override fun createViewModel(context: Context, savedState: SavedState): FooViewModel =
- *             FooViewModel(context, savedState)
+ *         override fun createViewModel(context: Context, savedStateHandle: SavedStateHandle): FooViewModel =
+ *             FooViewModel(context, savedStateHandle)
  *     }
  * }
  * ```
@@ -81,11 +82,22 @@ abstract class ViewModelFactory<T : AbstractViewModel> {
      * Creates a ViewModel for this factory.
      *
      * @param context the application context.
-     * @param savedState a handle to saved state.
+     * @param savedStateHandle a handle to saved state.
      */
     @MainThread
-    protected abstract fun createViewModel(context: Context, savedState: SavedState): T
+    protected open fun createViewModel(context: Context, savedStateHandle: SavedStateHandle): T {
+        return createViewModel(context, SavedState(savedStateHandle))
+    }
 
-    internal fun create(context: Context, savedState: SavedState): T =
-        createViewModel(context, savedState)
+    /**
+     * This function should not be used. Instead, override the above function.
+     */
+    @Deprecated("Change the type of the second argument to SavedStateHandle.")
+    @MainThread
+    protected open fun createViewModel(context: Context, savedState: SavedState): T {
+        throw NotImplementedError("createViewModel() must be overridden.")
+    }
+
+    internal fun create(context: Context, savedStateHandle: SavedStateHandle): T =
+        createViewModel(context, savedStateHandle)
 }

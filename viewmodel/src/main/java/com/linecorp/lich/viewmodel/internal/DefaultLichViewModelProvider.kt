@@ -24,7 +24,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.savedstate.SavedStateRegistryOwner
 import com.linecorp.lich.viewmodel.AbstractViewModel
-import com.linecorp.lich.viewmodel.SavedState
 import com.linecorp.lich.viewmodel.ViewModelFactory
 
 /**
@@ -60,7 +59,7 @@ open class DefaultLichViewModelProvider : LichViewModelProvider {
         return newViewModelFor(
             factory,
             context.applicationContext,
-            bridgeViewModel.savedState,
+            bridgeViewModel.savedStateHandle,
             viewModelStoreOwner
         ).also { viewModel ->
             bridgeViewModel.viewModel = viewModel
@@ -71,15 +70,15 @@ open class DefaultLichViewModelProvider : LichViewModelProvider {
     protected open fun <T : AbstractViewModel> newViewModelFor(
         factory: ViewModelFactory<T>,
         applicationContext: Context,
-        savedState: SavedState,
+        savedStateHandle: SavedStateHandle,
         viewModelStoreOwner: ViewModelStoreOwner
-    ): T = createViewModel(factory, applicationContext, savedState)
+    ): T = createViewModel(factory, applicationContext, savedStateHandle)
 
     protected fun <T : AbstractViewModel> createViewModel(
         factory: ViewModelFactory<T>,
         applicationContext: Context,
-        savedState: SavedState
-    ): T = factory.create(applicationContext, savedState)
+        savedStateHandle: SavedStateHandle
+    ): T = factory.create(applicationContext, savedStateHandle)
 
     private class BridgeViewModelFactory(
         savedStateRegistryOwner: SavedStateRegistryOwner,

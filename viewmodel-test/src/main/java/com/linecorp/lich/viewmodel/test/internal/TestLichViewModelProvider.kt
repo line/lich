@@ -16,9 +16,9 @@
 package com.linecorp.lich.viewmodel.test.internal
 
 import android.content.Context
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModelStoreOwner
 import com.linecorp.lich.viewmodel.AbstractViewModel
-import com.linecorp.lich.viewmodel.SavedState
 import com.linecorp.lich.viewmodel.ViewModelFactory
 import com.linecorp.lich.viewmodel.internal.DefaultLichViewModelProvider
 import com.linecorp.lich.viewmodel.test.MockViewModelManager
@@ -26,7 +26,7 @@ import java.lang.ref.WeakReference
 import java.util.WeakHashMap
 import java.util.concurrent.ConcurrentHashMap
 
-private typealias MockFactory = (ViewModelStoreOwner, SavedState) -> AbstractViewModel
+private typealias MockFactory = (ViewModelStoreOwner, SavedStateHandle) -> AbstractViewModel
 
 /**
  * An implementation of [com.linecorp.lich.viewmodel.internal.LichViewModelProvider] for tests.
@@ -61,10 +61,10 @@ class TestLichViewModelProvider : DefaultLichViewModelProvider() {
     override fun <T : AbstractViewModel> newViewModelFor(
         factory: ViewModelFactory<T>,
         applicationContext: Context,
-        savedState: SavedState,
+        savedStateHandle: SavedStateHandle,
         viewModelStoreOwner: ViewModelStoreOwner
     ): T = getViewModelManager(applicationContext)
-        .newViewModelFor(factory, savedState, viewModelStoreOwner)
+        .newViewModelFor(factory, savedStateHandle, viewModelStoreOwner)
 
     override fun getManager(applicationContext: Context): Any =
         getViewModelManager(applicationContext)
@@ -79,21 +79,21 @@ class TestLichViewModelProvider : DefaultLichViewModelProvider() {
 
         fun <T : AbstractViewModel> newViewModelFor(
             factory: ViewModelFactory<T>,
-            savedState: SavedState,
+            savedStateHandle: SavedStateHandle,
             viewModelStoreOwner: ViewModelStoreOwner
         ): T {
             // If there is a mockFactory, creates a mock and returns it.
             mockFactories[factory]?.let { mockFactory ->
                 @Suppress("UNCHECKED_CAST")
-                return mockFactory(viewModelStoreOwner, savedState) as T
+                return mockFactory(viewModelStoreOwner, savedStateHandle) as T
             }
             // Otherwise, returns a real ViewModel.
-            return createRealViewModel(factory, savedState)
+            return createRealViewModel(factory, savedStateHandle)
         }
 
         override fun <T : AbstractViewModel> setMockViewModel(
             factory: ViewModelFactory<T>,
-            mockFactory: (ViewModelStoreOwner, SavedState) -> T
+            mockFactory: (ViewModelStoreOwner, SavedStateHandle) -> T
         ) {
             mockFactories[factory] = mockFactory
         }
@@ -104,8 +104,8 @@ class TestLichViewModelProvider : DefaultLichViewModelProvider() {
 
         override fun <T : AbstractViewModel> createRealViewModel(
             factory: ViewModelFactory<T>,
-            savedState: SavedState
-        ): T = createViewModel(factory, applicationContext, savedState)
+            savedStateHandle: SavedStateHandle
+        ): T = createViewModel(factory, applicationContext, savedStateHandle)
 
         override fun clearAllMockViewModels() {
             mockFactories.clear()

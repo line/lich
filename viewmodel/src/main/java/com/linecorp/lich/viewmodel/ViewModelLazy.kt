@@ -39,8 +39,8 @@ import androidx.navigation.fragment.NavHostFragment
  * ```
  *
  * @param factory [ViewModelFactory] to create the ViewModel.
- * @param argumentsFunction a function that returns initial values for a new [SavedState] passed
- * down to the ViewModel. If omitted, `getIntent()?.getExtras()` for this Activity is used.
+ * @param argumentsFunction a function that returns initial values for a new `SavedStateHandle`
+ * passed down to the ViewModel. If omitted, `getIntent()?.getExtras()` for this Activity is used.
  */
 @MainThread
 fun <T : AbstractViewModel> ComponentActivity.viewModel(
@@ -66,8 +66,8 @@ fun <T : AbstractViewModel> ComponentActivity.viewModel(
  * ```
  *
  * @param factory [ViewModelFactory] to create the ViewModel.
- * @param argumentsFunction a function that returns initial values for a new [SavedState] passed
- * down to the ViewModel. If omitted, `getArguments()` for this Fragment is used.
+ * @param argumentsFunction a function that returns initial values for a new `SavedStateHandle`
+ * passed down to the ViewModel. If omitted, `getArguments()` for this Fragment is used.
  */
 @MainThread
 fun <T : AbstractViewModel> Fragment.viewModel(
@@ -94,8 +94,8 @@ fun <T : AbstractViewModel> Fragment.viewModel(
  * ```
  *
  * @param factory [ViewModelFactory] to create the ViewModel.
- * @param argumentsFunction a function that returns initial values for a new [SavedState] passed
- * down to the ViewModel. If omitted, `getIntent()?.getExtras()` for the host Activity is used.
+ * @param argumentsFunction a function that returns initial values for a new `SavedStateHandle`
+ * passed down to the ViewModel. If omitted, `getIntent()?.getExtras()` for the host Activity is used.
  */
 @MainThread
 fun <T : AbstractViewModel> Fragment.activityViewModel(
