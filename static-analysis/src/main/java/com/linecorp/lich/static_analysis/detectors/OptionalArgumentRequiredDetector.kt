@@ -33,8 +33,8 @@ class OptionalArgumentRequiredDetector : Detector(), SourceCodeScanner {
             Implementation(OptionalArgumentRequiredDetector::class.java, Scope.JAVA_FILE_SCOPE)
         )
 
-        private const val argumentAnnotationQualifiedName = "com.linecorp.lich.viewmodel.Argument"
-        private const val savedStateQualifiedName = "com.linecorp.lich.viewmodel.SavedState"
+        private const val argumentAnnotationQualifiedName = "com.linecorp.lich.savedstate.Argument"
+        private const val savedStatesQualifiedName = "com.linecorp.lich.savedstate.SavedStatesKt"
     }
 
     private fun JavaContext.report(node: UCallExpression) {
@@ -61,7 +61,7 @@ class OptionalArgumentRequiredDetector : Detector(), SourceCodeScanner {
 
     override fun visitMethodCall(context: JavaContext, node: UCallExpression, method: PsiMethod) {
         if (isKotlin(method) &&
-            context.evaluator.isMemberInClass(method, savedStateQualifiedName)
+            context.evaluator.isMemberInClass(method, savedStatesQualifiedName)
         ) {
             if (isOptionalArgument(node)) {
                 context.report(node)
@@ -69,5 +69,5 @@ class OptionalArgumentRequiredDetector : Detector(), SourceCodeScanner {
         }
     }
 
-    override fun getApplicableMethodNames(): List<String>? = listOf("required")
+    override fun getApplicableMethodNames(): List<String> = listOf("required")
 }

@@ -1,6 +1,6 @@
-package com.linecorp.lich.viewmodel
+package com.linecorp.lich.savedstate
 
-class ArgumentTest(val savedState: SavedState) {
+class ArgumentTest(val savedStateHandle: SavedStateHandle) {
     @Argument(isOptional = true)
-    val test: Int by savedState.required()
+    val test: Int by savedStateHandle.required()
 }
