@@ -19,6 +19,8 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.FragmentActivity
+import com.linecorp.lich.savedstate.putViewModelArgs
+import com.linecorp.lich.savedstate.setViewModelArgs
 
 class TestActivity : FragmentActivity() {
 
