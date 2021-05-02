@@ -22,6 +22,7 @@ import com.google.devtools.ksp.processing.Dependencies
 import com.google.devtools.ksp.processing.KSPLogger
 import com.google.devtools.ksp.processing.Resolver
 import com.google.devtools.ksp.processing.SymbolProcessor
+import com.google.devtools.ksp.processing.SymbolProcessorProvider
 import com.google.devtools.ksp.symbol.KSAnnotated
 import com.google.devtools.ksp.symbol.KSAnnotation
 import com.google.devtools.ksp.symbol.KSClassDeclaration
@@ -37,21 +38,10 @@ import com.squareup.kotlinpoet.STAR
 import com.squareup.kotlinpoet.TypeName
 import com.squareup.kotlinpoet.WildcardTypeName
 
-class KspViewModelArgsProcessor : SymbolProcessor {
-
-    private lateinit var codeGenerator: CodeGenerator
-
-    private lateinit var logger: KSPLogger
-
-    override fun init(
-        options: Map<String, String>,
-        kotlinVersion: KotlinVersion,
-        codeGenerator: CodeGenerator,
-        logger: KSPLogger
-    ) {
-        this.codeGenerator = codeGenerator
-        this.logger = logger
-    }
+class KspViewModelArgsProcessor(
+    private val codeGenerator: CodeGenerator,
+    private val logger: KSPLogger
+) : SymbolProcessor {
 
     override fun process(resolver: Resolver): List<KSAnnotated> {
         arrayOf(
@@ -202,5 +192,14 @@ class KspViewModelArgsProcessor : SymbolProcessor {
             Variance.CONTRAVARIANT -> WildcardTypeName.consumerOf(typeName)
             else -> typeName
         }
+    }
+
+    class Provider : SymbolProcessorProvider {
+        override fun create(
+            options: Map<String, String>,
+            kotlinVersion: KotlinVersion,
+            codeGenerator: CodeGenerator,
+            logger: KSPLogger
+        ): SymbolProcessor = KspViewModelArgsProcessor(codeGenerator, logger)
     }
 }
