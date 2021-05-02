@@ -31,8 +31,10 @@ import com.google.devtools.ksp.symbol.KSPropertyDeclaration
 import com.google.devtools.ksp.symbol.KSType
 import com.google.devtools.ksp.symbol.KSTypeAlias
 import com.google.devtools.ksp.symbol.KSTypeArgument
+import com.google.devtools.ksp.symbol.Modifier
 import com.google.devtools.ksp.symbol.Variance
 import com.squareup.kotlinpoet.ClassName
+import com.squareup.kotlinpoet.ParameterizedTypeName
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import com.squareup.kotlinpoet.STAR
 import com.squareup.kotlinpoet.TypeName
@@ -160,11 +162,10 @@ class KspViewModelArgsProcessor(
 
     private fun KSType.toTypeName(): TypeName? {
         val rawType = declaration.toRawClassName() ?: return null
-        val typeArguments = arguments.map { it.toTypeName() ?: return null }
-        // TODO: cf. https://github.com/google/ksp/issues/366
-        //val outerTypeName = outerType?.toTypeName() as? ParameterizedTypeName
+        val typeArguments = innerArguments.map { it.toTypeName() ?: return null }
+        val outerTypeName = outerType?.toTypeName() as? ParameterizedTypeName
         val nonNullType = when {
-            //outerTypeName != null -> outerTypeName.nestedClass(rawType.simpleName, typeArguments)
+            outerTypeName != null -> outerTypeName.nestedClass(rawType.simpleName, typeArguments)
             typeArguments.isEmpty() -> rawType
             else -> rawType.parameterizedBy(typeArguments)
         }
@@ -193,6 +194,24 @@ class KspViewModelArgsProcessor(
             else -> typeName
         }
     }
+
+    // TODO: Replace this with https://github.com/google/ksp/pull/408 when it ships.
+    private val KSType.outerType: KSType?
+        get() {
+            if (Modifier.INNER !in declaration.modifiers)
+                return null
+            val outerDecl = declaration.parentDeclaration as? KSClassDeclaration ?: return null
+            return outerDecl.asType(
+                arguments.subList(
+                    declaration.typeParameters.size,
+                    arguments.size
+                )
+            )
+        }
+
+    // TODO: Replace this with https://github.com/google/ksp/pull/408 when it ships.
+    private val KSType.innerArguments: List<KSTypeArgument>
+        get() = arguments.subList(0, declaration.typeParameters.size)
 
     class Provider : SymbolProcessorProvider {
         override fun create(
