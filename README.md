@@ -9,7 +9,8 @@ All the libraries are available on [Maven Central](https://search.maven.org/sear
 ## Libraries
 
 - [component](component) - Lightweight framework for managing singleton components on Android apps.
-- [viewmodel](viewmodel) - Lightweight framework for managing ViewModels.
+- [viewmodel](viewmodel) - Lightweight framework for managing ViewModels in the same way as "Lich Component".
+- [savedstate](savedstate) - A library that provides type-safe access to [saved instance state](https://developer.android.com/topic/libraries/architecture/viewmodel-savedstate).
 - [lifecycle](lifecycle) - A small library for Android Jetpack Lifecycle.
 - [okhttp](okhttp) - Coroutine-aware extensions for OkHttp.
 - [thrift](thrift) - A library for using Apache Thrift in combination with OkHttp.

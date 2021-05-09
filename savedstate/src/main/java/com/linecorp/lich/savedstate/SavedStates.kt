@@ -30,11 +30,11 @@ import kotlin.reflect.KProperty
  *     // A delegated property that accesses the value associated with "fooParam".
  *     // This is equivalent to the code below.
  *     // ```
- *     // var fooParam: String?
+ *     // private var fooParam: String?
  *     //     get() = savedStateHandle["fooParam"]
  *     //     set(value) { savedStateHandle["fooParam"] = value }
  *     // ```
- *     var fooParam: String? by savedStateHandle
+ *     private var fooParam: String? by savedStateHandle
  * }
  * ```
  */
@@ -71,11 +71,11 @@ inline operator fun <T> SavedStateHandle.setValue(thisRef: Any?, property: KProp
  *     //     }
  *     // }
  *     //
- *     // var fooParam: String
+ *     // private var fooParam: String
  *     //     get() = savedStateHandle["fooParam"]!!
  *     //     set(value) { savedStateHandle["fooParam"] = value }
  *     // ```
- *     var fooParam: String by savedStateHandle.initial("abc")
+ *     private var fooParam: String by savedStateHandle.initial("abc")
  * }
  * ```
  */
@@ -100,11 +100,11 @@ fun <T> SavedStateHandle.initial(value: T): InitializingSavedStateDelegate<T> =
  *     //     check("fooParam" in savedStateHandle) { "fooParam is not specified in the arguments." }
  *     // }
  *     //
- *     // var fooParam: String
+ *     // private var fooParam: String
  *     //     get() = savedStateHandle["fooParam"]!!
  *     //     set(value) { savedStateHandle["fooParam"] = value }
  *     // ```
- *     var fooParam: String by savedStateHandle.required()
+ *     private var fooParam: String by savedStateHandle.required()
  * }
  * ```
  */
@@ -122,9 +122,9 @@ fun <T> SavedStateHandle.required(): RequiringSavedStateDelegate<T> =
  *     // A delegated property of a `MutableLiveData` that accesses the value associated with "fooParam".
  *     // This is equivalent to the code below.
  *     // ```
- *     // val fooParam: MutableLiveData<String> = savedStateHandle.getLiveData("fooParam")
+ *     // private val fooParam: MutableLiveData<String> = savedStateHandle.getLiveData("fooParam")
  *     // ```
- *     val fooParam: MutableLiveData<String> by savedStateHandle.liveData()
+ *     private val fooParam: MutableLiveData<String> by savedStateHandle.liveData()
  * }
  * ```
  */
@@ -135,7 +135,7 @@ fun <T> SavedStateHandle.liveData(): SavedStateLiveDataDelegate<T> =
 /**
  * Provides a property delegate for [SavedStateHandle] to get the [MutableLiveData] associated with
  * the name of this property. Unless the value is specified in the `Args` of the ViewModel,
- * it will be initialized with the given [initialValue].
+ * it will be initialized with the given [value].
  *
  * ```
  * class FooViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
@@ -144,17 +144,15 @@ fun <T> SavedStateHandle.liveData(): SavedStateLiveDataDelegate<T> =
  *     // The value is initialized with "abc" unless specified by the `Args` of the ViewModel.
  *     // This is equivalent to the code below.
  *     // ```
- *     // val fooParam: MutableLiveData<String> = savedStateHandle.getLiveData("fooParam", "abc")
+ *     // private val fooParam: MutableLiveData<String> = savedStateHandle.getLiveData("fooParam", "abc")
  *     // ```
- *     val fooParam: MutableLiveData<String> by savedStateHandle.liveDataWithInitial("abc")
+ *     private val fooParam: MutableLiveData<String> by savedStateHandle.liveDataWithInitial("abc")
  * }
  * ```
  */
 @MainThread
-fun <T> SavedStateHandle.liveDataWithInitial(
-    initialValue: T
-): SavedStateLiveDataWithInitialDelegate<T> =
-    SavedStateLiveDataWithInitialDelegate(this, initialValue)
+fun <T> SavedStateHandle.liveDataWithInitial(value: T): SavedStateLiveDataWithInitialDelegate<T> =
+    SavedStateLiveDataWithInitialDelegate(this, value)
 
 /**
  * A delegate provider for [SavedStateHandle.initial].

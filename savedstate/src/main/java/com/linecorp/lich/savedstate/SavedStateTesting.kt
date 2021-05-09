@@ -20,12 +20,16 @@ import androidx.lifecycle.SavedStateHandle
 /**
  * Creates a [SavedStateHandle] with the specified contents, given as a list of pairs
  * where the first value is the key and the second is the value.
+ *
+ * This function should only be used within unit tests.
  */
 fun createSavedStateHandleForTesting(vararg pairs: Pair<String, *>): SavedStateHandle =
     SavedStateHandle(mapOf(*pairs))
 
 /**
  * Creates a [SavedStateHandle] initialized with the given [viewModelArgs].
+ *
+ * This function should only be used within unit tests.
  */
 fun createSavedStateHandleForTesting(viewModelArgs: ViewModelArgs): SavedStateHandle =
     viewModelArgs.toBundle().let { bundle ->
