@@ -28,13 +28,13 @@ android {
 }
 
 dependencies {
-    api project(':savedstate')
     implementation "org.jetbrains.kotlin:kotlin-stdlib:${versions.kotlin}"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:${versions.kotlinCoroutines}"
     implementation "androidx.lifecycle:lifecycle-viewmodel-savedstate:${versions.androidxLifecycle}"
     compileOnly "androidx.navigation:navigation-fragment:${versions.androidxNavigation}"
     lintPublish project(':static-analysis')
 
+    androidTestImplementation project(':savedstate')
     kaptAndroidTest project(':savedstate-compiler')
     androidTestImplementation "androidx.fragment:fragment:${versions.androidxFragment}"
     androidTestImplementation "org.jetbrains.kotlin:kotlin-test-junit:${versions.kotlin}"

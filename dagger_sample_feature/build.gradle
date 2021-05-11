@@ -26,6 +26,7 @@ dependencies {
     implementation project(':dagger_sample_app')
     implementation project(':component')
     implementation project(':viewmodel')
+    implementation project(':savedstate')
     kapt project(':savedstate-compiler')
     implementation "androidx.appcompat:appcompat:${versions.androidxAppcompat}"
     implementation "androidx.constraintlayout:constraintlayout:${versions.androidxConstraintlayout}"
