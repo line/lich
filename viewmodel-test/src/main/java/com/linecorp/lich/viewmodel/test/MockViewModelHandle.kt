@@ -18,7 +18,6 @@ package com.linecorp.lich.viewmodel.test
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModelStoreOwner
 import com.linecorp.lich.viewmodel.AbstractViewModel
-import com.linecorp.lich.viewmodel.SavedState
 import com.linecorp.lich.viewmodel.ViewModelFactory
 
 /**
@@ -61,10 +60,6 @@ class MockViewModelHandle<T : AbstractViewModel>(
      */
     val savedStateHandle: SavedStateHandle
         get() = _savedStateHandle ?: throwNotCreatedException()
-
-    @Deprecated("Use `savedStateHandle` instead.", ReplaceWith("savedStateHandle"))
-    val savedState: SavedState
-        get() = SavedState(savedStateHandle)
 
     private fun throwNotCreatedException(): Nothing =
         throw IllegalStateException("Mock ViewModel is not created yet.")
