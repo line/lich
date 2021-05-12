@@ -56,6 +56,7 @@ android {
 dependencies {
     implementation project(':component')
     implementation project(':viewmodel')
+    implementation project(':savedstate')
     ksp project(':savedstate-compiler')
     implementation project(':lifecycle')
     implementation project(':okhttp')

@@ -46,16 +46,11 @@ class KspViewModelArgsProcessor(
 ) : SymbolProcessor {
 
     override fun process(resolver: Resolver): List<KSAnnotated> {
-        arrayOf(
-            GENERATE_ARGS_ANNOTATION_NAME,
-            DEPRECATED_GENERATE_ARGS_ANNOTATION_NAME
-        ).forEach { annotationName ->
-            resolver.getSymbolsWithAnnotation(annotationName).forEach { symbol ->
-                if (symbol is KSClassDeclaration) {
-                    generateViewModelArgs(symbol, resolver)
-                } else {
-                    logger.warn("@GenerateArgs is only applicable to class declarations.", symbol)
-                }
+        resolver.getSymbolsWithAnnotation(GENERATE_ARGS_ANNOTATION_NAME).forEach { symbol ->
+            if (symbol is KSClassDeclaration) {
+                generateViewModelArgs(symbol, resolver)
+            } else {
+                logger.warn("@GenerateArgs is only applicable to class declarations.", symbol)
             }
         }
         return emptyList()
@@ -89,8 +84,7 @@ class KspViewModelArgsProcessor(
     private fun KSPropertyDeclaration.createArgumentInfo(
         resolver: Resolver
     ): ViewModelArgumentInfo? {
-        val annotation = getAnnotation(ARGUMENT_ANNOTATION_NAME)
-            ?: getAnnotation(DEPRECATED_ARGUMENT_ANNOTATION_NAME) ?: return null
+        val annotation = getAnnotation(ARGUMENT_ANNOTATION_NAME) ?: return null
 
         if (extensionReceiver != null) {
             logger.warn("@Argument is not applicable to extension properties.", this)

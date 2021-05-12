@@ -51,8 +51,7 @@ import kotlinx.metadata.ClassName as KmClassName
 
 class KaptViewModelArgsProcessor : AbstractProcessor() {
 
-    override fun getSupportedAnnotationTypes(): Set<String> =
-        setOf(GENERATE_ARGS_ANNOTATION_NAME, DEPRECATED_GENERATE_ARGS_ANNOTATION_NAME)
+    override fun getSupportedAnnotationTypes(): Set<String> = setOf(GENERATE_ARGS_ANNOTATION_NAME)
 
     override fun getSupportedSourceVersion(): SourceVersion = SourceVersion.latestSupported()
 
@@ -109,9 +108,7 @@ class KaptViewModelArgsProcessor : AbstractProcessor() {
 
             val annotation = enclosedElement.annotationMirrors.firstOrNull { annotation ->
                 annotation.annotationType.asElement().let {
-                    it is TypeElement &&
-                        (it.qualifiedName.contentEquals(ARGUMENT_ANNOTATION_NAME) ||
-                            it.qualifiedName.contentEquals(DEPRECATED_ARGUMENT_ANNOTATION_NAME))
+                    it is TypeElement && it.qualifiedName.contentEquals(ARGUMENT_ANNOTATION_NAME)
                 }
             } ?: return@mapNotNull null
 

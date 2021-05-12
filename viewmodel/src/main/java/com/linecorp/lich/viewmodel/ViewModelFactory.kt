@@ -85,18 +85,7 @@ abstract class ViewModelFactory<T : AbstractViewModel> {
      * @param savedStateHandle a handle to saved state.
      */
     @MainThread
-    protected open fun createViewModel(context: Context, savedStateHandle: SavedStateHandle): T {
-        return createViewModel(context, SavedState(savedStateHandle))
-    }
-
-    /**
-     * This function should not be used. Instead, override the above function.
-     */
-    @Deprecated("Change the type of the second argument to SavedStateHandle.")
-    @MainThread
-    protected open fun createViewModel(context: Context, savedState: SavedState): T {
-        throw NotImplementedError("createViewModel() must be overridden.")
-    }
+    protected abstract fun createViewModel(context: Context, savedStateHandle: SavedStateHandle): T
 
     internal fun create(context: Context, savedStateHandle: SavedStateHandle): T =
         createViewModel(context, savedStateHandle)
