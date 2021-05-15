@@ -161,14 +161,12 @@ class InitializingSavedStateDelegate<T>(
     private val savedStateHandle: SavedStateHandle,
     private val value: T
 ) {
-    @Suppress("NOTHING_TO_INLINE")
-    inline operator fun provideDelegate(
+    operator fun provideDelegate(
         thisRef: Any?,
         property: KProperty<*>
     ): InitializedSavedState<T> = initialize(property.name)
 
-    @PublishedApi
-    internal fun initialize(key: String): InitializedSavedState<T> {
+    private fun initialize(key: String): InitializedSavedState<T> {
         if (key !in savedStateHandle) {
             savedStateHandle[key] = value
         }
@@ -180,14 +178,12 @@ class InitializingSavedStateDelegate<T>(
  * A delegate provider for [SavedStateHandle.required].
  */
 class RequiringSavedStateDelegate<T>(private val savedStateHandle: SavedStateHandle) {
-    @Suppress("NOTHING_TO_INLINE")
-    inline operator fun provideDelegate(
+    operator fun provideDelegate(
         thisRef: Any?,
         property: KProperty<*>
     ): InitializedSavedState<T> = checkExistence(property.name)
 
-    @PublishedApi
-    internal fun checkExistence(key: String): InitializedSavedState<T> {
+    private fun checkExistence(key: String): InitializedSavedState<T> {
         check(key in savedStateHandle) { "$key is not specified in the arguments." }
         return InitializedSavedState(savedStateHandle, key)
     }
@@ -226,14 +222,12 @@ class InitializedSavedState<T>(
  * A delegate provider for [SavedStateHandle.liveData].
  */
 class SavedStateLiveDataDelegate<T>(private val savedStateHandle: SavedStateHandle) {
-    @Suppress("NOTHING_TO_INLINE")
-    inline operator fun provideDelegate(
+    operator fun provideDelegate(
         thisRef: Any?,
         property: KProperty<*>
     ): SavedStateLiveData<T> = getSavedStateLiveData(property.name)
 
-    @PublishedApi
-    internal fun getSavedStateLiveData(key: String): SavedStateLiveData<T> =
+    private fun getSavedStateLiveData(key: String): SavedStateLiveData<T> =
         SavedStateLiveData(savedStateHandle.getLiveData(key))
 }
 
@@ -244,14 +238,12 @@ class SavedStateLiveDataWithInitialDelegate<T>(
     private val savedStateHandle: SavedStateHandle,
     private val initialValue: T
 ) {
-    @Suppress("NOTHING_TO_INLINE")
-    inline operator fun provideDelegate(
+    operator fun provideDelegate(
         thisRef: Any?,
         property: KProperty<*>
     ): SavedStateLiveData<T> = getSavedStateLiveData(property.name)
 
-    @PublishedApi
-    internal fun getSavedStateLiveData(key: String): SavedStateLiveData<T> =
+    private fun getSavedStateLiveData(key: String): SavedStateLiveData<T> =
         SavedStateLiveData(savedStateHandle.getLiveData(key, initialValue))
 }
 
