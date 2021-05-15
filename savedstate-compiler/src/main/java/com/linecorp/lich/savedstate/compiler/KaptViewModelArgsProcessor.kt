@@ -294,7 +294,6 @@ class KaptViewModelArgsProcessor : AbstractProcessor() {
         private fun Metadata.asClassHeader(): KotlinClassHeader = KotlinClassHeader(
             kind = kind,
             metadataVersion = metadataVersion,
-            bytecodeVersion = bytecodeVersion,
             data1 = data1,
             data2 = data2,
             extraString = extraString,
