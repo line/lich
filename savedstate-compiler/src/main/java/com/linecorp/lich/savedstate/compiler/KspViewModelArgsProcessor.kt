@@ -17,6 +17,8 @@ package com.linecorp.lich.savedstate.compiler
 
 import com.google.devtools.ksp.getClassDeclarationByName
 import com.google.devtools.ksp.getDeclaredProperties
+import com.google.devtools.ksp.innerArguments
+import com.google.devtools.ksp.outerType
 import com.google.devtools.ksp.processing.CodeGenerator
 import com.google.devtools.ksp.processing.Dependencies
 import com.google.devtools.ksp.processing.KSPLogger
@@ -31,7 +33,6 @@ import com.google.devtools.ksp.symbol.KSPropertyDeclaration
 import com.google.devtools.ksp.symbol.KSType
 import com.google.devtools.ksp.symbol.KSTypeAlias
 import com.google.devtools.ksp.symbol.KSTypeArgument
-import com.google.devtools.ksp.symbol.Modifier
 import com.google.devtools.ksp.symbol.Variance
 import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.ParameterizedTypeName
@@ -77,7 +78,8 @@ class KspViewModelArgsProcessor(
             return null
         }
         val argsClassName = viewModelClassName.peerClass("${viewModelClassName.simpleName}Args")
-        val arguments = getDeclaredProperties().mapNotNull { it.createArgumentInfo(resolver) }
+        val arguments =
+            getDeclaredProperties().mapNotNull { it.createArgumentInfo(resolver) }.toList()
         return ViewModelInfo(viewModelClassName, argsClassName, arguments)
     }
 
@@ -188,24 +190,6 @@ class KspViewModelArgsProcessor(
             else -> typeName
         }
     }
-
-    // TODO: Replace this with https://github.com/google/ksp/pull/408 when it ships.
-    private val KSType.outerType: KSType?
-        get() {
-            if (Modifier.INNER !in declaration.modifiers)
-                return null
-            val outerDecl = declaration.parentDeclaration as? KSClassDeclaration ?: return null
-            return outerDecl.asType(
-                arguments.subList(
-                    declaration.typeParameters.size,
-                    arguments.size
-                )
-            )
-        }
-
-    // TODO: Replace this with https://github.com/google/ksp/pull/408 when it ships.
-    private val KSType.innerArguments: List<KSTypeArgument>
-        get() = arguments.subList(0, declaration.typeParameters.size)
 
     class Provider : SymbolProcessorProvider {
         override fun create(
