@@ -31,12 +31,15 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib:${versions.kotlin}"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:${versions.kotlinCoroutines}"
     implementation "androidx.lifecycle:lifecycle-viewmodel-savedstate:${versions.androidxLifecycle}"
+    //noinspection KtxExtensionAvailable
+    compileOnly "androidx.fragment:fragment:${versions.androidxFragment}"
+    //noinspection KtxExtensionAvailable
     compileOnly "androidx.navigation:navigation-fragment:${versions.androidxNavigation}"
     lintPublish project(':static-analysis')
 
     androidTestImplementation project(':savedstate')
     kaptAndroidTest project(':savedstate-compiler')
-    androidTestImplementation "androidx.fragment:fragment:${versions.androidxFragment}"
+    androidTestImplementation "androidx.fragment:fragment-ktx:${versions.androidxFragment}"
     androidTestImplementation "org.jetbrains.kotlin:kotlin-test-junit:${versions.kotlin}"
     androidTestImplementation "androidx.test:runner:${versions.androidxTestRunner}"
     androidTestImplementation "androidx.test.ext:junit:${versions.androidxTestJunit}"
