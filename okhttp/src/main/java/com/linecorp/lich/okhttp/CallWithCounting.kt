@@ -286,13 +286,11 @@ private class CountingSink(
     }
 
     private fun emitUploadProgress() {
-        try {
-            channel.offer(CallState.Uploading(bytesUploaded, contentLength))
-        } catch (e: Exception) {
-            // We ignore any exceptions thrown from `channel.offer()`.
-            // cf. https://github.com/Kotlin/kotlinx.coroutines/issues/974
-            // Cancellation will be notified as an IOException on `sink.write()`.
-        }
+        // Since the channel is CONFLATED, `trySend()` will always succeed unless the channel is
+        // cancelled. If the channel is cancelled, it means that the HTTP call is cancelled, so
+        // the cancellation will be notified as an IOException on `sink.write()`.
+        // Therefore, the result of `trySend()` can be ignored here.
+        channel.trySend(CallState.Uploading(bytesUploaded, contentLength))
     }
 }
 
@@ -317,13 +315,11 @@ private class CountingSource(
         }
 
     private fun emitDownloadProgress() {
-        try {
-            channel.offer(CallState.Downloading(bytesDownloaded, contentLength))
-        } catch (e: Exception) {
-            // We ignore any exceptions thrown from `channel.offer()`.
-            // cf. https://github.com/Kotlin/kotlinx.coroutines/issues/974
-            // Cancellation will be notified as an IOException on `source.read()`.
-        }
+        // Since the channel is CONFLATED, `trySend()` will always succeed unless the channel is
+        // cancelled. If the channel is cancelled, it means that the HTTP call is cancelled, so
+        // the cancellation will be notified as an IOException on `source.read()`.
+        // Therefore, the result of `trySend()` can be ignored here.
+        channel.trySend(CallState.Downloading(bytesDownloaded, contentLength))
     }
 }
 
@@ -345,17 +341,17 @@ private class CountingCallback<T>(
             } catch (e: IOException) {
                 CallState.Failure(e)
             }
-            // Since the channel is CONFLATED, `offer()` will always succeed unless the channel
-            // is cancelled.
-            channel.offer(finalState)
+            // Since the channel is CONFLATED, `trySend()` will always succeed unless the channel is
+            // cancelled.
+            channel.trySend(finalState)
         }
     }
 
     override fun onFailure(call: Call, e: IOException) {
         runAndCloseChannel {
-            // Since the channel is CONFLATED, `offer()` will always succeed unless the channel
-            // is cancelled.
-            channel.offer(CallState.Failure(e))
+            // Since the channel is CONFLATED, `trySend()` will always succeed unless the channel is
+            // cancelled.
+            channel.trySend(CallState.Failure(e))
         }
     }
 
