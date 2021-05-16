@@ -35,7 +35,7 @@ dependencies {
     lintPublish project(':static-analysis')
 
     kaptAndroidTest project(':savedstate-compiler')
-    androidTestImplementation "androidx.fragment:fragment:${versions.androidxFragment}"
+    androidTestImplementation "androidx.fragment:fragment-ktx:${versions.androidxFragment}"
     androidTestImplementation "org.jetbrains.kotlin:kotlin-test-junit:${versions.kotlin}"
     androidTestImplementation "androidx.test:runner:${versions.androidxTestRunner}"
     androidTestImplementation "androidx.test.ext:junit:${versions.androidxTestJunit}"
