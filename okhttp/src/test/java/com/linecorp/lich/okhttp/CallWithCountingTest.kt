@@ -308,7 +308,8 @@ class CallWithCountingTest {
         assertEquals(1, callStateList.size)
         callStateList.last().let { lastState ->
             assertIs<Failure>(lastState)
-            assertEquals(500, assertIs<ResponseStatusException>(lastState.exception).code)
+            val exception = assertIs<ResponseStatusException>(lastState.exception)
+            assertEquals(500, exception.code)
         }
     }
 

@@ -44,7 +44,6 @@ import java.io.IOException
  * }
  * ```
  */
-@Suppress("MemberVisibilityCanBePrivate")
 abstract class AbstractThriftServiceClient<T : TServiceClient> {
     /**
      * The [OkHttpClient] for calling Thrift services.
@@ -66,7 +65,7 @@ abstract class AbstractThriftServiceClient<T : TServiceClient> {
      *
      * @param sendFunction A function that calls `send_METHOD(...)` of the TServiceClient.
      */
-    protected fun newRequestBody(sendFunction: T.() -> Unit): ThriftRequestBody<T> =
+    protected open fun newRequestBody(sendFunction: T.() -> Unit): ThriftRequestBody<T> =
         ThriftRequestBody(thriftClientFactory, sendFunction)
 
     /**
@@ -111,7 +110,7 @@ abstract class AbstractThriftServiceClient<T : TServiceClient> {
      * @return The result of [receiveFunction].
      * @throws TTransportException If any I/O error occurred.
      */
-    protected suspend fun <R> doCall(request: Request, receiveFunction: T.() -> R): R =
+    protected open suspend fun <R> doCall(request: Request, receiveFunction: T.() -> R): R =
         try {
             okHttpClient.call(request) { response ->
                 response.handleResponse(receiveFunction)
@@ -130,6 +129,6 @@ abstract class AbstractThriftServiceClient<T : TServiceClient> {
      * @return The result of [receiveFunction].
      * @throws TTransportException If any I/O error occurred.
      */
-    protected suspend fun <R> call(sendFunction: T.() -> Unit, receiveFunction: T.() -> R): R =
+    protected open suspend fun <R> call(sendFunction: T.() -> Unit, receiveFunction: T.() -> R): R =
         doCall(newRequest(sendFunction), receiveFunction)
 }

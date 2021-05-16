@@ -38,6 +38,7 @@ import org.junit.Before
 import org.junit.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
+import kotlin.test.assertIs
 import kotlin.test.assertTrue
 
 class ThriftServiceClientTest {
@@ -91,8 +92,7 @@ class ThriftServiceClientTest {
         assertFailsWith<TTransportException> {
             newClient().ping()
         }.let { e ->
-            val cause = e.cause
-            assertTrue(cause is ResponseStatusException)
+            val cause = assertIs<ResponseStatusException>(e.cause)
             assertEquals(500, cause.code)
         }
     }
