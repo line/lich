@@ -27,6 +27,7 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import java.util.concurrent.TimeUnit
+import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 import kotlin.test.assertNull
@@ -67,7 +68,7 @@ class CallTest {
         }
         server.takeRequest()
 
-        assertTrue(data contentEquals result)
+        assertContentEquals(data, result)
     }
 
     @Test
@@ -90,7 +91,7 @@ class CallTest {
         }
 
         assertEquals("DONE.", result)
-        assertTrue(data contentEquals server.takeRequest().body.readByteArray())
+        assertContentEquals(data, server.takeRequest().body.readByteArray())
     }
 
     @Test

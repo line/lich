@@ -19,6 +19,7 @@ import com.linecorp.lich.okhttp.CallState.Downloading
 import com.linecorp.lich.okhttp.CallState.Failure
 import com.linecorp.lich.okhttp.CallState.Success
 import com.linecorp.lich.okhttp.CallState.Uploading
+import kotlinx.coroutines.flow.last
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withTimeoutOrNull
@@ -36,8 +37,10 @@ import org.junit.Before
 import org.junit.Test
 import java.util.concurrent.TimeUnit
 import kotlin.math.min
+import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
+import kotlin.test.assertIs
 import kotlin.test.assertNull
 import kotlin.test.assertSame
 import kotlin.test.assertTrue
@@ -77,12 +80,12 @@ class CallWithCountingTest {
         }.toList()
 
         callStateList.subList(0, callStateList.size - 1).forEach { state ->
-            assertTrue(state is Downloading)
+            assertIs<Downloading>(state)
             assertEquals(20000, state.bytesTotal)
         }
         callStateList.last().let { lastState ->
-            assertTrue(lastState is Success)
-            assertTrue(data contentEquals lastState.data)
+            assertIs<Success<ByteArray>>(lastState)
+            assertContentEquals(data, lastState.data)
             assertEquals(-1, lastState.bytesUploaded)
             assertEquals(20000, lastState.bytesDownloaded)
         }
@@ -105,12 +108,12 @@ class CallWithCountingTest {
         }.toList()
 
         callStateList.subList(0, callStateList.size - 1).forEach { state ->
-            assertTrue(state is Downloading)
+            assertIs<Downloading>(state)
             assertEquals(-1, state.bytesTotal)
         }
         callStateList.last().let { lastState ->
-            assertTrue(lastState is Success)
-            assertTrue(data contentEquals lastState.data)
+            assertIs<Success<ByteArray>>(lastState)
+            assertContentEquals(data, lastState.data)
             assertEquals(-1, lastState.bytesUploaded)
             assertEquals(20000, lastState.bytesDownloaded)
         }
@@ -139,13 +142,13 @@ class CallWithCountingTest {
         }.toList()
 
         callStateList.subList(0, callStateList.size - 1).forEach { state ->
-            assertTrue(state is Downloading)
+            assertIs<Downloading>(state)
             assertTrue(state.bytesTransferred >= 10000)
             assertEquals(20000, state.bytesTotal)
         }
         callStateList.last().let { lastState ->
-            assertTrue(lastState is Success)
-            assertTrue(data contentEquals lastState.data)
+            assertIs<Success<ByteArray>>(lastState)
+            assertContentEquals(data, lastState.data)
             assertEquals(-1, lastState.bytesUploaded)
             assertEquals(20000, lastState.bytesDownloaded)
         }
@@ -172,7 +175,7 @@ class CallWithCountingTest {
 
         assertEquals(1, callStateList.size)
         callStateList.last().let { lastState ->
-            assertTrue(lastState is Success)
+            assertIs<Success<String>>(lastState)
             assertEquals("Range Not Satisfiable.", lastState.data)
             assertEquals(-1, lastState.bytesUploaded)
             assertEquals(20000, lastState.bytesDownloaded)
@@ -202,16 +205,16 @@ class CallWithCountingTest {
         }.toList()
 
         callStateList.subList(0, callStateList.size - 1).forEach { state ->
-            assertTrue(state is Uploading)
+            assertIs<Uploading>(state)
             assertEquals(20000, state.bytesTotal)
         }
         callStateList.last().let { lastState ->
-            assertTrue(lastState is Success)
+            assertIs<Success<String>>(lastState)
             assertEquals("DONE.", lastState.data)
             assertEquals(20000, lastState.bytesUploaded)
             assertEquals(-1, lastState.bytesDownloaded)
         }
-        assertTrue(data contentEquals server.takeRequest().body.readByteArray())
+        assertContentEquals(data, server.takeRequest().body.readByteArray())
     }
 
     @Test
@@ -249,16 +252,16 @@ class CallWithCountingTest {
         }.toList()
 
         callStateList.subList(0, callStateList.size - 1).forEach { state ->
-            assertTrue(state is Uploading)
+            assertIs<Uploading>(state)
             assertEquals(-1, state.bytesTotal)
         }
         callStateList.last().let { lastState ->
-            assertTrue(lastState is Success)
+            assertIs<Success<String>>(lastState)
             assertEquals("DONE.", lastState.data)
             assertEquals(20000, lastState.bytesUploaded)
             assertEquals(-1, lastState.bytesDownloaded)
         }
-        assertTrue(data contentEquals server.takeRequest().body.readByteArray())
+        assertContentEquals(data, server.takeRequest().body.readByteArray())
     }
 
     @Test
@@ -275,18 +278,18 @@ class CallWithCountingTest {
             .url(server.url("/foo"))
             .post(data.toRequestBody())
             .build()
-        val callStateListOrNull = withTimeoutOrNull(200) {
+        val lastStateOrNull = withTimeoutOrNull(200) {
             okHttpClient.callWithCounting(
                 request,
                 countDownload = false
             ) { response ->
                 assertTrue(response.isSuccessful)
                 checkNotNull(response.body).string()
-            }.toList()
+            }.last()
         }
         server.takeRequest()
 
-        assertNull(callStateListOrNull)
+        assertNull(lastStateOrNull)
     }
 
     @Test
@@ -304,8 +307,8 @@ class CallWithCountingTest {
 
         assertEquals(1, callStateList.size)
         callStateList.last().let { lastState ->
-            assertTrue(lastState is Failure)
-            assertTrue(lastState.exception is ResponseStatusException)
+            assertIs<Failure>(lastState)
+            assertEquals(500, assertIs<ResponseStatusException>(lastState.exception).code)
         }
     }
 
@@ -318,7 +321,7 @@ class CallWithCountingTest {
         assertFailsWith<RuntimeException> {
             okHttpClient.callWithCounting(request) {
                 throw RuntimeException("FOO")
-            }.toList()
+            }.last()
         }.let { exception ->
             assertEquals("FOO", exception.message)
         }
