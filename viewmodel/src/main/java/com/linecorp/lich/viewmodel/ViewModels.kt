@@ -22,9 +22,8 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.annotation.MainThread
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelStoreOwner
-import androidx.savedstate.SavedStateRegistryOwner
-import com.linecorp.lich.viewmodel.internal.lichViewModelProvider
+import androidx.navigation.NavBackStackEntry
+import com.linecorp.lich.viewmodel.internal.LichViewModels
 
 /**
  * Returns an existing ViewModel or creates a new one, associated with this Activity.
@@ -55,7 +54,7 @@ import com.linecorp.lich.viewmodel.internal.lichViewModelProvider
 fun <T : AbstractViewModel> ComponentActivity.getViewModel(
     factory: ViewModelFactory<T>,
     arguments: Bundle? = intent?.extras
-): T = getViewModel(this, this, factory, arguments)
+): T = LichViewModels.getViewModelWithExplicitArguments(this, this, this, factory, arguments)
 
 /**
  * Returns an existing ViewModel or creates a new one, associated with this Fragment.
@@ -86,7 +85,13 @@ fun <T : AbstractViewModel> ComponentActivity.getViewModel(
 fun <T : AbstractViewModel> Fragment.getViewModel(
     factory: ViewModelFactory<T>,
     arguments: Bundle? = this.arguments
-): T = requireContext().getViewModel(this, this, factory, arguments)
+): T = LichViewModels.getViewModelWithExplicitArguments(
+    requireContext(),
+    this,
+    this,
+    factory,
+    arguments
+)
 
 /**
  * Returns an existing ViewModel or creates a new one, associated with the Activity hosting this
@@ -121,16 +126,15 @@ fun <T : AbstractViewModel> Fragment.getActivityViewModel(
     arguments: Bundle? = requireActivity().intent?.extras
 ): T = requireActivity().getViewModel(factory, arguments)
 
+/**
+ * Returns an existing ViewModel or creates a new one, associated with this [NavBackStackEntry].
+ * You can use this ViewModel to pass UI-related data between destinations in a navigation graph.
+ *
+ * @param context a [Context].
+ * @param factory [ViewModelFactory] to create the ViewModel.
+ */
 @MainThread
-internal fun <T : AbstractViewModel> Context.getViewModel(
-    viewModelStoreOwner: ViewModelStoreOwner,
-    savedStateRegistryOwner: SavedStateRegistryOwner,
-    factory: ViewModelFactory<T>,
-    arguments: Bundle?
-): T = lichViewModelProvider.getViewModel(
-    this,
-    viewModelStoreOwner,
-    savedStateRegistryOwner,
-    factory,
-    arguments
-)
+fun <T : AbstractViewModel> NavBackStackEntry.getViewModel(
+    context: Context,
+    factory: ViewModelFactory<T>
+): T = LichViewModels.getViewModelWithDefaultArguments(context, this, this, factory)

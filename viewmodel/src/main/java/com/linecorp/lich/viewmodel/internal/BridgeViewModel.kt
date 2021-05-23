@@ -21,10 +21,10 @@ import androidx.lifecycle.ViewModel
 import com.linecorp.lich.viewmodel.AbstractViewModel
 
 /**
- * A class that bridges a [ViewModel] of Android Architecture Components and our [AbstractViewModel].
+ * A class that bridges an AndroidX [ViewModel] and Lich [AbstractViewModel].
  */
 @MainThread
-internal class BridgeViewModel(internal val savedStateHandle: SavedStateHandle) : ViewModel() {
+class BridgeViewModel(internal val savedStateHandle: SavedStateHandle) : ViewModel() {
 
     internal var viewModel: AbstractViewModel? = null
 
