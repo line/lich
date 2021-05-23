@@ -19,6 +19,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.FragmentActivity
+import androidx.fragment.app.commit
 import com.linecorp.lich.savedstate.putViewModelArgs
 import com.linecorp.lich.savedstate.setViewModelArgs
 
@@ -33,18 +34,20 @@ class TestActivity : FragmentActivity() {
 
         testFragment = supportFragmentManager.run {
             findFragmentByTag(FRAGMENT_TAG) as? TestFragment
-                ?: TestFragment().also {
-                    it.setViewModelArgs(
-                        TestViewModelArgs(
-                            param1 = "abc",
-                            param2 = 100,
-                            param3 = "fooBar"
-                        )
-                    )
-                    beginTransaction().add(it, FRAGMENT_TAG).commit()
-                }
+                ?: newTestFragment().also { commit { add(it, FRAGMENT_TAG) } }
         }
     }
+
+    private fun newTestFragment(): TestFragment =
+        TestFragment().also {
+            it.setViewModelArgs(
+                TestViewModelArgs(
+                    param1 = "abc",
+                    param2 = 100,
+                    param3 = "fooBar"
+                )
+            )
+        }
 
     override fun onStart() {
         super.onStart()
@@ -57,7 +60,7 @@ class TestActivity : FragmentActivity() {
     }
 
     companion object {
-        const val FRAGMENT_TAG: String = "TestFragment"
+        private const val FRAGMENT_TAG: String = "TestFragment"
 
         fun newIntent(context: Context): Intent =
             Intent(context, TestActivity::class.java).putViewModelArgs(

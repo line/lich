@@ -15,20 +15,13 @@
  */
 package com.linecorp.lich.savedstate
 
-import android.os.Bundle
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 
 class TestFragment : Fragment() {
 
-    lateinit var testViewModel: TestViewModel
+    val testViewModel: TestViewModel by viewModels()
 
-    lateinit var testActivityViewModel: TestViewModel
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        testViewModel = ViewModelProvider(this).get(TestViewModel::class.java)
-        testActivityViewModel = ViewModelProvider(requireActivity()).get(TestViewModel::class.java)
-    }
+    val testActivityViewModel: TestViewModel by activityViewModels()
 }
