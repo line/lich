@@ -19,25 +19,22 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import androidx.activity.viewModels
 import androidx.fragment.app.FragmentActivity
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.commit
 
 class TestActivity : FragmentActivity() {
 
     lateinit var testFragment: TestFragment
 
-    lateinit var testViewModel: TestViewModel
+    val testViewModel: TestViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        testViewModel = ViewModelProvider(this).get(TestViewModel::class.java)
-
         testFragment = supportFragmentManager.run {
             findFragmentByTag(FRAGMENT_TAG) as? TestFragment
-                ?: newTestFragment().also {
-                    beginTransaction().add(it, FRAGMENT_TAG).commit()
-                }
+                ?: newTestFragment().also { commit { add(it, FRAGMENT_TAG) } }
         }
     }
 

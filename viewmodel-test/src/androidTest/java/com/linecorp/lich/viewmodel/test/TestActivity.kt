@@ -19,6 +19,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.FragmentActivity
+import androidx.fragment.app.commit
 import com.linecorp.lich.viewmodel.viewModel
 
 class TestActivity : FragmentActivity() {
@@ -38,17 +39,19 @@ class TestActivity : FragmentActivity() {
 
         testFragment = supportFragmentManager.run {
             findFragmentByTag(FRAGMENT_TAG) as? TestFragment
-                ?: TestFragment().also {
-                    it.arguments = Bundle().apply {
-                        putBundle(
-                            TestFragment.FRAGMENTVIEWMODEL_ARGS_TAG,
-                            ViewModelXArgs(message = "I am TestFragment.viewModelX.").toBundle()
-                        )
-                    }
-                    beginTransaction().add(it, FRAGMENT_TAG).commit()
-                }
+                ?: newTestFragment().also { commit { add(it, FRAGMENT_TAG) } }
         }
     }
+
+    private fun newTestFragment(): TestFragment =
+        TestFragment().also {
+            it.arguments = Bundle().apply {
+                putBundle(
+                    TestFragment.FRAGMENTVIEWMODEL_ARGS_TAG,
+                    ViewModelXArgs(message = "I am TestFragment.viewModelX.").toBundle()
+                )
+            }
+        }
 
     override fun onStart() {
         super.onStart()
