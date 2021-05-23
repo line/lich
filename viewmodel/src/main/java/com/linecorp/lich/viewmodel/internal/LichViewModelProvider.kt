@@ -16,10 +16,9 @@
 package com.linecorp.lich.viewmodel.internal
 
 import android.content.Context
-import android.os.Bundle
 import androidx.annotation.MainThread
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelStoreOwner
-import androidx.savedstate.SavedStateRegistryOwner
 import com.linecorp.lich.viewmodel.AbstractViewModel
 import com.linecorp.lich.viewmodel.ViewModelFactory
 import java.util.ServiceLoader
@@ -32,9 +31,8 @@ interface LichViewModelProvider {
     fun <T : AbstractViewModel> getViewModel(
         context: Context,
         viewModelStoreOwner: ViewModelStoreOwner,
-        savedStateRegistryOwner: SavedStateRegistryOwner,
-        factory: ViewModelFactory<T>,
-        arguments: Bundle?
+        bridgeViewModelFactory: ViewModelProvider.Factory,
+        factory: ViewModelFactory<T>
     ): T
 
     fun getManager(applicationContext: Context): Any

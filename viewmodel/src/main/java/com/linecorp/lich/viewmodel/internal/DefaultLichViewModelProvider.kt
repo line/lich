@@ -16,13 +16,9 @@
 package com.linecorp.lich.viewmodel.internal
 
 import android.content.Context
-import android.os.Bundle
-import androidx.lifecycle.AbstractSavedStateViewModelFactory
 import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelStoreOwner
-import androidx.savedstate.SavedStateRegistryOwner
 import com.linecorp.lich.viewmodel.AbstractViewModel
 import com.linecorp.lich.viewmodel.ViewModelFactory
 
@@ -37,17 +33,15 @@ open class DefaultLichViewModelProvider : LichViewModelProvider {
     final override fun <T : AbstractViewModel> getViewModel(
         context: Context,
         viewModelStoreOwner: ViewModelStoreOwner,
-        savedStateRegistryOwner: SavedStateRegistryOwner,
-        factory: ViewModelFactory<T>,
-        arguments: Bundle?
+        bridgeViewModelFactory: ViewModelProvider.Factory,
+        factory: ViewModelFactory<T>
     ): T {
         // The key to use to identify the BridgeViewModel in a ViewModelStore.
         val key = "lich:" + requireNotNull(factory.javaClass.canonicalName) {
             "ViewModelFactories cannot be local or anonymous classes."
         }
 
-        // We always create a BridgeViewModel object for ViewModelStores of Android Architecture Components.
-        val bridgeViewModelFactory = BridgeViewModelFactory(savedStateRegistryOwner, arguments)
+        // First, we always create a BridgeViewModel object as an AndroidX ViewModel.
         val viewModelProvider = ViewModelProvider(viewModelStoreOwner, bridgeViewModelFactory)
         val bridgeViewModel = viewModelProvider.get(key, BridgeViewModel::class.java)
 
@@ -79,18 +73,6 @@ open class DefaultLichViewModelProvider : LichViewModelProvider {
         applicationContext: Context,
         savedStateHandle: SavedStateHandle
     ): T = factory.create(applicationContext, savedStateHandle)
-
-    private class BridgeViewModelFactory(
-        savedStateRegistryOwner: SavedStateRegistryOwner,
-        arguments: Bundle?
-    ) : AbstractSavedStateViewModelFactory(savedStateRegistryOwner, arguments) {
-        @Suppress("UNCHECKED_CAST")
-        override fun <T : ViewModel> create(
-            key: String,
-            modelClass: Class<T>,
-            handle: SavedStateHandle
-        ): T = BridgeViewModel(handle) as T
-    }
 
     override fun getManager(applicationContext: Context): Any =
         throw UnsupportedOperationException()
