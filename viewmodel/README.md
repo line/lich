@@ -5,7 +5,7 @@
 Lightweight framework for managing ViewModels in the same way as [Lich Component](../component).
 
 This library is very similar to
-[Android Architecture Components' ViewModel](https://developer.android.com/topic/libraries/architecture/viewmodel),
+[AndroidX ViewModel](https://developer.android.com/topic/libraries/architecture/viewmodel),
 but it has the following advantages:
 
 - The code for initializing a ViewModel class can be written in the ViewModel itself.
@@ -109,6 +109,20 @@ class FooFragment : Fragment() {
 
     // A shared instance of FooViewModel associated with the Activity hosting this FooFragment.
     private val fooActivityViewModel by activityViewModel(FooViewModel)
+
+    // snip...
+}
+```
+
+If you're using [AndroidX Navigation library](https://developer.android.com/guide/navigation),
+you can use [Fragment.navGraphViewModel](src/main/java/com/linecorp/lich/viewmodel/ViewModelLazy.kt)
+to obtain a ViewModel scoped to the entry point's navigation back stack.
+
+```kotlin
+class FooFragment : Fragment() {
+
+    // A shared instance of FooViewModel scoped to the `foo_nav_graph` navigation graph.
+    private val fooNavGraphViewModel by navGraphViewModel(FooViewModel, R.id.foo_nav_graph)
 
     // snip...
 }
