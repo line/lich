@@ -129,7 +129,6 @@ fun <T : AbstractViewModel> Fragment.navGraphViewModel(
     factory: ViewModelFactory<T>,
     @IdRes navGraphId: Int
 ): Lazy<T> = lazy(LazyThreadSafetyMode.NONE) {
-    NavHostFragment.findNavController(this).getBackStackEntry(navGraphId).let {
-        requireContext().getViewModel(it, it, factory, it.arguments)
-    }
+    NavHostFragment.findNavController(this).getBackStackEntry(navGraphId)
+        .getViewModel(requireContext(), factory)
 }

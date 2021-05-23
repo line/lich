@@ -23,6 +23,7 @@ import androidx.activity.ComponentActivity
 import androidx.annotation.MainThread
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelStoreOwner
+import androidx.navigation.NavBackStackEntry
 import androidx.savedstate.SavedStateRegistryOwner
 import com.linecorp.lich.viewmodel.internal.lichViewModelProvider
 
@@ -120,6 +121,19 @@ fun <T : AbstractViewModel> Fragment.getActivityViewModel(
     factory: ViewModelFactory<T>,
     arguments: Bundle? = requireActivity().intent?.extras
 ): T = requireActivity().getViewModel(factory, arguments)
+
+/**
+ * Returns an existing ViewModel or creates a new one, associated with this [NavBackStackEntry].
+ * You can use this ViewModel to pass UI-related data between destinations in a navigation graph.
+ *
+ * @param context a [Context].
+ * @param factory [ViewModelFactory] to create the ViewModel.
+ */
+@MainThread
+fun <T : AbstractViewModel> NavBackStackEntry.getViewModel(
+    context: Context,
+    factory: ViewModelFactory<T>
+): T = context.getViewModel(this, this, factory, this.arguments)
 
 @MainThread
 internal fun <T : AbstractViewModel> Context.getViewModel(
