@@ -67,7 +67,7 @@ internal class DefaultComponentProvider : ComponentProvider {
             latch.await()
 
             @Suppress("UNCHECKED_CAST")
-            return checkNotNull(result).getOrThrow() as T
+            return result!!.getOrThrow() as T
         }
 
         fun setResult(result: Result<Any>) {
