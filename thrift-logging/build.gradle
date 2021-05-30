@@ -28,9 +28,7 @@ android {
     }
 
     packagingOptions {
-        exclude '/META-INF/*.kotlin_module'
-        exclude '**/*.kotlin_builtins'
-        exclude '**/*.kotlin_metadata'
+        pickFirst '/META-INF/*.kotlin_module'
     }
 }
 
