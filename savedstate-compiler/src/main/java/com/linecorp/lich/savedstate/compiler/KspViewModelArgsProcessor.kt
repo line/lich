@@ -24,6 +24,7 @@ import com.google.devtools.ksp.processing.Dependencies
 import com.google.devtools.ksp.processing.KSPLogger
 import com.google.devtools.ksp.processing.Resolver
 import com.google.devtools.ksp.processing.SymbolProcessor
+import com.google.devtools.ksp.processing.SymbolProcessorEnvironment
 import com.google.devtools.ksp.processing.SymbolProcessorProvider
 import com.google.devtools.ksp.symbol.KSAnnotated
 import com.google.devtools.ksp.symbol.KSAnnotation
@@ -171,7 +172,7 @@ class KspViewModelArgsProcessor(
     private fun KSDeclaration.toRawClassName(): ClassName? {
         if (this !is KSClassDeclaration && this !is KSTypeAlias) return null
         val qualified = qualifiedName?.asString() ?: return null
-        val pkgName = packageName.asString().let { if (it == "<root>") "" else it }
+        val pkgName = packageName.asString()
         val simpleNames = if (pkgName.isEmpty()) {
             qualified
         } else {
@@ -192,11 +193,7 @@ class KspViewModelArgsProcessor(
     }
 
     class Provider : SymbolProcessorProvider {
-        override fun create(
-            options: Map<String, String>,
-            kotlinVersion: KotlinVersion,
-            codeGenerator: CodeGenerator,
-            logger: KSPLogger
-        ): SymbolProcessor = KspViewModelArgsProcessor(codeGenerator, logger)
+        override fun create(environment: SymbolProcessorEnvironment): SymbolProcessor =
+            KspViewModelArgsProcessor(environment.codeGenerator, environment.logger)
     }
 }
