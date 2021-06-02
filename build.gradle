@@ -47,6 +47,7 @@ buildscript {
     ]
     repositories {
         google()
+        mavenCentral()
         jcenter()
     }
     dependencies {
@@ -64,6 +65,7 @@ allprojects {
     group = 'com.linecorp.lich'
     repositories {
         google()
+        mavenCentral()
         jcenter()
     }
     afterEvaluate {
