@@ -20,8 +20,8 @@ import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.linecorp.lich.component.getComponent
 import com.linecorp.lich.component.test.clearMockComponent
-import com.nhaarman.mockitokotlin2.doReturn
-import com.nhaarman.mockitokotlin2.verify
+import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.verify
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith

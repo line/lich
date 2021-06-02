@@ -32,7 +32,7 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib:${versions.kotlin}"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:${versions.kotlinCoroutines}"
     implementation "androidx.lifecycle:lifecycle-viewmodel-savedstate:${versions.androidxLifecycle}"
-    compileOnly "com.nhaarman.mockitokotlin2:mockito-kotlin:${versions.mockitoKotlin}"
+    compileOnly "org.mockito.kotlin:mockito-kotlin:${versions.mockitoKotlin}"
 
     androidTestImplementation project(':savedstate')
     kaptAndroidTest project(':savedstate-compiler')
@@ -41,5 +41,5 @@ dependencies {
     androidTestImplementation "androidx.test:runner:${versions.androidxTestRunner}"
     androidTestImplementation "androidx.test.ext:junit:${versions.androidxTestJunit}"
     androidTestImplementation "org.mockito:mockito-android:${versions.mockito}"
-    androidTestImplementation "com.nhaarman.mockitokotlin2:mockito-kotlin:${versions.mockitoKotlin}"
+    androidTestImplementation "org.mockito.kotlin:mockito-kotlin:${versions.mockitoKotlin}"
 }
