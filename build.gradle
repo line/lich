@@ -40,7 +40,7 @@ buildscript {
         thrift                  : '0.13.0',
         dexmaker                : '2.28.1',
         mockito                 : '3.10.0',
-        mockitoKotlin           : '2.2.0',
+        mockitoKotlin           : '3.2.0',
         mockk                   : '1.11.0',
         robolectric             : '4.5.1',
         dokka                   : '1.4.32',

@@ -33,7 +33,7 @@ dependencies {
 ```
 
 The above code uses [MockK](https://mockk.io/) as a mocking library.
-If you prefer [Mockito-Kotlin](https://github.com/nhaarman/mockito-kotlin) over MockK, you can specify the following instead.
+If you prefer [Mockito-Kotlin](https://github.com/mockito/mockito-kotlin) over MockK, you can specify the following instead.
 
 ```groovy
 dependencies {
@@ -43,14 +43,14 @@ dependencies {
     testImplementation 'androidx.test:runner:x.x.x'
     testImplementation 'androidx.test.ext:junit:x.x.x'
     testImplementation 'org.mockito:mockito-inline:x.x.x'
-    testImplementation 'com.nhaarman.mockitokotlin2:mockito-kotlin:x.x.x'
+    testImplementation 'org.mockito.kotlin:mockito-kotlin:x.x.x'
     testImplementation 'org.robolectric:robolectric:x.x'
 
     androidTestImplementation 'com.linecorp.lich:viewmodel-test-mockitokotlin:x.x.x'
     androidTestImplementation 'androidx.test:runner:x.x.x'
     androidTestImplementation 'androidx.test.ext:junit:x.x.x'
     androidTestImplementation 'org.mockito:mockito-android:x.x.x'
-    androidTestImplementation 'com.nhaarman.mockitokotlin2:mockito-kotlin:x.x.x'
+    androidTestImplementation 'org.mockito.kotlin:mockito-kotlin:x.x.x'
 }
 ```
 
@@ -205,7 +205,7 @@ See also
 in the sample_app module.
 
 The [mockViewModel](../viewmodel-test-mockitokotlin/src/main/java/com/linecorp/lich/viewmodel/test/mockitokotlin/Mocking.kt)
-function is also available for [Mockito-Kotlin](https://github.com/nhaarman/mockito-kotlin).
+function is also available for [Mockito-Kotlin](https://github.com/mockito/mockito-kotlin).
 Here is an example using Mockito-Kotlin.
 
 ```kotlin

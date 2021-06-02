@@ -18,13 +18,13 @@ package com.linecorp.lich.viewmodel.test.mockitokotlin
 import androidx.test.core.app.ActivityScenario
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.linecorp.lich.viewmodel.test.clearAllMockViewModels
-import com.nhaarman.mockitokotlin2.doReturn
-import com.nhaarman.mockitokotlin2.never
-import com.nhaarman.mockitokotlin2.only
-import com.nhaarman.mockitokotlin2.verify
 import org.junit.After
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.never
+import org.mockito.kotlin.only
+import org.mockito.kotlin.verify
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertSame
