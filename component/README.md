@@ -46,7 +46,7 @@ dependencies {
 For unit-testing, the `component-test` module provides [AndroidX Test](https://developer.android.com/training/testing/set-up-project)
 support. (For Robolectric, see also [this document](http://robolectric.org/androidx_test/).)
 In addition, helper functions to work with [MockK](https://mockk.io/) or
-[Mockito-Kotlin](https://github.com/nhaarman/mockito-kotlin) are also available.
+[Mockito-Kotlin](https://github.com/mockito/mockito-kotlin) are also available.
 
 If you are using [MockK](https://mockk.io/), add the following dependencies:
 
@@ -65,7 +65,7 @@ dependencies {
 }
 ```
 
-If you are using [Mockito-Kotlin](https://github.com/nhaarman/mockito-kotlin), add the following
+If you are using [Mockito-Kotlin](https://github.com/mockito/mockito-kotlin), add the following
 dependencies instead:
 
 ```groovy
@@ -74,14 +74,14 @@ dependencies {
     testImplementation 'androidx.test:runner:x.x.x'
     testImplementation 'androidx.test.ext:junit:x.x.x'
     testImplementation 'org.mockito:mockito-inline:x.x.x'
-    testImplementation 'com.nhaarman.mockitokotlin2:mockito-kotlin:x.x.x'
+    testImplementation 'org.mockito.kotlin:mockito-kotlin:x.x.x'
     testImplementation 'org.robolectric:robolectric:x.x'
 
     androidTestImplementation 'com.linecorp.lich:component-test-mockitokotlin:x.x.x'
     androidTestImplementation 'androidx.test:runner:x.x.x'
     androidTestImplementation 'androidx.test.ext:junit:x.x.x'
     androidTestImplementation 'org.mockito:mockito-android:x.x.x'
-    androidTestImplementation 'com.nhaarman.mockitokotlin2:mockito-kotlin:x.x.x'
+    androidTestImplementation 'org.mockito.kotlin:mockito-kotlin:x.x.x'
 }
 ```
 
@@ -413,7 +413,7 @@ See also
 [CounterUseCaseTest](../sample_app/src/test/java/com/linecorp/lich/sample/mvvm/CounterUseCaseTest.kt).
 
 The [mockComponent](../component-test-mockitokotlin/src/main/java/com/linecorp/lich/component/test/mockitokotlin/Mocking.kt)
-function is also available for [Mockito-Kotlin](https://github.com/nhaarman/mockito-kotlin).
+function is also available for [Mockito-Kotlin](https://github.com/mockito/mockito-kotlin).
 Here is an example using Mockito-Kotlin.
 
 ```kotlin

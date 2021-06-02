@@ -35,12 +35,12 @@ android {
 dependencies {
     api project(':component-test')
     implementation "org.jetbrains.kotlin:kotlin-stdlib:${versions.kotlin}"
-    compileOnly "com.nhaarman.mockitokotlin2:mockito-kotlin:${versions.mockitoKotlin}"
+    compileOnly "org.mockito.kotlin:mockito-kotlin:${versions.mockitoKotlin}"
 
     testImplementation "org.jetbrains.kotlin:kotlin-test-junit:${versions.kotlin}"
     testImplementation "androidx.test:runner:${versions.androidxTestRunner}"
     testImplementation "androidx.test.ext:junit:${versions.androidxTestJunit}"
     testImplementation "org.mockito:mockito-inline:${versions.mockito}"
-    testImplementation "com.nhaarman.mockitokotlin2:mockito-kotlin:${versions.mockitoKotlin}"
+    testImplementation "org.mockito.kotlin:mockito-kotlin:${versions.mockitoKotlin}"
     testImplementation "org.robolectric:robolectric:${versions.robolectric}"
 }

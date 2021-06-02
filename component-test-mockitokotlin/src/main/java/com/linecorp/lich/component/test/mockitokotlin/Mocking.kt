@@ -18,9 +18,9 @@ package com.linecorp.lich.component.test.mockitokotlin
 import com.linecorp.lich.component.ComponentFactory
 import com.linecorp.lich.component.test.getRealComponent
 import com.linecorp.lich.component.test.setMockComponent
-import com.nhaarman.mockitokotlin2.KStubbing
-import com.nhaarman.mockitokotlin2.mock
-import com.nhaarman.mockitokotlin2.spy
+import org.mockito.kotlin.KStubbing
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.spy
 
 /**
  * Creates a mock component allowing for immediate stubbing, and sets the mock for [factory].

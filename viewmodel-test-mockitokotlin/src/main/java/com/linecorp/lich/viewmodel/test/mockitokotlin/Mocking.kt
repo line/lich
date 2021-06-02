@@ -19,9 +19,9 @@ import com.linecorp.lich.viewmodel.AbstractViewModel
 import com.linecorp.lich.viewmodel.ViewModelFactory
 import com.linecorp.lich.viewmodel.test.MockViewModelHandle
 import com.linecorp.lich.viewmodel.test.createRealViewModel
-import com.nhaarman.mockitokotlin2.KStubbing
-import com.nhaarman.mockitokotlin2.mock
-import com.nhaarman.mockitokotlin2.spy
+import org.mockito.kotlin.KStubbing
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.spy
 
 /**
  * Sets mock ViewModel factory for [factory]. The mock factory supports immediate stubbing.
