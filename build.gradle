@@ -47,7 +47,7 @@ buildscript {
     ]
     repositories {
         google()
-        jcenter()
+        mavenCentral()
     }
     dependencies {
         classpath "com.android.tools.build:gradle:${versions.androidGradlePlugin}"
@@ -64,7 +64,7 @@ allprojects {
     group = 'com.linecorp.lich'
     repositories {
         google()
-        jcenter()
+        mavenCentral()
     }
     afterEvaluate {
         if (ext.has('publication')) {
