@@ -8,9 +8,5 @@ compileKotlin {
 
 dependencies {
     compileOnly "com.android.tools.lint:lint-api:${versions.androidLint}"
-    compileOnly "com.android.tools.lint:lint-checks:${versions.androidLint}"
-
-    testImplementation "com.android.tools.lint:lint:${versions.androidLint}"
     testImplementation "com.android.tools.lint:lint-tests:${versions.androidLint}"
-    testImplementation "com.android.tools:testutils:${versions.androidLint}"
 }
