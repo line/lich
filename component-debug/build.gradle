@@ -34,9 +34,8 @@ android {
 
 dependencies {
     api project(':component')
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:${versions.kotlin}"
 
-    testImplementation "org.jetbrains.kotlin:kotlin-test-junit:${versions.kotlin}"
+    testImplementation 'org.jetbrains.kotlin:kotlin-test'
     testImplementation "androidx.test:runner:${versions.androidxTestRunner}"
     testImplementation "androidx.test.ext:junit:${versions.androidxTestJunit}"
     testImplementation "org.robolectric:robolectric:${versions.robolectric}"

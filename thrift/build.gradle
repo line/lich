@@ -13,7 +13,6 @@ ext.publication = [
 
 dependencies {
     implementation project(':okhttp')
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:${versions.kotlin}"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:${versions.kotlinCoroutines}"
     implementation "com.squareup.okhttp3:okhttp:${versions.okhttp}"
     implementation("org.apache.thrift:libthrift:${versions.thrift}") {
@@ -22,6 +21,6 @@ dependencies {
     }
 
     testImplementation project(':sample_thrift')
-    testImplementation "org.jetbrains.kotlin:kotlin-test-junit:${versions.kotlin}"
+    testImplementation 'org.jetbrains.kotlin:kotlin-test'
     testImplementation "com.squareup.okhttp3:mockwebserver:${versions.okhttp}"
 }

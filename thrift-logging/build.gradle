@@ -34,7 +34,6 @@ android {
 
 dependencies {
     implementation project(':thrift')
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:${versions.kotlin}"
     implementation("org.apache.thrift:libthrift:${versions.thrift}") {
         exclude group: 'org.apache.httpcomponents'
         exclude group: 'org.slf4j'
@@ -42,8 +41,8 @@ dependencies {
     implementation "com.linkedin.dexmaker:dexmaker:${versions.dexmaker}"
 
     androidTestImplementation project(':sample_thrift')
+    androidTestImplementation 'org.jetbrains.kotlin:kotlin-test'
     androidTestImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:${versions.kotlinCoroutines}"
-    androidTestImplementation "org.jetbrains.kotlin:kotlin-test-junit:${versions.kotlin}"
     androidTestImplementation "androidx.test:runner:${versions.androidxTestRunner}"
     androidTestImplementation "androidx.test.ext:junit:${versions.androidxTestJunit}"
     androidTestImplementation "io.mockk:mockk-android:${versions.mockk}"
