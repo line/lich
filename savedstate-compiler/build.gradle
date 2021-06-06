@@ -1,7 +1,9 @@
-apply plugin: 'kotlin'
-apply plugin: 'org.jetbrains.dokka'
-apply plugin: 'maven-publish'
-apply plugin: 'signing'
+plugins {
+    id 'org.jetbrains.kotlin.jvm'
+    id 'org.jetbrains.dokka'
+    id 'maven-publish'
+    id 'signing'
+}
 
 version = VERSION_NAME_SAVEDSTATE
 ext.publication = [

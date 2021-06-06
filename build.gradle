@@ -54,11 +54,12 @@ buildscript {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${versions.kotlin}"
         classpath "com.google.devtools.ksp:symbol-processing-gradle-plugin:${versions.ksp}"
         classpath "org.jetbrains.dokka:dokka-gradle-plugin:${versions.dokka}"
-        classpath "io.codearte.gradle.nexus:gradle-nexus-staging-plugin:0.30.0"
     }
 }
 
-apply plugin: 'io.codearte.nexus-staging'
+plugins {
+    id 'io.codearte.nexus-staging' version '0.30.0'
+}
 
 allprojects {
     group = 'com.linecorp.lich'
