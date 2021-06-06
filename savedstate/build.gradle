@@ -28,7 +28,7 @@ android {
 }
 
 dependencies {
-    implementation "androidx.lifecycle:lifecycle-viewmodel-savedstate:${versions.androidxLifecycle}"
+    api "androidx.lifecycle:lifecycle-viewmodel-savedstate:${versions.androidxLifecycle}"
     //noinspection KtxExtensionAvailable
     compileOnly "androidx.fragment:fragment:${versions.androidxFragment}"
     lintPublish project(':static-analysis')

@@ -28,8 +28,8 @@ android {
 }
 
 dependencies {
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:${versions.kotlinCoroutines}"
-    implementation "androidx.lifecycle:lifecycle-viewmodel-savedstate:${versions.androidxLifecycle}"
+    api "org.jetbrains.kotlinx:kotlinx-coroutines-android:${versions.kotlinCoroutines}"
+    api "androidx.lifecycle:lifecycle-viewmodel-savedstate:${versions.androidxLifecycle}"
     //noinspection KtxExtensionAvailable
     compileOnly "androidx.fragment:fragment:${versions.androidxFragment}"
     //noinspection KtxExtensionAvailable

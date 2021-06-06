@@ -29,8 +29,6 @@ android {
 
 dependencies {
     api project(':viewmodel-test')
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:${versions.kotlinCoroutines}"
-    implementation "androidx.lifecycle:lifecycle-viewmodel-savedstate:${versions.androidxLifecycle}"
     compileOnly "io.mockk:mockk:${versions.mockk}"
 
     androidTestImplementation project(':savedstate')
