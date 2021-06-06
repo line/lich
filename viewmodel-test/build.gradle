@@ -29,15 +29,12 @@ android {
 
 dependencies {
     api project(':viewmodel')
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:${versions.kotlin}"
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:${versions.kotlinCoroutines}"
-    implementation "androidx.lifecycle:lifecycle-viewmodel-savedstate:${versions.androidxLifecycle}"
     implementation "androidx.test:core:${versions.androidxTestCore}"
 
     androidTestImplementation project(':savedstate')
     kaptAndroidTest project(':savedstate-compiler')
+    androidTestImplementation 'org.jetbrains.kotlin:kotlin-test'
     androidTestImplementation "androidx.fragment:fragment-ktx:${versions.androidxFragment}"
-    androidTestImplementation "org.jetbrains.kotlin:kotlin-test-junit:${versions.kotlin}"
     androidTestImplementation "androidx.test:runner:${versions.androidxTestRunner}"
     androidTestImplementation "androidx.test.ext:junit:${versions.androidxTestJunit}"
 }

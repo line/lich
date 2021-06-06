@@ -2,20 +2,20 @@ buildscript {
     // Make sure to use the same AGP as the main project.
     def androidGradlePlugin = '4.2.1'
     /**
-     * Calculates the right lint version for the provided [androidGradlePlugin] version. AGP is
-     * tightly coupled with lint because it implements LintClient. The formula to calculate the
-     * lint version relative to AGP is: AGP version + 23.
+     * Calculates the right lint version for the provided AGP version. AGP is tightly coupled with
+     * Android Lint because it implements LintClient. The formula to calculate the lint version
+     * relative to AGP is: AGP version + 23.
      *
-     * E.g. AGP version 3.2.1 -> Lint version 26.2.1
+     * E.g. AGP version 4.2.1 -> Android Lint version 27.2.1
      */
-    def lintVersion = { agp ->
-        def (majorVersion, minorVersion, patchVersion) = agp.split("\\.")
+    def androidLintVersion = { agpVersion ->
+        def (majorVersion, minorAndPatchVersion) = agpVersion.split("\\.", 2)
         int lintMajorVersion = (majorVersion as Integer) + 23
-        return "$lintMajorVersion.$minorVersion.$patchVersion"
+        return "$lintMajorVersion.$minorAndPatchVersion"
     }
     ext.versions = [
         androidGradlePlugin     : androidGradlePlugin,
-        androidLint             : lintVersion(androidGradlePlugin),
+        androidLint             : androidLintVersion(androidGradlePlugin),
         compileSdk              : 30,
         minSdk                  : 14,
         targetSdk               : 30,
@@ -52,7 +52,7 @@ buildscript {
     dependencies {
         classpath "com.android.tools.build:gradle:${versions.androidGradlePlugin}"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${versions.kotlin}"
-        classpath "com.google.devtools.ksp:com.google.devtools.ksp.gradle.plugin:${versions.ksp}"
+        classpath "com.google.devtools.ksp:symbol-processing-gradle-plugin:${versions.ksp}"
         classpath "org.jetbrains.dokka:dokka-gradle-plugin:${versions.dokka}"
         classpath "io.codearte.gradle.nexus:gradle-nexus-staging-plugin:0.30.0"
     }

@@ -28,15 +28,14 @@ android {
 }
 
 dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:${versions.kotlin}"
-    implementation "androidx.lifecycle:lifecycle-viewmodel-savedstate:${versions.androidxLifecycle}"
+    api "androidx.lifecycle:lifecycle-viewmodel-savedstate:${versions.androidxLifecycle}"
     //noinspection KtxExtensionAvailable
     compileOnly "androidx.fragment:fragment:${versions.androidxFragment}"
     lintPublish project(':static-analysis')
 
     kaptAndroidTest project(':savedstate-compiler')
+    androidTestImplementation 'org.jetbrains.kotlin:kotlin-test'
     androidTestImplementation "androidx.fragment:fragment-ktx:${versions.androidxFragment}"
-    androidTestImplementation "org.jetbrains.kotlin:kotlin-test-junit:${versions.kotlin}"
     androidTestImplementation "androidx.test:runner:${versions.androidxTestRunner}"
     androidTestImplementation "androidx.test.ext:junit:${versions.androidxTestJunit}"
 }
