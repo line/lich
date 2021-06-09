@@ -1,7 +1,9 @@
-apply plugin: 'com.android.dynamic-feature'
-apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-kapt'
-apply plugin: 'com.google.devtools.ksp'
+plugins {
+    id 'com.android.dynamic-feature'
+    id 'org.jetbrains.kotlin.android'
+    id 'org.jetbrains.kotlin.kapt'
+    id 'com.google.devtools.ksp'
+}
 
 android {
     compileSdkVersion versions.compileSdk
