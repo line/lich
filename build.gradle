@@ -66,6 +66,12 @@ allprojects {
         google()
         jcenter()
     }
+    // Avoid '/META-INF/*.kotlin_module' conflicts.
+    tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
+        kotlinOptions {
+            freeCompilerArgs += ['-module-name', "com_linecorp_lich_${project.name}"]
+        }
+    }
     afterEvaluate {
         if (ext.has('publication')) {
             afterEvaluate {
