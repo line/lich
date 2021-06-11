@@ -28,10 +28,6 @@ android {
     buildFeatures {
         buildConfig = false
     }
-
-    packagingOptions {
-        pickFirst '/META-INF/*.kotlin_module'
-    }
 }
 
 dependencies {

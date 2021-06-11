@@ -39,12 +39,6 @@ android {
         }
     }
 
-    packagingOptions {
-        exclude '/META-INF/*.kotlin_module'
-        exclude '**/*.kotlin_builtins'
-        exclude '**/*.kotlin_metadata'
-    }
-
     dynamicFeatures = [":dagger_sample_feature"]
 }
 
