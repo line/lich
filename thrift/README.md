@@ -34,7 +34,13 @@ class FooServiceClient(
 }
 
 val fooServiceClient = FooServiceClient(OkHttpClient(), "https://api.example.com/foo".toHttpUrl())
-fooServiceClient.ping()
+
+try {
+    val response = fooServiceClient.callFoo(123, "foobar", FooParam(4))
+    println("response = $response")
+} catch (e: TException) {
+    println("fooService.callFoo() failed: $e")
+}
 ```
 
 ## Transparent logging

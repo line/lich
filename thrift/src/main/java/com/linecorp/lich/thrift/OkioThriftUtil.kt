@@ -32,6 +32,7 @@ object OkioThriftUtil {
      * @param protocolFactory A [TProtocolFactory] used for serialization. If not specified,
      * [TCompactProtocol.Factory] will be used.
      * @return Serialized object in a [Buffer].
+     * @throws org.apache.thrift.protocol.TProtocolException If the serialization failed.
      */
     fun <T : TBase<*, *>> serialize(
         target: T,
@@ -48,6 +49,7 @@ object OkioThriftUtil {
      * @param protocolFactory A [TProtocolFactory] used for deserialization. If not specified,
      * [TCompactProtocol.Factory] will be used.
      * @return Deserialized object.
+     * @throws org.apache.thrift.protocol.TProtocolException If the deserialization failed.
      */
     fun <T : TBase<*, *>> deserialize(
         source: BufferedSource,
