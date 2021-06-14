@@ -12,17 +12,20 @@ public class FooParam implements org.apache.thrift.TBase<FooParam, FooParam._Fie
 
   private static final org.apache.thrift.protocol.TField NUMBER_FIELD_DESC = new org.apache.thrift.protocol.TField("number", org.apache.thrift.protocol.TType.I32, (short)1);
   private static final org.apache.thrift.protocol.TField COMMENT_FIELD_DESC = new org.apache.thrift.protocol.TField("comment", org.apache.thrift.protocol.TType.STRING, (short)2);
+  private static final org.apache.thrift.protocol.TField FOO_UNION_FIELD_DESC = new org.apache.thrift.protocol.TField("fooUnion", org.apache.thrift.protocol.TType.STRUCT, (short)3);
 
   private static final org.apache.thrift.scheme.SchemeFactory STANDARD_SCHEME_FACTORY = new FooParamStandardSchemeFactory();
   private static final org.apache.thrift.scheme.SchemeFactory TUPLE_SCHEME_FACTORY = new FooParamTupleSchemeFactory();
 
   public int number; // required
   public @org.apache.thrift.annotation.Nullable java.lang.String comment; // optional
+  public @org.apache.thrift.annotation.Nullable FooUnion fooUnion; // optional
 
   /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
   public enum _Fields implements org.apache.thrift.TFieldIdEnum {
     NUMBER((short)1, "number"),
-    COMMENT((short)2, "comment");
+    COMMENT((short)2, "comment"),
+    FOO_UNION((short)3, "fooUnion");
 
     private static final java.util.Map<java.lang.String, _Fields> byName = new java.util.HashMap<java.lang.String, _Fields>();
 
@@ -42,6 +45,8 @@ public class FooParam implements org.apache.thrift.TBase<FooParam, FooParam._Fie
           return NUMBER;
         case 2: // COMMENT
           return COMMENT;
+        case 3: // FOO_UNION
+          return FOO_UNION;
         default:
           return null;
       }
@@ -85,7 +90,7 @@ public class FooParam implements org.apache.thrift.TBase<FooParam, FooParam._Fie
   // isset id assignments
   private static final int __NUMBER_ISSET_ID = 0;
   private byte __isset_bitfield = 0;
-  private static final _Fields optionals[] = {_Fields.COMMENT};
+  private static final _Fields optionals[] = {_Fields.COMMENT,_Fields.FOO_UNION};
   public static final java.util.Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
   static {
     java.util.Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new java.util.EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
@@ -93,6 +98,8 @@ public class FooParam implements org.apache.thrift.TBase<FooParam, FooParam._Fie
         new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
     tmpMap.put(_Fields.COMMENT, new org.apache.thrift.meta_data.FieldMetaData("comment", org.apache.thrift.TFieldRequirementType.OPTIONAL, 
         new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
+    tmpMap.put(_Fields.FOO_UNION, new org.apache.thrift.meta_data.FieldMetaData("fooUnion", org.apache.thrift.TFieldRequirementType.OPTIONAL, 
+        new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRUCT        , "FooUnion")));
     metaDataMap = java.util.Collections.unmodifiableMap(tmpMap);
     org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(FooParam.class, metaDataMap);
   }
@@ -119,6 +126,9 @@ public class FooParam implements org.apache.thrift.TBase<FooParam, FooParam._Fie
     if (other.isSetComment()) {
       this.comment = other.comment;
     }
+    if (other.isSetFooUnion()) {
+      this.fooUnion = new FooUnion(other.fooUnion);
+    }
   }
 
   public FooParam deepCopy() {
@@ -130,6 +140,7 @@ public class FooParam implements org.apache.thrift.TBase<FooParam, FooParam._Fie
     this.number = 0;
 
     this.comment = null;
+    this.fooUnion = null;
   }
 
   public int getNumber() {
@@ -180,6 +191,31 @@ public class FooParam implements org.apache.thrift.TBase<FooParam, FooParam._Fie
     }
   }
 
+  @org.apache.thrift.annotation.Nullable
+  public FooUnion getFooUnion() {
+    return this.fooUnion;
+  }
+
+  public FooParam setFooUnion(@org.apache.thrift.annotation.Nullable FooUnion fooUnion) {
+    this.fooUnion = fooUnion;
+    return this;
+  }
+
+  public void unsetFooUnion() {
+    this.fooUnion = null;
+  }
+
+  /** Returns true if field fooUnion is set (has been assigned a value) and false otherwise */
+  public boolean isSetFooUnion() {
+    return this.fooUnion != null;
+  }
+
+  public void setFooUnionIsSet(boolean value) {
+    if (!value) {
+      this.fooUnion = null;
+    }
+  }
+
   public void setFieldValue(_Fields field, @org.apache.thrift.annotation.Nullable java.lang.Object value) {
     switch (field) {
     case NUMBER:
@@ -198,6 +234,14 @@ public class FooParam implements org.apache.thrift.TBase<FooParam, FooParam._Fie
       }
       break;
 
+    case FOO_UNION:
+      if (value == null) {
+        unsetFooUnion();
+      } else {
+        setFooUnion((FooUnion)value);
+      }
+      break;
+
     }
   }
 
@@ -209,6 +253,9 @@ public class FooParam implements org.apache.thrift.TBase<FooParam, FooParam._Fie
 
     case COMMENT:
       return getComment();
+
+    case FOO_UNION:
+      return getFooUnion();
 
     }
     throw new java.lang.IllegalStateException();
@@ -225,6 +272,8 @@ public class FooParam implements org.apache.thrift.TBase<FooParam, FooParam._Fie
       return isSetNumber();
     case COMMENT:
       return isSetComment();
+    case FOO_UNION:
+      return isSetFooUnion();
     }
     throw new java.lang.IllegalStateException();
   }
@@ -262,6 +311,15 @@ public class FooParam implements org.apache.thrift.TBase<FooParam, FooParam._Fie
         return false;
     }
 
+    boolean this_present_fooUnion = true && this.isSetFooUnion();
+    boolean that_present_fooUnion = true && that.isSetFooUnion();
+    if (this_present_fooUnion || that_present_fooUnion) {
+      if (!(this_present_fooUnion && that_present_fooUnion))
+        return false;
+      if (!this.fooUnion.equals(that.fooUnion))
+        return false;
+    }
+
     return true;
   }
 
@@ -274,6 +332,10 @@ public class FooParam implements org.apache.thrift.TBase<FooParam, FooParam._Fie
     hashCode = hashCode * 8191 + ((isSetComment()) ? 131071 : 524287);
     if (isSetComment())
       hashCode = hashCode * 8191 + comment.hashCode();
+
+    hashCode = hashCode * 8191 + ((isSetFooUnion()) ? 131071 : 524287);
+    if (isSetFooUnion())
+      hashCode = hashCode * 8191 + fooUnion.hashCode();
 
     return hashCode;
   }
@@ -302,6 +364,16 @@ public class FooParam implements org.apache.thrift.TBase<FooParam, FooParam._Fie
     }
     if (isSetComment()) {
       lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.comment, other.comment);
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+    }
+    lastComparison = java.lang.Boolean.valueOf(isSetFooUnion()).compareTo(other.isSetFooUnion());
+    if (lastComparison != 0) {
+      return lastComparison;
+    }
+    if (isSetFooUnion()) {
+      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.fooUnion, other.fooUnion);
       if (lastComparison != 0) {
         return lastComparison;
       }
@@ -337,6 +409,16 @@ public class FooParam implements org.apache.thrift.TBase<FooParam, FooParam._Fie
         sb.append("null");
       } else {
         sb.append(this.comment);
+      }
+      first = false;
+    }
+    if (isSetFooUnion()) {
+      if (!first) sb.append(", ");
+      sb.append("fooUnion:");
+      if (this.fooUnion == null) {
+        sb.append("null");
+      } else {
+        sb.append(this.fooUnion);
       }
       first = false;
     }
@@ -401,6 +483,15 @@ public class FooParam implements org.apache.thrift.TBase<FooParam, FooParam._Fie
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
             }
             break;
+          case 3: // FOO_UNION
+            if (schemeField.type == org.apache.thrift.protocol.TType.STRUCT) {
+              struct.fooUnion = new FooUnion();
+              struct.fooUnion.read(iprot);
+              struct.setFooUnionIsSet(true);
+            } else { 
+              org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+            }
+            break;
           default:
             org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
         }
@@ -423,6 +514,13 @@ public class FooParam implements org.apache.thrift.TBase<FooParam, FooParam._Fie
         if (struct.isSetComment()) {
           oprot.writeFieldBegin(COMMENT_FIELD_DESC);
           oprot.writeString(struct.comment);
+          oprot.writeFieldEnd();
+        }
+      }
+      if (struct.fooUnion != null) {
+        if (struct.isSetFooUnion()) {
+          oprot.writeFieldBegin(FOO_UNION_FIELD_DESC);
+          struct.fooUnion.write(oprot);
           oprot.writeFieldEnd();
         }
       }
@@ -450,19 +548,25 @@ public class FooParam implements org.apache.thrift.TBase<FooParam, FooParam._Fie
       if (struct.isSetComment()) {
         optionals.set(1);
       }
-      oprot.writeBitSet(optionals, 2);
+      if (struct.isSetFooUnion()) {
+        optionals.set(2);
+      }
+      oprot.writeBitSet(optionals, 3);
       if (struct.isSetNumber()) {
         oprot.writeI32(struct.number);
       }
       if (struct.isSetComment()) {
         oprot.writeString(struct.comment);
       }
+      if (struct.isSetFooUnion()) {
+        struct.fooUnion.write(oprot);
+      }
     }
 
     @Override
     public void read(org.apache.thrift.protocol.TProtocol prot, FooParam struct) throws org.apache.thrift.TException {
       org.apache.thrift.protocol.TTupleProtocol iprot = (org.apache.thrift.protocol.TTupleProtocol) prot;
-      java.util.BitSet incoming = iprot.readBitSet(2);
+      java.util.BitSet incoming = iprot.readBitSet(3);
       if (incoming.get(0)) {
         struct.number = iprot.readI32();
         struct.setNumberIsSet(true);
@@ -470,6 +574,11 @@ public class FooParam implements org.apache.thrift.TBase<FooParam, FooParam._Fie
       if (incoming.get(1)) {
         struct.comment = iprot.readString();
         struct.setCommentIsSet(true);
+      }
+      if (incoming.get(2)) {
+        struct.fooUnion = new FooUnion();
+        struct.fooUnion.read(iprot);
+        struct.setFooUnionIsSet(true);
       }
     }
   }
