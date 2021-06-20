@@ -21,6 +21,8 @@ import okhttp3.RequestBody
 import okio.Buffer
 import okio.BufferedSink
 import org.apache.thrift.TServiceClient
+import java.io.IOException
+import java.net.ProtocolException
 
 /**
  * A [RequestBody] that represents a request of a Thrift call.
@@ -47,6 +49,9 @@ class ThriftRequestBody<T : TServiceClient>(
             okioTransport.sendSink = buffer
             try {
                 thriftClient = thriftClientFactory.newClient(okioTransport).apply(sendFunction)
+            } catch (e: Exception) {
+                // Use ProtocolException to prevent OkHttp from retrying.
+                throw ProtocolException("Failed to serialize the request.").initCause(e)
             } finally {
                 okioTransport.sendSink = null
                 sendBuffer = buffer
@@ -55,8 +60,10 @@ class ThriftRequestBody<T : TServiceClient>(
 
     override fun contentType(): MediaType = mediaTypeThrift
 
+    @Throws(IOException::class)
     override fun contentLength(): Long = populateBuffer().size
 
+    @Throws(IOException::class)
     override fun writeTo(sink: BufferedSink) {
         // Since readAll() consumes all bytes from the buffer, we copy it first.
         populateBuffer().copy().readAll(sink)

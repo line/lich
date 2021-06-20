@@ -27,6 +27,8 @@ import org.apache.thrift.TServiceClient
  * @param receiveFunction A function that calls `recv_METHOD(...)` of the TServiceClient.
  * @return The result of [receiveFunction].
  * @throws java.io.IOException If any I/O error occurred.
+ * @throws org.apache.thrift.TException If an error occurred in the Thrift protocol layer or
+ * on the target server.
  * @see ThriftRequestBody
  */
 fun <T : TServiceClient, R> Response.receiveThriftResponse(receiveFunction: T.() -> R): R {

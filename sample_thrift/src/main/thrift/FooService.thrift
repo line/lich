@@ -5,6 +5,12 @@ typedef i64 FooId
 struct FooParam {
     1: i32 number = 0
     2: optional string comment
+    3: optional FooUnion fooUnion
+}
+
+union FooUnion {
+    1: i32 intValue
+    2: string stringValue
 }
 
 struct FooResponse {

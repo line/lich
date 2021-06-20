@@ -22,6 +22,7 @@ import okhttp3.HttpUrl
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Response
+import org.apache.thrift.TException
 import org.apache.thrift.TServiceClient
 import org.apache.thrift.transport.TTransportException
 import java.io.IOException
@@ -87,11 +88,12 @@ abstract class AbstractThriftServiceClient<T : TServiceClient> {
      *
      * By default, this function checks the status code of the response and throws
      * [ResponseStatusException] if it is not `200 OK`. Otherwise, this function parses the response
-     * body using [Response.receiveThriftResponse].
+     * body using [receiveThriftResponse].
      *
      * @param receiveFunction A function that calls `recv_METHOD(...)` of the TServiceClient.
      * @return The result of [receiveFunction].
      * @throws IOException If any I/O error occurred.
+     * @throws TException If an error occurred in the Thrift protocol layer or on the target server.
      */
     protected open fun <R> Response.handleResponse(receiveFunction: T.() -> R): R {
         if (code != StatusCode.OK) {
@@ -103,12 +105,11 @@ abstract class AbstractThriftServiceClient<T : TServiceClient> {
     /**
      * Makes a Thrift call with the given [request] and [receiveFunction].
      *
-     * If any I/O error occurs, this function throws a [TTransportException].
-     *
      * @param request A OkHttp [Request] for the Thrift call. Must have a [ThriftRequestBody].
      * @param receiveFunction A function that calls `recv_METHOD(...)` of the TServiceClient.
      * @return The result of [receiveFunction].
-     * @throws TTransportException If any I/O error occurred.
+     * @throws TException If an error occurred in the Thrift protocol layer, transport layer, or
+     * on the target server.
      */
     protected open suspend fun <R> doCall(request: Request, receiveFunction: T.() -> R): R =
         try {
@@ -122,12 +123,11 @@ abstract class AbstractThriftServiceClient<T : TServiceClient> {
     /**
      * Makes a Thrift call with the given [sendFunction] and [receiveFunction].
      *
-     * If any I/O error occurs, this function throws a [TTransportException].
-     *
      * @param sendFunction A function that calls `send_METHOD(...)` of the TServiceClient.
      * @param receiveFunction A function that calls `recv_METHOD(...)` of the TServiceClient.
      * @return The result of [receiveFunction].
-     * @throws TTransportException If any I/O error occurred.
+     * @throws TException If an error occurred in the Thrift protocol layer, transport layer, or
+     * on the target server.
      */
     protected open suspend fun <R> call(sendFunction: T.() -> Unit, receiveFunction: T.() -> R): R =
         doCall(newRequest(sendFunction), receiveFunction)
