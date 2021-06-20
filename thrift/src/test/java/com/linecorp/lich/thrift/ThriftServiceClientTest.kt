@@ -20,6 +20,7 @@ import com.linecorp.lich.sample.thrift.FooException
 import com.linecorp.lich.sample.thrift.FooParam
 import com.linecorp.lich.sample.thrift.FooResponse
 import com.linecorp.lich.sample.thrift.FooService
+import com.linecorp.lich.sample.thrift.FooUnion
 import kotlinx.coroutines.runBlocking
 import okhttp3.OkHttpClient
 import okhttp3.mockwebserver.MockResponse
@@ -36,6 +37,7 @@ import org.apache.thrift.transport.TTransportException
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
+import java.net.ProtocolException
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 import kotlin.test.assertIs
@@ -136,6 +138,24 @@ class ThriftServiceClientTest {
         }.let { e ->
             assertEquals(fooException, e)
         }
+    }
+
+    @Test
+    fun testCallFooWithInvalidUnion() = runBlocking {
+        server.start()
+
+        val fooParam = FooParam().apply {
+            setNumber(100)
+            // Serializing a value-less Union causes TProtocolException.
+            setFooUnion(FooUnion())
+        }
+        assertFailsWith<TTransportException> {
+            newClient().callFoo(123, "foobar", fooParam)
+        }.let { e ->
+            assertIs<ProtocolException>(e.cause)
+        }
+
+        assertEquals(0, server.requestCount)
     }
 
     private fun newClient(): FooServiceClient =

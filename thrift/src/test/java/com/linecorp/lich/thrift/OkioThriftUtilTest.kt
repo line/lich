@@ -15,9 +15,13 @@
  */
 package com.linecorp.lich.thrift
 
+import com.linecorp.lich.sample.thrift.FooParam
 import com.linecorp.lich.sample.thrift.FooResponse
-import org.junit.Assert.assertEquals
+import com.linecorp.lich.sample.thrift.FooUnion
+import org.apache.thrift.protocol.TProtocolException
 import org.junit.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 
 class OkioThriftUtilTest {
 
@@ -35,5 +39,18 @@ class OkioThriftUtilTest {
         val deserialized = OkioThriftUtil.deserialize(buffer, FooResponse())
         assertEquals(fooResponse, deserialized)
         assertEquals(0, buffer.size)
+    }
+
+    @Test
+    fun serializeInvalidUnion() {
+        val fooParam = FooParam().apply {
+            setNumber(100)
+            // Serializing a value-less Union causes TProtocolException.
+            setFooUnion(FooUnion())
+        }
+
+        assertFailsWith<TProtocolException> {
+            OkioThriftUtil.serialize(fooParam)
+        }
     }
 }
