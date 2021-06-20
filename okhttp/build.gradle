@@ -15,7 +15,7 @@ ext.publication = [
 
 dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:${versions.kotlinCoroutines}"
-    implementation "com.squareup.okhttp3:okhttp:${versions.okhttp}"
+    api "com.squareup.okhttp3:okhttp:${versions.okhttp}"
 
     testImplementation 'org.jetbrains.kotlin:kotlin-test'
     testImplementation "com.squareup.okhttp3:mockwebserver:${versions.okhttp}"

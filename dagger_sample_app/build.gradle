@@ -56,7 +56,6 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:${versions.androidxLifecycle}"
     implementation "androidx.room:room-ktx:${versions.androidxRoom}"
     kapt "androidx.room:room-compiler:${versions.androidxRoom}"
-    implementation "com.squareup.okhttp3:okhttp:${versions.okhttp}"
     implementation "com.google.dagger:dagger:${versions.dagger}"
     kapt "com.google.dagger:dagger-compiler:${versions.dagger}"
 

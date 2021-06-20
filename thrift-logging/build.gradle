@@ -32,10 +32,6 @@ android {
 
 dependencies {
     implementation project(':thrift')
-    implementation("org.apache.thrift:libthrift:${versions.thrift}") {
-        exclude group: 'org.apache.httpcomponents'
-        exclude group: 'org.slf4j'
-    }
     implementation "com.linkedin.dexmaker:dexmaker:${versions.dexmaker}"
 
     androidTestImplementation project(':sample_thrift')
@@ -44,6 +40,5 @@ dependencies {
     androidTestImplementation "androidx.test:runner:${versions.androidxTestRunner}"
     androidTestImplementation "androidx.test.ext:junit:${versions.androidxTestJunit}"
     androidTestImplementation "io.mockk:mockk-android:${versions.mockk}"
-    androidTestImplementation "com.squareup.okhttp3:okhttp:${versions.okhttp}"
     androidTestImplementation "com.squareup.okhttp3:mockwebserver:${versions.okhttp}"
 }

@@ -58,7 +58,6 @@ dependencies {
     implementation "androidx.navigation:navigation-ui-ktx:${versions.androidxNavigation}"
     implementation "androidx.room:room-ktx:${versions.androidxRoom}"
     kapt "androidx.room:room-compiler:${versions.androidxRoom}"
-    implementation "com.squareup.okhttp3:okhttp:${versions.okhttp}"
 
     debugRuntimeOnly project(':component-debug')
 
