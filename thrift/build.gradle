@@ -15,8 +15,8 @@ ext.publication = [
 
 dependencies {
     implementation project(':okhttp')
-    implementation "com.squareup.okhttp3:okhttp:${versions.okhttp}"
-    implementation("org.apache.thrift:libthrift:${versions.thrift}") {
+    api "com.squareup.okhttp3:okhttp:${versions.okhttp}"
+    api("org.apache.thrift:libthrift:${versions.thrift}") {
         exclude group: 'org.apache.httpcomponents'
         exclude group: 'org.slf4j'
     }
