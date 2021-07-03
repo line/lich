@@ -11,66 +11,49 @@ dependencies {
 }
 ```
 
-## AutoResetLifecycleScope
+## AutoResetLifecycleScope: A safer alternative to AndroidX lifecycleScope
 
-[AutoResetLifecycleScope](src/main/java/com/linecorp/lich/lifecycle/AutoResetLifecycleScope.kt)
-is a lifecycle-aware
-[CoroutineScope](https://kotlin.github.io/kotlinx.coroutines/kotlinx-coroutines-core/kotlinx.coroutines/-coroutine-scope/).
+[AutoResetLifecycleScope](src/main/java/com/linecorp/lich/lifecycle/AutoResetLifecycleScope.kt) is
+a safer alternative to AndroidX [lifecycleScope](https://developer.android.com/reference/kotlin/androidx/lifecycle/package-summary#lifecyclescope).
 
-`AutoResetLifecycleScope` will be canceled when its `Lifecycle` is destroyed.
-`AutoResetLifecycleScope` will also "reset" coroutines launched from it when the Lifecycle events
-specified by `resetPolicy` have occurred.
+This scope is bound to [Dispatchers.Main](https://kotlin.github.io/kotlinx.coroutines/kotlinx-coroutines-core/kotlinx.coroutines/-dispatchers/-main.html),
+and will be cancelled when the `Lifecycle` is DESTROYED.
+In addition, any coroutines launched from this scope are automatically cancelled when the
+`Lifecycle` is STOPPED. (If `ResetPolicy.ON_STOP` is specified for the `resetPolicy` parameter.)
 
-`AutoResetLifecycleScope` is bound to
-[Dispatchers.Main](https://kotlin.github.io/kotlinx.coroutines/kotlinx-coroutines-core/kotlinx.coroutines/-dispatchers/-main.html).
-So, coroutines launched from the scope will be executed on the main thread by default.
+This "auto-reset" feature is useful for collecting `Flow`s safely.
+It is known that collecting `Flow`s with `lifecycleScope.launchWhenStarted` can
+[lead to resource leaks](https://link.medium.com/OR5ePKTGthb).
+This is because coroutines launched by `lifecycleScope.launchWhenStarted` will not be cancelled
+even if the `Lifecycle` is stopped.
+On the other hand, coroutines launched from [AutoResetLifecycleScope](src/main/java/com/linecorp/lich/lifecycle/AutoResetLifecycleScope.kt)
+are automatically cancelled when the `Lifecycle` is stopped. This avoids resource leaks.
 
-Example of use:
+The following code is an example of using [AutoResetLifecycleScope](src/main/java/com/linecorp/lich/lifecycle/AutoResetLifecycleScope.kt)
+to collect a `Flow` safely.
+
 ```kotlin
 class FooActivity : AppCompatActivity() {
 
-    private val coroutineScope: CoroutineScope = AutoResetLifecycleScope(this)
+    // Any coroutines launched from this scope are automatically cancelled when FooActivity is STOPPED.
+    private val autoResetLifecycleScope: CoroutineScope = AutoResetLifecycleScope(this)
 
-    fun loadDataThenDraw() {
-        // The launched coroutines will be automatically cancelled ON_STOP and ON_DESTROY.
-        coroutineScope.launch {
-            try {
-                val fooData = fooServiceClient.fetchFooData()
-                drawData(fooData)
-            } catch (e: IOException) {
-                Toast.makeText(this, "Failed to fetch data.", Toast.LENGTH_SHORT).show()
+    // A repository that provides some data as a Flow.
+    private val fooRepository = FooRepository()
+
+    override fun onStart() {
+        super.onStart()
+
+        // It is SAFE to collect a flow with AutoResetLifecycleScope.
+        // The coroutine launched here will be automatically cancelled just before `FooActivity.onStop()`.
+        autoResetLifecycleScope.launch {
+            fooRepository.dataFlow().collect { value ->
+                textView.text = value
             }
         }
     }
-
-    @MainThread
-    private fun drawData(fooData: FooData) {
-        // snip...
-    }
 }
 ```
-See also
-[SimpleCoroutineActivity](../sample_app/src/main/java/com/linecorp/lich/sample/simplecoroutine/SimpleCoroutineActivity.kt).
 
-### About difference with Jetpack's lifecycleScope
-
-AndroidX Lifecycle 2.2.0+ provides `lifecycleScope`. Please read
-[this document](https://developer.android.com/topic/libraries/architecture/coroutines#lifecyclescope)
-first for details. `lifecycleScope` has useful functions like `launchWhenStarted`,
-but these functions must be used with care.
-
-[LifecycleScopeDemo1Fragment](../sample_app/src/main/java/com/linecorp/lich/sample/lifecyclescope/LifecycleScopeDemo1Fragment.kt)
-is an example. Here are some things to keep in mind when using `lifecycleScope`:
-
-- Avoid using `Fragment.lifecycleScope.launch*`. Coroutines launched from `Fragment.lifecycleScope` stay alive even after `onDestroyView()`. So, you need to be careful about View recreation.
-- `Fragment.viewLifecycleOwner.lifecycleScope.launchWhenStarted` is somewhat safe, but its coroutines stay alive even after `onStop()` and restart execution after the next `onStart()`. So, you shouldn't use it for tasks launched on `onStart()`.
-
-Thus, `lifecycleScope` has some pitfalls. So, you should consider using alternatives.
-
-The best way is to use coroutines only in ViewModels. All asynchronous tasks are launched
-in ViewModels, and Fragment/Activity only observes the result via LiveData.
-See [SampleViewModel](../sample_app/src/main/java/com/linecorp/lich/sample/mvvm/SampleViewModel.kt)
-for a working example.
-
-Another alternative is using `AutoResetLifecycleScope`. Any coroutines launched from it
-are just cancelled when `onStop()` is called. So it is relatively safe to use.
+[LifecycleScopeDemoActivity](../sample_app/src/main/java/com/linecorp/lich/sample/lifecyclescope/LifecycleScopeDemoActivity.kt)
+also demonstrates the pitfalls of collecting flows with [lifecycleScope](https://developer.android.com/reference/kotlin/androidx/lifecycle/package-summary#lifecyclescope).
