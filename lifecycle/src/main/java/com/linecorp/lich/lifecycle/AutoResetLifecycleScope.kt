@@ -27,40 +27,41 @@ import java.util.concurrent.atomic.AtomicReference
 import kotlin.coroutines.CoroutineContext
 
 /**
- * Lifecycle-aware [CoroutineScope].
+ * A safer alternative to AndroidX `lifecycleScope`.
  *
- * Like [kotlinx.coroutines.MainScope], this scope has [SupervisorJob] and [Dispatchers.Main]
- * context elements. In addition, this scope has "auto-reset" and "auto-cancel" features.
+ * This scope is bound to [Dispatchers.Main], and will be cancelled when the [Lifecycle] is DESTROYED.
+ * In addition, any coroutines launched from this scope are automatically cancelled when the
+ * [Lifecycle] is STOPPED. (If [ResetPolicy.ON_STOP] is specified for the `resetPolicy` parameter.)
  *
- * When a AutoResetLifecycleScope has been "reset", all jobs launched from the scope will be cancelled.
- * But, after the reset, the coroutineContext of the scope will be recreated immediately. The timing
- * of "auto-reset" can be specified with the `resetPolicy` parameter.
+ * This "auto-reset" feature is useful for collecting `Flow`s safely.
+ * It is known that collecting `Flow`s with `lifecycleScope.launchWhenStarted` can lead to resource leaks.
+ * (cf. https://link.medium.com/OR5ePKTGthb)
+ * This is because coroutines launched by `lifecycleScope.launchWhenStarted` will not be cancelled
+ * even if the [Lifecycle] is stopped.
+ * On the other hand, coroutines launched from [AutoResetLifecycleScope] are automatically cancelled
+ * when the [Lifecycle] is stopped. This avoids resource leaks.
  *
- * And, this scope will be automatically cancelled when [Lifecycle.Event.ON_DESTROY] event occurred.
- * After `ON_DESTROY`, the scope is no longer active.
+ * The following code is an example of using [AutoResetLifecycleScope] to collect a `Flow` safely.
  *
- * Example of use:
  * ```
  * class FooActivity : AppCompatActivity() {
  *
- *     // This coroutineScope is automatically reset ON_STOP, and cancelled ON_DESTROY.
- *     private val coroutineScope: CoroutineScope = AutoResetLifecycleScope(this)
+ *     // Any coroutines launched from this scope are automatically cancelled when FooActivity is STOPPED.
+ *     private val autoResetLifecycleScope: CoroutineScope = AutoResetLifecycleScope(this)
  *
- *     fun loadDataThenDraw() {
- *         // The launched job will be automatically cancelled ON_STOP and ON_DESTROY.
- *         coroutineScope.launch {
- *             try {
- *                 val fooData = fooServiceClient.fetchFooData()
- *                 drawData(fooData)
- *             } catch (e: IOException) {
- *                 Toast.makeText(this, "Failed to fetch data.", Toast.LENGTH_SHORT).show()
+ *     // A repository that provides some data as a Flow.
+ *     private val fooRepository = FooRepository()
+ *
+ *     override fun onStart() {
+ *         super.onStart()
+ *
+ *         // It is SAFE to collect a flow with AutoResetLifecycleScope.
+ *         // The coroutine launched here will be automatically cancelled just before `FooActivity.onStop()`.
+ *         autoResetLifecycleScope.launch {
+ *             fooRepository.dataFlow().collect { value ->
+ *                 textView.text = value
  *             }
  *         }
- *     }
- *
- *     @MainThread
- *     private fun drawData(fooData: FooData) {
- *         // snip...
  *     }
  * }
  * ```
@@ -80,6 +81,9 @@ class AutoResetLifecycleScope @JvmOverloads @MainThread constructor(
     /**
      * The policy when this [AutoResetLifecycleScope] will be reset.
      *
+     * When an [AutoResetLifecycleScope] is reset, any coroutines that were previously launched from
+     * the scope will be automatically cancelled.
+     *
      * Note that the scope will be always cancelled when [Lifecycle.Event.ON_DESTROY] event occurred,
      * regardless of [ResetPolicy].
      */
@@ -88,10 +92,12 @@ class AutoResetLifecycleScope @JvmOverloads @MainThread constructor(
          * The scope will be reset when [Lifecycle.Event.ON_PAUSE] event occurred.
          */
         ON_PAUSE,
+
         /**
          * The scope will be reset when [Lifecycle.Event.ON_STOP] event occurred.
          */
         ON_STOP,
+
         /**
          * Auto-reset is not performed.
          * But, the scope is still cancelled when [Lifecycle.Event.ON_DESTROY] event occurred.
