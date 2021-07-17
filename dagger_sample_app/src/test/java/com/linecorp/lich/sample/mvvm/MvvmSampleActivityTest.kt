@@ -34,10 +34,13 @@ import io.mockk.verify
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.robolectric.annotation.Config
 import kotlin.test.assertEquals
 import kotlin.test.assertSame
 import kotlin.test.assertTrue
 
+// Workaround for https://github.com/robolectric/robolectric/issues/6593
+@Config(instrumentedPackages = ["androidx.loader.content"])
 @RunWith(AndroidJUnit4::class)
 class MvvmSampleActivityTest {
 
