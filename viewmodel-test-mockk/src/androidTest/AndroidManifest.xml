@@ -1,6 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.linecorp.lich.viewmodel.test.mockk">
 
+    <uses-sdk tools:overrideLibrary="io.mockk,io.mockk.proxy.android" />
     <application>
         <activity android:name=".TestActivity" />
     </application>
