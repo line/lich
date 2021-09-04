@@ -1,6 +1,6 @@
 buildscript {
     // Make sure to use the same AGP as the main project.
-    def androidGradlePlugin = '4.2.2'
+    def androidGradlePlugin = '7.0.2'
     /**
      * Calculates the right lint version for the provided AGP version. AGP is tightly coupled with
      * Android Lint because it implements LintClient. The formula to calculate the lint version
@@ -22,10 +22,10 @@ buildscript {
         kotlin                  : '1.5.21',
         kotlinCoroutines        : '1.5.1',
         kotlinMetadataJvm       : '0.3.0',
-        ksp                     : '1.5.21-1.0.0-beta05',
-        androidxAppcompat       : '1.3.0',
-        androidxConstraintlayout: '2.0.4',
-        androidxFragment        : '1.3.5',
+        ksp                     : '1.5.21-1.0.0-beta07',
+        androidxAppcompat       : '1.3.1',
+        androidxConstraintlayout: '2.1.0',
+        androidxFragment        : '1.3.6',
         androidxLifecycle       : '2.3.1',
         androidxNavigation      : '2.3.5',
         androidxRoom            : '2.3.0',
@@ -35,11 +35,11 @@ buildscript {
         androidxTestEspresso    : '3.4.0',
         autoService             : '1.0',
         okhttp                  : '4.9.1',
-        dagger                  : '2.37',
+        dagger                  : '2.38.1',
         kotlinPoet              : '1.9.0',
         thrift                  : '0.13.0',
         dexmaker                : '2.28.1',
-        mockito                 : '3.11.1',
+        mockito                 : '3.12.4',
         mockitoKotlin           : '3.2.0',
         mockk                   : '1.12.0',
         robolectric             : '4.6.1',
