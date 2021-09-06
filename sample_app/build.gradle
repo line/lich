@@ -53,7 +53,7 @@ dependencies {
     implementation "androidx.appcompat:appcompat:${versions.androidxAppcompat}"
     implementation "androidx.constraintlayout:constraintlayout:${versions.androidxConstraintlayout}"
     implementation "androidx.fragment:fragment-ktx:${versions.androidxFragment}"
-    implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.4.0-alpha02" // For repeateOnLifecycle()
+    implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.4.0-alpha03" // For repeateOnLifecycle()
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:${versions.androidxLifecycle}"
     implementation "androidx.navigation:navigation-fragment-ktx:${versions.androidxNavigation}"
     implementation "androidx.navigation:navigation-ui-ktx:${versions.androidxNavigation}"
