@@ -25,11 +25,13 @@ import io.mockk.verify
 import org.junit.After
 import org.junit.Test
 import org.junit.runner.RunWith
+import kotlin.test.Ignore
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertSame
 import kotlin.test.assertTrue
 
+@Ignore("https://github.com/line/lich/issues/103")
 @RunWith(AndroidJUnit4::class)
 class MockingTest {
 
