@@ -11,18 +11,48 @@ This library provides the following features.
 
 ## Set up
 
-Add the following entries to your `build.gradle` file.
+This library officially supports [KSP](https://github.com/google/ksp).
+Please add the following entries to your `settings.gradle` and `build.gradle` files.
 
 ```groovy
-apply plugin: 'kotlin-kapt'
+// settings.gradle
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+        google()
+    }
+    plugins {
+        id 'com.google.devtools.ksp' version '1.5.30-1.0.0'
+    }
+}
+```
+
+```groovy
+// build.gradle
+plugins {
+    id 'com.google.devtools.ksp'
+}
+
+dependencies {
+    implementation 'com.linecorp.lich:savedstate:x.x.x'
+    ksp 'com.linecorp.lich:savedstate-compiler:x.x.x'
+}
+```
+
+Alternatively, you can use [kapt](https://kotlinlang.org/docs/kapt.html) instead of KSP.
+In that case, change `build.gradle` as follows.
+
+```groovy
+// build.gradle
+plugins {
+    id 'org.jetbrains.kotlin.kapt'
+}
 
 dependencies {
     implementation 'com.linecorp.lich:savedstate:x.x.x'
     kapt 'com.linecorp.lich:savedstate-compiler:x.x.x'
 }
 ```
-
-`savedstate-compiler` can also be used as [KSP](https://github.com/google/ksp) instead of [kapt](https://kotlinlang.org/docs/kapt.html). (Experimental)
 
 ## Delegated properties for SavedStateHandle
 
