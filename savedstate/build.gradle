@@ -1,7 +1,7 @@
 plugins {
     id 'com.android.library'
     id 'org.jetbrains.kotlin.android'
-    id 'org.jetbrains.kotlin.kapt'
+    id 'com.google.devtools.ksp'
     id 'org.jetbrains.dokka'
     id 'maven-publish'
     id 'signing'
@@ -35,7 +35,7 @@ dependencies {
     compileOnly "androidx.fragment:fragment:${versions.androidxFragment}"
     lintPublish project(':static-analysis')
 
-    kaptAndroidTest project(':savedstate-compiler')
+    kspAndroidTest project(':savedstate-compiler')
     androidTestImplementation 'org.jetbrains.kotlin:kotlin-test'
     androidTestImplementation "androidx.fragment:fragment-ktx:${versions.androidxFragment}"
     androidTestImplementation "androidx.test:runner:${versions.androidxTestRunner}"
