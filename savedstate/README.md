@@ -17,10 +17,6 @@ Please add the following entries to your `settings.gradle` and `build.gradle` fi
 ```groovy
 // settings.gradle
 pluginManagement {
-    repositories {
-        gradlePluginPortal()
-        google()
-    }
     plugins {
         id 'com.google.devtools.ksp' version '1.5.30-1.0.0'
     }
