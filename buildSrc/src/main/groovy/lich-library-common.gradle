@@ -1,0 +1,71 @@
+plugins {
+    id 'maven-publish'
+    id 'signing'
+    id 'org.jetbrains.dokka'
+}
+
+interface LichLibraryPluginExtension {
+    Property<String> getVersion()
+    Property<String> getName()
+    Property<String> getDescription()
+    Property<String> getUrl()
+}
+
+def extension = project.extensions.create('lichLibrary', LichLibraryPluginExtension)
+
+afterEvaluate {
+    project.group = 'com.linecorp.lich'
+    project.version = extension.version.get()
+    publishing {
+        publications {
+            maven(MavenPublication) {
+                pom {
+                    name = extension.name
+                    description = extension.description
+                    url = extension.url
+                    licenses {
+                        license {
+                            name = 'The Apache License, Version 2.0'
+                            url = 'https://www.apache.org/licenses/LICENSE-2.0.txt'
+                            distribution = 'repo'
+                        }
+                    }
+                    developers {
+                        developer {
+                            name = 'LINE Corporation'
+                            email = 'dl_oss_dev@linecorp.com'
+                            url = 'https://engineering.linecorp.com/en/'
+                        }
+                    }
+                    scm {
+                        connection = 'scm:git:https://github.com/line/lich.git'
+                        developerConnection = 'scm:git:https://github.com/line/lich.git'
+                        url = 'https://github.com/line/lich'
+                    }
+                    issueManagement {
+                        system = 'GitHub'
+                        url = 'https://github.com/line/lich/issues'
+                    }
+                }
+            }
+        }
+        repositories {
+            maven {
+                url = findProperty('repositoryUrl') ?: extension.version.get().endsWith('SNAPSHOT') ?
+                    'https://oss.sonatype.org/content/repositories/snapshots/' :
+                    'https://oss.sonatype.org/service/local/staging/deploy/maven2/'
+                credentials {
+                    username = findProperty('repositoryUsername') ?: ''
+                    password = findProperty('repositoryPassword') ?: ''
+                }
+            }
+        }
+    }
+    signing {
+        def signingKey = findProperty('signingKey')
+        def signingPassword = findProperty('signingPassword')
+        required { signingKey != null && signingPassword != null }
+        useInMemoryPgpKeys(signingKey, signingPassword)
+        sign publishing.publications.maven
+    }
+}
