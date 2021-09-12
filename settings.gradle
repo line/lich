@@ -1,3 +1,10 @@
+dependencyResolutionManagement {
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+rootProject.name = "Lich"
 include ':component'
 include ':component-debug'
 include ':component-test'
