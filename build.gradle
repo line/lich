@@ -59,22 +59,18 @@ plugins {
     id 'io.codearte.nexus-staging' version '0.30.0'
 }
 
-allprojects {
-    repositories {
-        google()
-        mavenCentral()
-    }
+nexusStaging {
+    packageGroup = 'com.linecorp'
+    stagingProfileId = '465b0f4eecd582'
+}
+
+subprojects {
     // Avoid '/META-INF/*.kotlin_module' conflicts.
     tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
         kotlinOptions {
             freeCompilerArgs += ['-module-name', "com_linecorp_lich_${project.name}"]
         }
     }
-}
-
-nexusStaging {
-    packageGroup = 'com.linecorp'
-    stagingProfileId = '465b0f4eecd582'
 }
 
 task clean(type: Delete) {
