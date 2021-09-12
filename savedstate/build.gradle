@@ -2,18 +2,15 @@ plugins {
     id 'com.android.library'
     id 'org.jetbrains.kotlin.android'
     id 'com.google.devtools.ksp'
-    id 'org.jetbrains.dokka'
-    id 'maven-publish'
-    id 'signing'
+    id 'lich-library-android'
 }
 
-version = VERSION_NAME_SAVEDSTATE
-ext.publication = [
-    type       : 'aar',
-    name       : 'Lich SavedState (main)',
-    description: 'Property delegates for easy access to SavedStateHandle values.',
-    url        : 'https://github.com/line/lich/tree/master/savedstate',
-]
+lichLibrary {
+    version = VERSION_NAME_SAVEDSTATE
+    name = 'Lich SavedState (main)'
+    description = 'Property delegates for easy access to SavedStateHandle values.'
+    url = 'https://github.com/line/lich/tree/master/savedstate'
+}
 
 android {
     compileSdkVersion versions.compileSdk

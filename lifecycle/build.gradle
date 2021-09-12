@@ -1,18 +1,15 @@
 plugins {
     id 'com.android.library'
     id 'org.jetbrains.kotlin.android'
-    id 'org.jetbrains.dokka'
-    id 'maven-publish'
-    id 'signing'
+    id 'lich-library-android'
 }
 
-version = VERSION_NAME_LIFECYCLE
-ext.publication = [
-    type       : 'aar',
-    name       : 'Lich Lifecycle',
-    description: 'A small library for Android Jetpack Lifecycle.',
-    url        : 'https://github.com/line/lich/tree/master/lifecycle',
-]
+lichLibrary {
+    version = VERSION_NAME_LIFECYCLE
+    name = 'Lich Lifecycle'
+    description = 'A small library for Android Jetpack Lifecycle.'
+    url = 'https://github.com/line/lich/tree/master/lifecycle'
+}
 
 android {
     compileSdkVersion versions.compileSdk

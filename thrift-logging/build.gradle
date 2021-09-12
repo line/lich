@@ -1,18 +1,15 @@
 plugins {
     id 'com.android.library'
     id 'org.jetbrains.kotlin.android'
-    id 'org.jetbrains.dokka'
-    id 'maven-publish'
-    id 'signing'
+    id 'lich-library-android'
 }
 
-version = VERSION_NAME_THRIFT
-ext.publication = [
-    type       : 'aar',
-    name       : 'Lich Thrift Logging',
-    description: 'Transparent logging library for Lich Thrift.',
-    url        : 'https://github.com/line/lich/tree/master/thrift',
-]
+lichLibrary {
+    version = VERSION_NAME_THRIFT
+    name = 'Lich Thrift Logging'
+    description = 'Transparent logging library for Lich Thrift.'
+    url = 'https://github.com/line/lich/tree/master/thrift'
+}
 
 android {
     compileSdkVersion versions.compileSdk

@@ -1,18 +1,15 @@
 plugins {
     id 'com.android.library'
     id 'org.jetbrains.kotlin.android'
-    id 'org.jetbrains.dokka'
-    id 'maven-publish'
-    id 'signing'
+    id 'lich-library-android'
 }
 
-version = VERSION_NAME_COMPONENT
-ext.publication = [
-    type       : 'aar',
-    name       : 'Lich Component (for testing)',
-    description: 'Lightweight framework for managing singleton components on Android apps.',
-    url        : 'https://github.com/line/lich/tree/master/component',
-]
+lichLibrary {
+    version = VERSION_NAME_COMPONENT
+    name = 'Lich Component (for testing)'
+    description = 'Lightweight framework for managing singleton components on Android apps.'
+    url = 'https://github.com/line/lich/tree/master/component'
+}
 
 android {
     compileSdkVersion versions.compileSdk
