@@ -16,9 +16,9 @@ buildscript {
     ext.versions = [
         androidGradlePlugin     : androidGradlePlugin,
         androidLint             : androidLintVersion(androidGradlePlugin),
-        compileSdk              : 30,
+        compileSdk              : 31,
         minSdk                  : 14,
-        targetSdk               : 30,
+        targetSdk               : 31,
         kotlin                  : '1.5.31',
         kotlinCoroutines        : '1.5.2',
         kotlinMetadataJvm       : '0.3.0',
