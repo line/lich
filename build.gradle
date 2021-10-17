@@ -1,6 +1,6 @@
 buildscript {
     // Make sure to use the same AGP as the main project.
-    def androidGradlePlugin = '7.0.2'
+    def androidGradlePlugin = '7.0.3'
     /**
      * Calculates the right lint version for the provided AGP version. AGP is tightly coupled with
      * Android Lint because it implements LintClient. The formula to calculate the lint version
@@ -16,15 +16,15 @@ buildscript {
     ext.versions = [
         androidGradlePlugin     : androidGradlePlugin,
         androidLint             : androidLintVersion(androidGradlePlugin),
-        compileSdk              : 30,
+        compileSdk              : 31,
         minSdk                  : 14,
-        targetSdk               : 30,
-        kotlin                  : '1.5.30',
+        targetSdk               : 31,
+        kotlin                  : '1.5.31',
         kotlinCoroutines        : '1.5.2',
         kotlinMetadataJvm       : '0.3.0',
-        ksp                     : '1.5.30-1.0.0',
+        ksp                     : '1.5.31-1.0.0',
         androidxAppcompat       : '1.3.1',
-        androidxConstraintlayout: '2.1.0',
+        androidxConstraintlayout: '2.1.1',
         androidxFragment        : '1.3.6',
         androidxLifecycle       : '2.3.1',
         androidxNavigation      : '2.3.5',
@@ -34,13 +34,13 @@ buildscript {
         androidxTestJunit       : '1.1.3',
         androidxTestEspresso    : '3.4.0',
         autoService             : '1.0',
-        okhttp                  : '4.9.1',
-        dagger                  : '2.38.1',
-        kotlinPoet              : '1.9.0',
+        okhttp                  : '4.9.2',
+        dagger                  : '2.39.1',
+        kotlinPoet              : '1.10.1',
         thrift                  : '0.13.0',
         dexmaker                : '2.28.1',
-        mockito                 : '3.12.4',
-        mockitoKotlin           : '3.2.0',
+        mockito                 : '4.0.0',
+        mockitoKotlin           : '4.0.0',
         mockk                   : '1.12.0',
         robolectric             : '4.6.1',
     ]
