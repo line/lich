@@ -35,7 +35,6 @@ buildscript {
         androidxTestEspresso    : '3.4.0',
         autoService             : '1.0',
         okhttp                  : '4.9.2',
-        dagger                  : '2.39.1',
         kotlinPoet              : '1.10.1',
         thrift                  : '0.13.0',
         dexmaker                : '2.28.1',
