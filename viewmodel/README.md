@@ -201,8 +201,8 @@ class BarActivityTest {
 ```
 
 See also
-[MvvmSampleActivityTest](../sample_app/src/test/java/com/linecorp/lich/sample/mvvm/MvvmSampleActivityTest.kt)
-in the sample_app module.
+[MvvmSampleActivityTest](../sample-app/ui/src/test/java/com/linecorp/lich/sample/ui/MvvmSampleActivityTest.kt)
+in the `:sample-app:ui` module.
 
 The [mockViewModel](../viewmodel-test-mockitokotlin/src/main/java/com/linecorp/lich/viewmodel/test/mockitokotlin/Mocking.kt)
 function is also available for [Mockito-Kotlin](https://github.com/mockito/mockito-kotlin).
@@ -306,5 +306,5 @@ class FooFragment : Fragment() {
 
 ## Example
 
-[SampleViewModel](../sample_app/src/main/java/com/linecorp/lich/sample/mvvm/SampleViewModel.kt)
-in the sample_app module.
+[SampleViewModel](../sample-app/ui/src/main/java/com/linecorp/lich/sample/ui/SampleViewModel.kt)
+in the `:sample-app:ui` module.

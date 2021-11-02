@@ -282,8 +282,8 @@ internal class FooModuleFacadeImpl(private val context: Context) : FooModuleFaca
 }
 ```
 
-See [FooFeatureFacade](../sample_app/src/main/java/com/linecorp/lich/sample/feature/foo/FooFeatureFacade.kt)
-and [FooFeatureFacadeFactory](../sample_feature/src/main/java/com/linecorp/lich/sample/feature/foo/FooFeatureFacadeFactory.kt)
+See [GlobalOkHttpClient](../sample-app/base/src/main/java/com/linecorp/lich/sample/base/GlobalOkHttpClient.kt)
+and [GlobalOkHttpClientFactory](../sample-app/app/src/main/java/com/linecorp/lich/sample/base/GlobalOkHttpClientFactory.kt)
 for the actual code.
 
 ### delegateToServiceLoader()
@@ -359,8 +359,8 @@ If you are using R8 (included in Android Gradle Plugin 3.5.0+) with code shrinki
 enabled, the R8 optimization gets rid of reflection entirely in the final byte code. For details,
 please refer [this article](https://medium.com/androiddevelopers/patterns-for-accessing-code-from-dynamic-feature-modules-7e5dca6f9123).
 
-See [BarFeatureFacade](../sample_app/src/main/java/com/linecorp/lich/sample/feature/bar/BarFeatureFacade.kt)
-and [BarFeatureFacadeImpl](../sample_feature/src/main/java/com/linecorp/lich/sample/feature/bar/BarFeatureFacadeImpl.kt)
+See [CounterRepository](../sample-app/model-api/src/main/java/com/linecorp/lich/sample/model/repository/CounterRepository.kt)
+and [CounterRepositoryImpl](../sample-app/model-impl/src/main/java/com/linecorp/lich/sample/model/repository/CounterRepositoryImpl.kt)
 for the actual code.
 
 ## Testing
@@ -410,7 +410,7 @@ class SaveFooUseCaseTest {
 ```
 
 See also
-[CounterUseCaseTest](../sample_app/src/test/java/com/linecorp/lich/sample/mvvm/CounterUseCaseTest.kt).
+[CounterUseCaseTest](../sample-app/ui/src/test/java/com/linecorp/lich/sample/ui/CounterUseCaseTest.kt).
 
 The [mockComponent](../component-test-mockitokotlin/src/main/java/com/linecorp/lich/component/test/mockitokotlin/Mocking.kt)
 function is also available for [Mockito-Kotlin](https://github.com/mockito/mockito-kotlin).
@@ -469,7 +469,7 @@ Then, you can get the singleton as follows:
 val okHttpClient: OkHttpClient = context.getComponent(GlobalOkHttpClient)
 ```
 
-See also [the sample code](../sample_app/src/main/java/com/linecorp/lich/sample/GlobalOkHttpClient.kt).
+See also [the sample code](../sample-app/base/src/main/java/com/linecorp/lich/sample/base/GlobalOkHttpClient.kt).
 
 ## Resolve circular dependencies
 

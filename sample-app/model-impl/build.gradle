@@ -1,0 +1,49 @@
+plugins {
+    id 'com.android.library'
+    id 'org.jetbrains.kotlin.android'
+    id 'com.google.devtools.ksp'
+}
+
+android {
+    compileSdkVersion versions.compileSdk
+
+    defaultConfig {
+        minSdkVersion 21
+        targetSdkVersion versions.targetSdk
+    }
+
+    buildFeatures {
+        buildConfig false
+    }
+
+    testOptions {
+        unitTests {
+            // For Robolectric. See: http://robolectric.org/getting-started/
+            includeAndroidResources = true
+        }
+    }
+}
+
+ksp {
+    arg("room.schemaLocation", "$projectDir/schemas")
+}
+
+dependencies {
+    implementation project(':sample-app:base')
+    implementation project(':sample-app:model-api')
+
+    implementation project(':component')
+    implementation project(':okhttp')
+    implementation "androidx.room:room-ktx:${versions.androidxRoom}"
+    ksp "androidx.room:room-compiler:${versions.androidxRoom}"
+    implementation "com.google.auto.service:auto-service-annotations:${versions.autoService}"
+    ksp "dev.zacsweers.autoservice:auto-service-ksp:${versions.autoServiceKsp}"
+
+    testImplementation project(':component-test-mockk')
+    testImplementation 'org.jetbrains.kotlin:kotlin-test'
+    testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:${versions.kotlinCoroutines}"
+    testImplementation "androidx.test:runner:${versions.androidxTestRunner}"
+    testImplementation "androidx.test.ext:junit:${versions.androidxTestJunit}"
+    testImplementation "io.mockk:mockk:${versions.mockk}"
+    testImplementation "org.robolectric:robolectric:${versions.robolectric}"
+}

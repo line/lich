@@ -1,0 +1,23 @@
+plugins {
+    id 'com.android.library'
+    id 'org.jetbrains.kotlin.android'
+}
+
+android {
+    compileSdkVersion versions.compileSdk
+
+    defaultConfig {
+        minSdkVersion 21
+        targetSdkVersion versions.targetSdk
+    }
+
+    buildFeatures {
+        buildConfig false
+    }
+}
+
+dependencies {
+    implementation project(':component')
+    implementation "com.google.android.material:material:${versions.androidMaterial}"
+    implementation "com.squareup.okhttp3:okhttp:${versions.okhttp}"
+}

@@ -17,8 +17,7 @@ All the libraries are available on [Maven Central](https://search.maven.org/sear
 
 ## Sample App
 
-- [sample_app](sample_app) - A sample application using Lich libraries.
-- [sample_feature](sample_feature) - A sample feature module using Lich component library.
+- [sample-app](sample-app) - A sample multi-module application using Lich libraries.
 
 ## Material
 

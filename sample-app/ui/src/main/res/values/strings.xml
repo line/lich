@@ -1,0 +1,7 @@
+<resources>
+    <string name="counter_title">Value:</string>
+    <string name="counter_no_value">No value.</string>
+    <string name="count_up_button">Count up</string>
+    <string name="count_down_button">Count down</string>
+    <string name="delete_counter_button">Delete Counter</string>
+</resources>
