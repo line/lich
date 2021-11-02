@@ -1,0 +1,50 @@
+plugins {
+    id 'com.android.library'
+    id 'org.jetbrains.kotlin.android'
+    id 'com.google.devtools.ksp'
+}
+
+android {
+    compileSdkVersion versions.compileSdk
+
+    defaultConfig {
+        minSdkVersion 21
+        targetSdkVersion versions.targetSdk
+    }
+
+    buildFeatures {
+        buildConfig false
+        viewBinding true
+    }
+
+    testOptions {
+        unitTests {
+            // For Robolectric. See: http://robolectric.org/getting-started/
+            includeAndroidResources = true
+        }
+    }
+}
+
+dependencies {
+    implementation project(':sample-app:base')
+    implementation project(':sample-app:model-api')
+    // NOTE: `:sample-app:ui` doesn't depend on `:sample-app:model-impl`.
+
+    implementation project(':component')
+    implementation project(':viewmodel')
+    implementation project(':savedstate')
+    ksp project(':savedstate-compiler')
+    implementation "androidx.appcompat:appcompat:${versions.androidxAppcompat}"
+    implementation "androidx.constraintlayout:constraintlayout:${versions.androidxConstraintlayout}"
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:${versions.androidxLifecycle}"
+
+    testImplementation project(':component-test-mockk')
+    testImplementation project(':viewmodel-test-mockk')
+    testImplementation 'org.jetbrains.kotlin:kotlin-test'
+    testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:${versions.kotlinCoroutines}"
+    testImplementation "androidx.test:runner:${versions.androidxTestRunner}"
+    testImplementation "androidx.test.ext:junit:${versions.androidxTestJunit}"
+    testImplementation "androidx.test.espresso:espresso-core:${versions.androidxTestEspresso}"
+    testImplementation "io.mockk:mockk:${versions.mockk}"
+    testImplementation "org.robolectric:robolectric:${versions.robolectric}"
+}

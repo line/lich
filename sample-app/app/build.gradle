@@ -1,0 +1,50 @@
+plugins {
+    id 'com.android.application'
+    id 'org.jetbrains.kotlin.android'
+    id 'com.google.devtools.ksp'
+}
+
+android {
+    compileSdkVersion versions.compileSdk
+
+    defaultConfig {
+        minSdkVersion 21
+        targetSdkVersion versions.targetSdk
+        versionCode 1
+        versionName "1.0"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    buildFeatures {
+        viewBinding true
+    }
+}
+
+dependencies {
+    implementation project(':sample-app:base')
+    implementation project(':sample-app:ui')
+    runtimeOnly project(':sample-app:model-impl') // This module is only needed at runtime.
+
+    implementation project(':component')
+    implementation project(':lifecycle')
+    implementation project(':viewmodel')
+    implementation project(':savedstate')
+    ksp project(':savedstate-compiler')
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:${versions.kotlinCoroutines}"
+    implementation "androidx.appcompat:appcompat:${versions.androidxAppcompat}"
+    implementation "androidx.constraintlayout:constraintlayout:${versions.androidxConstraintlayout}"
+    implementation "androidx.fragment:fragment-ktx:${versions.androidxFragment}"
+    implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.4.0" // For repeateOnLifecycle()
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:${versions.androidxLifecycle}"
+    implementation "androidx.navigation:navigation-fragment-ktx:${versions.androidxNavigation}"
+    implementation "androidx.navigation:navigation-ui-ktx:${versions.androidxNavigation}"
+    implementation "com.squareup.okhttp3:okhttp:${versions.okhttp}"
+
+    debugRuntimeOnly project(':component-debug')
+}
