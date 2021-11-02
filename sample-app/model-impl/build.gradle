@@ -1,7 +1,7 @@
 plugins {
     id 'com.android.library'
     id 'org.jetbrains.kotlin.android'
-    id 'org.jetbrains.kotlin.kapt'
+    id 'com.google.devtools.ksp'
 }
 
 android {
@@ -24,10 +24,8 @@ android {
     }
 }
 
-kapt {
-    arguments {
-        arg("room.schemaLocation", "$projectDir/schemas")
-    }
+ksp {
+    arg("room.schemaLocation", "$projectDir/schemas")
 }
 
 dependencies {
@@ -37,9 +35,9 @@ dependencies {
     implementation project(':component')
     implementation project(':okhttp')
     implementation "androidx.room:room-ktx:${versions.androidxRoom}"
-    kapt "androidx.room:room-compiler:${versions.androidxRoom}"
-    compileOnly "com.google.auto.service:auto-service-annotations:${versions.autoService}"
-    kapt "com.google.auto.service:auto-service:${versions.autoService}"
+    ksp "androidx.room:room-compiler:${versions.androidxRoom}"
+    implementation "com.google.auto.service:auto-service-annotations:${versions.autoService}"
+    ksp "dev.zacsweers.autoservice:auto-service-ksp:${versions.autoServiceKsp}"
 
     testImplementation project(':component-test-mockk')
     testImplementation 'org.jetbrains.kotlin:kotlin-test'
