@@ -55,5 +55,5 @@ class FooActivity : AppCompatActivity() {
 }
 ```
 
-[LifecycleScopeDemoActivity](../sample_app/src/main/java/com/linecorp/lich/sample/lifecyclescope/LifecycleScopeDemoActivity.kt)
+[LifecycleScopeDemoActivity](../sample-app/app/src/main/java/com/linecorp/lich/sample/lifecyclescope/LifecycleScopeDemoActivity.kt)
 also demonstrates the pitfalls of collecting flows with [lifecycleScope](https://developer.android.com/reference/kotlin/androidx/lifecycle/package-summary#lifecyclescope).
