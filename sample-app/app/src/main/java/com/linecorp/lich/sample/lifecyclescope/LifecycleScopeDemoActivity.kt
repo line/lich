@@ -19,6 +19,7 @@ import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.linecorp.lich.component.component
@@ -50,7 +51,7 @@ class LifecycleScopeDemoActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         // DON'T DO THIS!!
-        // A flow backed by a channel is NOT SAFE to collect with `launchWhenStarted`.
+        // A flow backed by a channel is NOT SAFE to collect with `lifecycleScope.launchWhenStarted`.
         // It will keep the underlying flow producer active while emitting items into the buffer
         // in the background, and thus wasting resources.
         // cf. https://link.medium.com/OR5ePKTGthb
@@ -66,12 +67,27 @@ class LifecycleScopeDemoActivity : AppCompatActivity() {
         // `STARTED` and is cancelled when the lifecycle is `STOPPED`.
         // It automatically restarts the block when the lifecycle is `STARTED` again.
         lifecycleScope.launch {
-            lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
                 channelFlowRepository.counterFlow("repeatOn").collect { value ->
                     log("repeatOnLifecycle.collect: value=$value")
                     binding.repeatonlifecycleValue.text = value
                 }
             }
+        }
+
+        // It is also SAFE to collect a flow with `lifecycleScope.launch` + `flow.flowWithLifecycle`.
+        // The upstream flow of `flowWithLifecycle` is cancelled when the lifecycle is `STOPPED`,
+        // and starts collecting again when the lifecycle becomes `STARTED`.
+        // On the other hand, the downstream of `flowWithLifecycle` (i.e. the `.collect {...}` block)
+        // remains active even when the lifecycle is `STOPPED`. Note that this behavior is different
+        // from that of `repeatOnLifecycle` above.
+        lifecycleScope.launch {
+            channelFlowRepository.counterFlow("flowWith")
+                .flowWithLifecycle(lifecycle)
+                .collect { value ->
+                    log("flowWithLifecycle.collect: value=$value")
+                    binding.flowwithlifecycleValue.text = value
+                }
         }
     }
 
