@@ -19,44 +19,27 @@ import android.content.Context
 import android.os.Build
 import com.linecorp.lich.component.DelegatedComponentFactory
 import com.linecorp.lich.sample.BuildConfig
-import okhttp3.Interceptor
-import okhttp3.Interceptor.Chain
 import okhttp3.OkHttpClient
-import okhttp3.Response
 
 /**
  * The actual factory class for [GlobalOkHttpClient].
+ *
+ * This class creates an [OkHttpClient] with an interceptor that sets a `User-Agent` request header.
  *
  * @see com.linecorp.lich.component.ComponentFactory.delegateCreation
  */
 // NOTE: Since this class is instantiated using reflection, it must have a public empty constructor.
 class GlobalOkHttpClientFactory : DelegatedComponentFactory<OkHttpClient>() {
-
-    override fun createComponent(context: Context): OkHttpClient =
-        OkHttpClient.Builder()
-            .addInterceptor(UserAgentInterceptor(buildUserAgent()))
-            .build()
-
-    /**
-     * Builds the default User-Agent value.
-     */
-    private fun buildUserAgent(): String =
-        "LichSample/${BuildConfig.VERSION_NAME} (Android ${Build.VERSION.RELEASE}; ${Build.MODEL})"
-
-    /**
-     * An [Interceptor] that sets the default User-Agent header unless it is explicitly specified in
-     * Request.
-     */
-    private class UserAgentInterceptor(private val userAgent: String) : Interceptor {
-        override fun intercept(chain: Chain): Response {
-            val originalRequest = chain.request()
-            if (originalRequest.header("User-Agent") != null) {
-                return chain.proceed(originalRequest)
-            }
-            val newRequest = originalRequest.newBuilder()
-                .addHeader("User-Agent", userAgent)
-                .build()
-            return chain.proceed(newRequest)
-        }
+    override fun createComponent(context: Context): OkHttpClient {
+        val userAgentValue =
+            "LichSample/${BuildConfig.VERSION_NAME} (Android ${Build.VERSION.RELEASE}; ${Build.MODEL})"
+        return OkHttpClient.Builder()
+            .addInterceptor { chain ->
+                // Sets a `User-Agent` header to the request.
+                val newRequest = chain.request().newBuilder()
+                    .header("User-Agent", userAgentValue)
+                    .build()
+                chain.proceed(newRequest)
+            }.build()
     }
 }
