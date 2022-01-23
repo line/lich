@@ -47,6 +47,7 @@ class ThriftRequestBody<T : TServiceClient>(
     internal val okioTransport: OkioTransport = OkioTransport()
 
     internal var thriftClient: T? = null
+        private set
 
     private var sendBuffer: Buffer? = null
 
