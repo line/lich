@@ -105,7 +105,7 @@ class CallTest {
         server.start()
 
         val request = Request.Builder().url(server.url("/foo")).build()
-        val result = withTimeoutOrNull(200) {
+        val result = withTimeoutOrNull<Nothing>(200) {
             okHttpClient.call(request) { response ->
                 assertTrue(response.isSuccessful)
                 checkNotNull(response.body).bytes()

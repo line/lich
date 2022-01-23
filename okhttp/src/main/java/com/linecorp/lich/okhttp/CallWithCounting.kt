@@ -119,7 +119,7 @@ fun <T> OkHttpClient.callWithCounting(
     throttleMillis: Long = 100L,
     responseHandler: (Response) -> T
 ): Flow<CallState<T>> {
-    val unthrottledFlow = callbackFlow<CallState<T>> {
+    val unthrottledFlow = callbackFlow {
         val countingRequestBody =
             request.takeIf { countUpload }?.body?.let { CountingRequestBody(it, channel) }
         val call = newCall(countingRequestBody?.injectTo(request) ?: request)
