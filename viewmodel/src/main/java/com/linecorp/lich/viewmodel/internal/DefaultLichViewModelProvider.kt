@@ -43,7 +43,7 @@ open class DefaultLichViewModelProvider : LichViewModelProvider {
 
         // First, we always create a BridgeViewModel object as an AndroidX ViewModel.
         val viewModelProvider = ViewModelProvider(viewModelStoreOwner, bridgeViewModelFactory)
-        val bridgeViewModel = viewModelProvider.get(key, BridgeViewModel::class.java)
+        val bridgeViewModel = viewModelProvider[key, BridgeViewModel::class.java]
 
         // Then, populate our ViewModel object to bridgeViewModel.viewModel.
         bridgeViewModel.viewModel?.let { viewModel ->

@@ -40,8 +40,9 @@ dependencies {
     implementation "androidx.appcompat:appcompat:${versions.androidxAppcompat}"
     implementation "androidx.constraintlayout:constraintlayout:${versions.androidxConstraintlayout}"
     implementation "androidx.fragment:fragment-ktx:${versions.androidxFragment}"
-    implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.4.0" // For repeateOnLifecycle()
+    implementation "androidx.lifecycle:lifecycle-runtime-ktx:${versions.androidxLifecycle}"
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:${versions.androidxLifecycle}"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:${versions.androidxLifecycle}" // https://github.com/line/lich/issues/114
     implementation "androidx.navigation:navigation-fragment-ktx:${versions.androidxNavigation}"
     implementation "androidx.navigation:navigation-ui-ktx:${versions.androidxNavigation}"
     implementation "com.squareup.okhttp3:okhttp:${versions.okhttp}"

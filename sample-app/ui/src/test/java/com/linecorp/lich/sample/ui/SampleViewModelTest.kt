@@ -30,19 +30,18 @@ import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.TestCoroutineDispatcher
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 
-@ExperimentalCoroutinesApi // For TestCoroutineDispatcher
+@ExperimentalCoroutinesApi // For UnconfinedTestDispatcher, etc.
 @RunWith(AndroidJUnit4::class)
 class SampleViewModelTest {
-
-    private val testDispatcher = TestCoroutineDispatcher()
 
     private lateinit var context: Context
 
@@ -56,7 +55,7 @@ class SampleViewModelTest {
 
     @Before
     fun setUp() {
-        Dispatchers.setMain(testDispatcher)
+        Dispatchers.setMain(UnconfinedTestDispatcher())
 
         context = ApplicationProvider.getApplicationContext()
 
@@ -76,11 +75,10 @@ class SampleViewModelTest {
     @After
     fun cleanUp() {
         Dispatchers.resetMain()
-        testDispatcher.cleanupTestCoroutines()
     }
 
     @Test
-    fun testLiveData() {
+    fun testLiveData() = runTest {
         mockIsLoading.value = true
 
         val counterTextObserver = sampleViewModel.counterText.observeWithMockk()
@@ -107,28 +105,28 @@ class SampleViewModelTest {
         }
 
     @Test
-    fun loadData() {
+    fun loadData() = runTest {
         sampleViewModel.loadData()
 
         coVerify { mockCounterUseCase.loadCounter("foo") }
     }
 
     @Test
-    fun countUp() {
+    fun countUp() = runTest {
         sampleViewModel.countUp()
 
         coVerify { mockCounterUseCase.changeCounterValue(1) }
     }
 
     @Test
-    fun countDown() {
+    fun countDown() = runTest {
         sampleViewModel.countDown()
 
         coVerify { mockCounterUseCase.changeCounterValue(-1) }
     }
 
     @Test
-    fun deleteCounter() {
+    fun deleteCounter() = runTest {
         sampleViewModel.deleteCounter()
 
         coVerify { mockCounterUseCase.deleteCounter() }

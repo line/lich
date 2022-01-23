@@ -40,8 +40,8 @@ class SavedStatesTest {
             scenario.onActivity { activity ->
                 val fragment = activity.testFragment
 
-                activityViewModel = ViewModelProvider(activity).get(TestViewModel::class.java)
-                fragmentViewModel = ViewModelProvider(fragment).get(TestViewModel::class.java)
+                activityViewModel = ViewModelProvider(activity)[TestViewModel::class.java]
+                fragmentViewModel = ViewModelProvider(fragment)[TestViewModel::class.java]
                 assertNotSame(activityViewModel, fragmentViewModel)
 
                 assertSame(activityViewModel, activity.testViewModel)

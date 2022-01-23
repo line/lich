@@ -34,6 +34,7 @@ dependencies {
     kspAndroidTest project(':savedstate-compiler')
     androidTestImplementation 'org.jetbrains.kotlin:kotlin-test'
     androidTestImplementation "androidx.fragment:fragment-ktx:${versions.androidxFragment}"
+    androidTestImplementation "androidx.lifecycle:lifecycle-viewmodel-ktx:${versions.androidxLifecycle}" // https://github.com/line/lich/issues/114
     androidTestImplementation "androidx.test:runner:${versions.androidxTestRunner}"
     androidTestImplementation "androidx.test.ext:junit:${versions.androidxTestJunit}"
     androidTestImplementation "org.mockito:mockito-android:${versions.mockito}"

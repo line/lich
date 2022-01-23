@@ -29,6 +29,7 @@ import okhttp3.OkHttpClient
  * @see com.linecorp.lich.component.ComponentFactory.delegateCreation
  */
 // NOTE: Since this class is instantiated using reflection, it must have a public empty constructor.
+@Suppress("unused")
 class GlobalOkHttpClientFactory : DelegatedComponentFactory<OkHttpClient>() {
     override fun createComponent(context: Context): OkHttpClient {
         val userAgentValue =
