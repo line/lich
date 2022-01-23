@@ -30,17 +30,19 @@ import java.net.ProtocolException
  * To receive the response of the Thrift call, use [receiveThriftResponse].
  *
  * @param thriftClientFactory A [ThriftClientFactory] to create a TServiceClient for the Thrift call.
- * @param mediaType The [MediaType] for the HTTP request.
  * @param sendFunction A function that calls `send_METHOD(...)` of the TServiceClient.
+ * @param mediaType The [MediaType] for the HTTP request. If omitted, [DefaultMediaType] is used.
  * @see receiveThriftResponse
  */
 class ThriftRequestBody<T : TServiceClient>(
     private val thriftClientFactory: ThriftClientFactory<T>,
-    private val mediaType: MediaType,
-    private val sendFunction: T.() -> Unit
+    private val sendFunction: T.() -> Unit,
+    private val mediaType: MediaType = DefaultMediaType
 ) : RequestBody() {
+    // This is only for binary compatibility. Will be removed in the next release.
+    @Deprecated(message = "For binary compatibility.", level = DeprecationLevel.HIDDEN)
     constructor(thriftClientFactory: ThriftClientFactory<T>, sendFunction: T.() -> Unit) :
-        this(thriftClientFactory, DefaultMediaType, sendFunction)
+        this(thriftClientFactory, sendFunction, DefaultMediaType)
 
     internal val okioTransport: OkioTransport = OkioTransport()
 
