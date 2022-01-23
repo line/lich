@@ -11,8 +11,7 @@ lichLibrary {
 }
 
 dependencies {
-//    implementation project(':okhttp')
-    implementation 'com.linecorp.lich:okhttp:2.4.0'
+    implementation project(':okhttp')
     api "com.squareup.okhttp3:okhttp:${versions.okhttp}"
     api("org.apache.thrift:libthrift:${versions.thrift}") {
         exclude group: 'org.apache.httpcomponents'
