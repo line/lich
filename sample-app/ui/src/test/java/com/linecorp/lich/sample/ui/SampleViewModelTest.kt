@@ -30,8 +30,9 @@ import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.After
@@ -55,7 +56,7 @@ class SampleViewModelTest {
 
     @Before
     fun setUp() {
-        Dispatchers.setMain(UnconfinedTestDispatcher())
+        Dispatchers.setMain(StandardTestDispatcher())
 
         context = ApplicationProvider.getApplicationContext()
 
@@ -107,6 +108,7 @@ class SampleViewModelTest {
     @Test
     fun loadData() = runTest {
         sampleViewModel.loadData()
+        runCurrent()
 
         coVerify { mockCounterUseCase.loadCounter("foo") }
     }
@@ -114,6 +116,7 @@ class SampleViewModelTest {
     @Test
     fun countUp() = runTest {
         sampleViewModel.countUp()
+        runCurrent()
 
         coVerify { mockCounterUseCase.changeCounterValue(1) }
     }
@@ -121,6 +124,7 @@ class SampleViewModelTest {
     @Test
     fun countDown() = runTest {
         sampleViewModel.countDown()
+        runCurrent()
 
         coVerify { mockCounterUseCase.changeCounterValue(-1) }
     }
@@ -128,6 +132,7 @@ class SampleViewModelTest {
     @Test
     fun deleteCounter() = runTest {
         sampleViewModel.deleteCounter()
+        runCurrent()
 
         coVerify { mockCounterUseCase.deleteCounter() }
     }
