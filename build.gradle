@@ -1,6 +1,6 @@
 buildscript {
     // Make sure to use the same AGP as the main project.
-    def androidGradlePlugin = '7.0.4'
+    def androidGradlePlugin = '7.1.1'
     /**
      * Calculates the right lint version for the provided AGP version. AGP is tightly coupled with
      * Android Lint because it implements LintClient. The formula to calculate the lint version
