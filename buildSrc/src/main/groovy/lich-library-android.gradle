@@ -2,21 +2,20 @@ plugins {
     id 'lich-library-common'
 }
 
+android {
+    publishing {
+        singleVariant("release") {
+            withSourcesJar()
+            withJavadocJar()
+        }
+    }
+}
+
 afterEvaluate {
-    task sourcesJar(type: Jar) {
-        archiveClassifier = 'sources'
-        from android.sourceSets.main.java.srcDirs
-    }
-    task javadocJar(type: Jar) {
-        archiveClassifier = 'javadoc'
-        from dokkaJavadoc
-    }
     publishing {
         publications {
             maven(MavenPublication) {
                 from components.release
-                artifact sourcesJar
-                artifact javadocJar
             }
         }
     }

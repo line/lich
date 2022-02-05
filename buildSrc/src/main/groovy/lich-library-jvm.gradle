@@ -2,21 +2,16 @@ plugins {
     id 'lich-library-common'
 }
 
+java {
+    withSourcesJar()
+    withJavadocJar()
+}
+
 afterEvaluate {
-    task sourcesJar(type: Jar) {
-        archiveClassifier = 'sources'
-        from sourceSets.main.allSource
-    }
-    task javadocJar(type: Jar) {
-        archiveClassifier = 'javadoc'
-        from dokkaJavadoc
-    }
     publishing {
         publications {
             maven(MavenPublication) {
                 from components.java
-                artifact sourcesJar
-                artifact javadocJar
             }
         }
     }
