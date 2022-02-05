@@ -12,11 +12,11 @@ lichLibrary {
 }
 
 android {
-    compileSdkVersion versions.compileSdk
+    compileSdk libs.versions.compileSdk.get().toInteger()
 
     defaultConfig {
-        minSdkVersion versions.minSdk
-        targetSdkVersion versions.targetSdk
+        minSdk 14
+        targetSdk libs.versions.targetSdk.get().toInteger()
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
         consumerProguardFiles 'proguard-rules.pro'
     }
@@ -30,16 +30,10 @@ android {
 }
 
 dependencies {
-    //noinspection KtxExtensionAvailable
-    compileOnly "androidx.fragment:fragment:${versions.androidxFragment}"
+    compileOnly libs.androidx.fragment
     lintPublish project(':static-analysis')
 
-    testImplementation 'org.jetbrains.kotlin:kotlin-test'
-    testImplementation "androidx.test:runner:${versions.androidxTestRunner}"
-    testImplementation "androidx.test.ext:junit:${versions.androidxTestJunit}"
-    testImplementation "org.robolectric:robolectric:${versions.robolectric}"
+    testImplementation libs.bundles.test.robolectric
 
-    androidTestImplementation 'org.jetbrains.kotlin:kotlin-test'
-    androidTestImplementation "androidx.test:runner:${versions.androidxTestRunner}"
-    androidTestImplementation "androidx.test.ext:junit:${versions.androidxTestJunit}"
+    androidTestImplementation libs.bundles.test.instrumentation
 }

@@ -11,7 +11,7 @@ lichLibrary {
 }
 
 dependencies {
-    implementation "com.google.devtools.ksp:symbol-processing-api:${versions.ksp}"
-    implementation "org.jetbrains.kotlinx:kotlinx-metadata-jvm:${versions.kotlinMetadataJvm}"
-    implementation "com.squareup:kotlinpoet:${versions.kotlinPoet}"
+    implementation libs.ksp.api
+    implementation libs.kotlin.metadata.jvm
+    implementation libs.kotlinpoet
 }

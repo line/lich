@@ -13,25 +13,22 @@ lichLibrary {
 }
 
 android {
-    compileSdkVersion versions.compileSdk
+    compileSdk libs.versions.compileSdk.get().toInteger()
 
     defaultConfig {
-        minSdkVersion versions.minSdk
-        targetSdkVersion versions.targetSdk
+        minSdk 14
+        targetSdk libs.versions.targetSdk.get().toInteger()
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
     }
 }
 
 dependencies {
-    api "androidx.lifecycle:lifecycle-viewmodel-savedstate:${versions.androidxLifecycle}"
-    //noinspection KtxExtensionAvailable
-    compileOnly "androidx.fragment:fragment:${versions.androidxFragment}"
+    api libs.androidx.lifecycle.viewmodel.savedstate
+    compileOnly libs.androidx.fragment
     lintPublish project(':static-analysis')
 
     kspAndroidTest project(':savedstate-compiler')
-    androidTestImplementation 'org.jetbrains.kotlin:kotlin-test'
-    androidTestImplementation "androidx.fragment:fragment-ktx:${versions.androidxFragment}"
-    androidTestImplementation "androidx.lifecycle:lifecycle-viewmodel-ktx:${versions.androidxLifecycle}" // https://github.com/line/lich/issues/114
-    androidTestImplementation "androidx.test:runner:${versions.androidxTestRunner}"
-    androidTestImplementation "androidx.test.ext:junit:${versions.androidxTestJunit}"
+    androidTestImplementation libs.bundles.test.instrumentation
+    androidTestImplementation libs.androidx.fragment.ktx
+    androidTestImplementation libs.androidx.lifecycle.viewmodel.ktx // https://github.com/line/lich/issues/114
 }

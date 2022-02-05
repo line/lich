@@ -12,12 +12,12 @@ lichLibrary {
 }
 
 android {
-    compileSdkVersion versions.compileSdk
+    compileSdk libs.versions.compileSdk.get().toInteger()
 
     defaultConfig {
         // OkHttp 3.13+ no longer supports Android 4.x.
-        minSdkVersion 21
-        targetSdkVersion versions.targetSdk
+        minSdk 21
+        targetSdk libs.versions.targetSdk.get().toInteger()
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
         consumerProguardFiles 'proguard-rules.pro'
     }
@@ -25,13 +25,11 @@ android {
 
 dependencies {
     implementation project(':thrift')
-    implementation "com.linkedin.dexmaker:dexmaker:${versions.dexmaker}"
+    implementation libs.dexmaker
 
     androidTestImplementation project(':sample_thrift')
-    androidTestImplementation 'org.jetbrains.kotlin:kotlin-test'
-    androidTestImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:${versions.kotlinCoroutines}"
-    androidTestImplementation "androidx.test:runner:${versions.androidxTestRunner}"
-    androidTestImplementation "androidx.test.ext:junit:${versions.androidxTestJunit}"
-    androidTestImplementation "io.mockk:mockk-android:${versions.mockk}"
-    androidTestImplementation "com.squareup.okhttp3:mockwebserver:${versions.okhttp}"
+    androidTestImplementation libs.bundles.test.instrumentation
+    androidTestImplementation libs.kotlin.coroutines.android
+    androidTestImplementation libs.mockk.android
+    androidTestImplementation libs.okhttp.mockwebserver
 }
