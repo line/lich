@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    compileSdkVersion versions.compileSdk
+    compileSdk libs.versions.compileSdk.get().toInteger()
 
     defaultConfig {
-        minSdkVersion 21
-        targetSdkVersion versions.targetSdk
+        minSdk 21
+        targetSdk libs.versions.targetSdk.get().toInteger()
         versionCode 1
         versionName "1.0"
     }
@@ -22,6 +22,7 @@ android {
     }
 
     buildFeatures {
+        buildConfig true
         viewBinding true
     }
 }
@@ -36,16 +37,16 @@ dependencies {
     implementation project(':viewmodel')
     implementation project(':savedstate')
     ksp project(':savedstate-compiler')
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:${versions.kotlinCoroutines}"
-    implementation "androidx.appcompat:appcompat:${versions.androidxAppcompat}"
-    implementation "androidx.constraintlayout:constraintlayout:${versions.androidxConstraintlayout}"
-    implementation "androidx.fragment:fragment-ktx:${versions.androidxFragment}"
-    implementation "androidx.lifecycle:lifecycle-runtime-ktx:${versions.androidxLifecycle}"
-    implementation "androidx.lifecycle:lifecycle-livedata-ktx:${versions.androidxLifecycle}"
-    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:${versions.androidxLifecycle}" // https://github.com/line/lich/issues/114
-    implementation "androidx.navigation:navigation-fragment-ktx:${versions.androidxNavigation}"
-    implementation "androidx.navigation:navigation-ui-ktx:${versions.androidxNavigation}"
-    implementation "com.squareup.okhttp3:okhttp:${versions.okhttp}"
+    implementation libs.kotlin.coroutines.android
+    implementation libs.androidx.appcompat
+    implementation libs.androidx.constraintlayout
+    implementation libs.androidx.fragment.ktx
+    implementation libs.androidx.lifecycle.livedata.ktx
+    implementation libs.androidx.lifecycle.runtime.ktx
+    implementation libs.androidx.lifecycle.viewmodel.ktx // https://github.com/line/lich/issues/114
+    implementation libs.androidx.navigation.fragment.ktx
+    implementation libs.androidx.navigation.ui.ktx
+    implementation libs.okhttp
 
     debugRuntimeOnly project(':component-debug')
 }

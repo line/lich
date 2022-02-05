@@ -12,14 +12,14 @@ lichLibrary {
 
 dependencies {
     implementation project(':okhttp')
-    api "com.squareup.okhttp3:okhttp:${versions.okhttp}"
-    api("org.apache.thrift:libthrift:${versions.thrift}") {
+    api libs.okhttp
+    api(libs.libthrift) {
         exclude group: 'org.apache.httpcomponents'
         exclude group: 'org.slf4j'
     }
 
     testImplementation project(':sample_thrift')
-    testImplementation 'org.jetbrains.kotlin:kotlin-test'
-    testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:${versions.kotlinCoroutines}"
-    testImplementation "com.squareup.okhttp3:mockwebserver:${versions.okhttp}"
+    testImplementation libs.kotlin.test
+    testImplementation libs.kotlin.coroutines.core
+    testImplementation libs.okhttp.mockwebserver
 }

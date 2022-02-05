@@ -11,9 +11,9 @@ lichLibrary {
 }
 
 dependencies {
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:${versions.kotlinCoroutines}"
-    api "com.squareup.okhttp3:okhttp:${versions.okhttp}"
+    api libs.okhttp
+    implementation libs.kotlin.coroutines.core
 
-    testImplementation 'org.jetbrains.kotlin:kotlin-test'
-    testImplementation "com.squareup.okhttp3:mockwebserver:${versions.okhttp}"
+    testImplementation libs.kotlin.test
+    testImplementation libs.okhttp.mockwebserver
 }

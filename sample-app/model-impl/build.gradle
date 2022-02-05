@@ -5,15 +5,11 @@ plugins {
 }
 
 android {
-    compileSdkVersion versions.compileSdk
+    compileSdk libs.versions.compileSdk.get().toInteger()
 
     defaultConfig {
-        minSdkVersion 21
-        targetSdkVersion versions.targetSdk
-    }
-
-    buildFeatures {
-        buildConfig false
+        minSdk 21
+        targetSdk libs.versions.targetSdk.get().toInteger()
     }
 
     testOptions {
@@ -34,16 +30,13 @@ dependencies {
 
     implementation project(':component')
     implementation project(':okhttp')
-    implementation "androidx.room:room-ktx:${versions.androidxRoom}"
-    ksp "androidx.room:room-compiler:${versions.androidxRoom}"
-    implementation "com.google.auto.service:auto-service-annotations:${versions.autoService}"
-    ksp "dev.zacsweers.autoservice:auto-service-ksp:${versions.autoServiceKsp}"
+    implementation libs.androidx.room.ktx
+    ksp libs.androidx.room.compiler
+    implementation libs.auto.service.annotations
+    ksp libs.auto.service.ksp
 
     testImplementation project(':component-test-mockk')
-    testImplementation 'org.jetbrains.kotlin:kotlin-test'
-    testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:${versions.kotlinCoroutines}"
-    testImplementation "androidx.test:runner:${versions.androidxTestRunner}"
-    testImplementation "androidx.test.ext:junit:${versions.androidxTestJunit}"
-    testImplementation "io.mockk:mockk:${versions.mockk}"
-    testImplementation "org.robolectric:robolectric:${versions.robolectric}"
+    testImplementation libs.bundles.test.robolectric
+    testImplementation libs.kotlin.coroutines.test
+    testImplementation libs.mockk
 }

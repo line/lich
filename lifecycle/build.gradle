@@ -12,25 +12,19 @@ lichLibrary {
 }
 
 android {
-    compileSdkVersion versions.compileSdk
+    compileSdk libs.versions.compileSdk.get().toInteger()
 
     defaultConfig {
-        minSdkVersion versions.minSdk
-        targetSdkVersion versions.targetSdk
+        minSdk 14
+        targetSdk libs.versions.targetSdk.get().toInteger()
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
-    }
-
-    buildFeatures {
-        buildConfig = false
     }
 }
 
 dependencies {
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:${versions.kotlinCoroutines}"
-    implementation "androidx.lifecycle:lifecycle-common:${versions.androidxLifecycle}"
+    implementation libs.kotlin.coroutines.android
+    implementation libs.androidx.lifecycle.common
 
-    androidTestImplementation 'org.jetbrains.kotlin:kotlin-test'
-    androidTestImplementation "androidx.fragment:fragment-ktx:${versions.androidxFragment}"
-    androidTestImplementation "androidx.test:runner:${versions.androidxTestRunner}"
-    androidTestImplementation "androidx.test.ext:junit:${versions.androidxTestJunit}"
+    androidTestImplementation libs.bundles.test.instrumentation
+    androidTestImplementation libs.androidx.fragment.ktx
 }

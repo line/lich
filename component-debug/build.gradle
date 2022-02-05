@@ -12,15 +12,11 @@ lichLibrary {
 }
 
 android {
-    compileSdkVersion versions.compileSdk
+    compileSdk libs.versions.compileSdk.get().toInteger()
 
     defaultConfig {
-        minSdkVersion versions.minSdk
-        targetSdkVersion versions.targetSdk
-    }
-
-    buildFeatures {
-        buildConfig = false
+        minSdk 14
+        targetSdk libs.versions.targetSdk.get().toInteger()
     }
 
     testOptions {
@@ -34,8 +30,5 @@ android {
 dependencies {
     api project(':component')
 
-    testImplementation 'org.jetbrains.kotlin:kotlin-test'
-    testImplementation "androidx.test:runner:${versions.androidxTestRunner}"
-    testImplementation "androidx.test.ext:junit:${versions.androidxTestJunit}"
-    testImplementation "org.robolectric:robolectric:${versions.robolectric}"
+    testImplementation libs.bundles.test.robolectric
 }

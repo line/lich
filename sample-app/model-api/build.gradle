@@ -4,19 +4,15 @@ plugins {
 }
 
 android {
-    compileSdkVersion versions.compileSdk
+    compileSdk libs.versions.compileSdk.get().toInteger()
 
     defaultConfig {
-        minSdkVersion 21
-        targetSdkVersion versions.targetSdk
-    }
-
-    buildFeatures {
-        buildConfig false
+        minSdk 21
+        targetSdk libs.versions.targetSdk.get().toInteger()
     }
 }
 
 dependencies {
     implementation project(':component')
-    implementation "androidx.room:room-ktx:${versions.androidxRoom}"
+    implementation libs.androidx.room.ktx
 }
