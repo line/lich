@@ -12,10 +12,6 @@ android {
         targetSdkVersion versions.targetSdk
     }
 
-    buildFeatures {
-        buildConfig false
-    }
-
     testOptions {
         unitTests {
             // For Robolectric. See: http://robolectric.org/getting-started/
