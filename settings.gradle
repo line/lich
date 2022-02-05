@@ -4,6 +4,7 @@ pluginManagement {
         google()
         mavenCentral()
     }
+    includeBuild 'publishing'
 }
 enableFeaturePreview("VERSION_CATALOGS")
 dependencyResolutionManagement {
