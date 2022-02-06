@@ -1,0 +1,22 @@
+plugins {
+    id 'lich-library-common'
+}
+
+android {
+    publishing {
+        singleVariant("release") {
+            withSourcesJar()
+            withJavadocJar()
+        }
+    }
+}
+
+afterEvaluate {
+    publishing {
+        publications {
+            maven(MavenPublication) {
+                from components.release
+            }
+        }
+    }
+}

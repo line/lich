@@ -1,0 +1,18 @@
+plugins {
+    id 'lich-library-common'
+}
+
+java {
+    withSourcesJar()
+    withJavadocJar()
+}
+
+afterEvaluate {
+    publishing {
+        publications {
+            maven(MavenPublication) {
+                from components.java
+            }
+        }
+    }
+}
