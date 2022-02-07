@@ -1,6 +1,7 @@
 package com.linecorp.lich.static_analysis
 
 import com.android.tools.lint.client.api.IssueRegistry
+import com.android.tools.lint.client.api.Vendor
 import com.android.tools.lint.detector.api.CURRENT_API
 import com.android.tools.lint.detector.api.Issue
 import com.linecorp.lich.static_analysis.detectors.LichFactoryDetector
@@ -16,5 +17,11 @@ class LichIssueRegistry : IssueRegistry() {
         LichFactoryDetector.OBJECT_ISSUE
     )
 
-    override val api: Int = CURRENT_API
+    override val api: Int
+        get() = CURRENT_API
+
+    override val vendor: Vendor = Vendor(
+        vendorName = "LINE Corporation",
+        feedbackUrl = "https://github.com/line/lich/issues"
+    )
 }
