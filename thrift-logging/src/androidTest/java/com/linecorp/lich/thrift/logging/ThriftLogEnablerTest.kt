@@ -22,8 +22,6 @@ import com.linecorp.lich.sample.thrift.FooParam
 import com.linecorp.lich.sample.thrift.FooResponse
 import com.linecorp.lich.sample.thrift.FooService
 import com.linecorp.lich.thrift.OkioTransport
-import io.mockk.mockk
-import io.mockk.verifySequence
 import kotlinx.coroutines.runBlocking
 import okhttp3.OkHttpClient
 import okhttp3.mockwebserver.MockResponse
@@ -38,6 +36,9 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.kotlin.inOrder
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.verifyNoMoreInteractions
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 
@@ -56,7 +57,7 @@ class ThriftLogEnablerTest {
     fun setUp() {
         server = MockWebServer()
         okHttpClient = OkHttpClient()
-        thriftLogger = mockk(relaxUnitFun = true)
+        thriftLogger = mock()
         thriftLogEnabler =
             ThriftLogEnabler(ApplicationProvider.getApplicationContext(), thriftLogger)
     }
@@ -74,20 +75,21 @@ class ThriftLogEnablerTest {
 
         newClient().ping()
 
-        verifySequence {
-            thriftLogger.logSend(
+        thriftLogger.inOrder {
+            verify().logSend(
                 "com.linecorp.lich.sample.thrift",
                 "FooService",
                 "ping",
                 FooService.ping_args()
             )
-            thriftLogger.logReceive(
+            verify().logReceive(
                 "com.linecorp.lich.sample.thrift",
                 "FooService",
                 "ping",
                 result
             )
         }
+        verifyNoMoreInteractions(thriftLogger)
     }
 
     @Test
@@ -103,14 +105,15 @@ class ThriftLogEnablerTest {
             assertEquals(exception.message, e.message)
         }
 
-        verifySequence {
-            thriftLogger.logSend(
+        thriftLogger.inOrder {
+            verify().logSend(
                 "com.linecorp.lich.sample.thrift",
                 "FooService",
                 "ping",
                 FooService.ping_args()
             )
         }
+        verifyNoMoreInteractions(thriftLogger)
     }
 
     @Test
@@ -132,20 +135,21 @@ class ThriftLogEnablerTest {
 
         assertEquals(fooResponse, actualResponse)
 
-        verifySequence {
-            thriftLogger.logSend(
+        thriftLogger.inOrder {
+            verify().logSend(
                 "com.linecorp.lich.sample.thrift",
                 "FooService",
                 "callFoo",
                 FooService.callFoo_args(123, "foobar", fooParam)
             )
-            thriftLogger.logReceive(
+            verify().logReceive(
                 "com.linecorp.lich.sample.thrift",
                 "FooService",
                 "callFoo",
                 result
             )
         }
+        verifyNoMoreInteractions(thriftLogger)
     }
 
     @Test
@@ -165,20 +169,21 @@ class ThriftLogEnablerTest {
             assertEquals(fooException, e)
         }
 
-        verifySequence {
-            thriftLogger.logSend(
+        thriftLogger.inOrder {
+            verify().logSend(
                 "com.linecorp.lich.sample.thrift",
                 "FooService",
                 "callFoo",
                 FooService.callFoo_args(123, "foobar", fooParam)
             )
-            thriftLogger.logReceive(
+            verify().logReceive(
                 "com.linecorp.lich.sample.thrift",
                 "FooService",
                 "callFoo",
                 result
             )
         }
+        verifyNoMoreInteractions(thriftLogger)
     }
 
     private fun newClient(): LoggingFooServiceClient =

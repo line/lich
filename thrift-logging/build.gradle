@@ -30,6 +30,7 @@ dependencies {
     androidTestImplementation project(':sample_thrift')
     androidTestImplementation libs.bundles.test.instrumentation
     androidTestImplementation libs.kotlin.coroutines.android
-    androidTestImplementation libs.mockk.android
+    androidTestImplementation libs.mockito.android
+    androidTestImplementation libs.mockito.kotlin
     androidTestImplementation libs.okhttp.mockwebserver
 }

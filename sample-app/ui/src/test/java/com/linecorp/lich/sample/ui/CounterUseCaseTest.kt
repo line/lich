@@ -18,16 +18,19 @@ package com.linecorp.lich.sample.ui
 import android.content.Context
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.linecorp.lich.component.test.mockk.mockComponent
+import com.linecorp.lich.component.test.mockitokotlin.mockComponent
 import com.linecorp.lich.sample.model.entity.Counter
 import com.linecorp.lich.sample.model.repository.CounterRepository
 import com.linecorp.lich.sample.model.repository.CounterResult
-import io.mockk.coEvery
-import io.mockk.coVerify
 import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.kotlin.any
+import org.mockito.kotlin.doAnswer
+import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.only
+import org.mockito.kotlin.verifyBlocking
 import kotlin.test.assertEquals
 
 @RunWith(AndroidJUnit4::class)
@@ -43,7 +46,7 @@ class CounterUseCaseTest {
     @Test
     fun loadCounterSuccess() {
         mockComponent(CounterRepository) {
-            coEvery { getCounter("foo") } returns
+            onBlocking { getCounter("foo") } doReturn
                 CounterResult.Success(Counter("foo", 42))
         }
         val counterUseCase = CounterUseCase(context)
@@ -58,7 +61,7 @@ class CounterUseCaseTest {
     @Test
     fun loadCounterNetworkError() {
         mockComponent(CounterRepository) {
-            coEvery { getCounter("foo") } returns CounterResult.NetworkError
+            onBlocking { getCounter("foo") } doReturn CounterResult.NetworkError
         }
         val counterUseCase = CounterUseCase(context)
 
@@ -73,7 +76,7 @@ class CounterUseCaseTest {
     fun loadCounterIsLoading() {
         val counterUseCase = CounterUseCase(context)
         mockComponent(CounterRepository) {
-            coEvery { getCounter(any()) } answers {
+            onBlocking { getCounter(any()) } doAnswer {
                 assertEquals(true, counterUseCase.isLoading.value)
                 CounterResult.NetworkError
             }
@@ -88,7 +91,7 @@ class CounterUseCaseTest {
 
     @Test
     fun changeCounterValue() {
-        val mockCounterRepository = mockComponent(CounterRepository, relaxUnitFun = true)
+        val mockCounterRepository = mockComponent(CounterRepository)
         val counterUseCase = CounterUseCase(context)
         counterUseCase.liveCounter.value = Counter("foo", 42)
 
@@ -96,20 +99,20 @@ class CounterUseCaseTest {
 
         val expected = Counter("foo", 43)
         assertEquals(expected, counterUseCase.liveCounter.value)
-        coVerify(exactly = 1) { mockCounterRepository.storeCounter(expected) }
+        verifyBlocking(mockCounterRepository, only()) { storeCounter(expected) }
     }
 
     @Test
     fun deleteCounter() {
-        val mockCounterRepository = mockComponent(CounterRepository, relaxUnitFun = true)
+        val mockCounterRepository = mockComponent(CounterRepository)
         val counterUseCase = CounterUseCase(context)
         counterUseCase.liveCounter.value = Counter("foo", 42)
 
         runBlocking { counterUseCase.deleteCounter() }
 
         assertEquals(null, counterUseCase.liveCounter.value)
-        coVerify(exactly = 1) {
-            mockCounterRepository.deleteCounter(Counter("foo", 42))
+        verifyBlocking(mockCounterRepository, only()) {
+            deleteCounter(Counter("foo", 42))
         }
     }
 }

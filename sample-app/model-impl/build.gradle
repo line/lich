@@ -35,8 +35,9 @@ dependencies {
     implementation libs.auto.service.annotations
     ksp libs.auto.service.ksp
 
-    testImplementation project(':component-test-mockk')
+    testImplementation project(':component-test-mockitokotlin')
     testImplementation libs.bundles.test.robolectric
     testImplementation libs.kotlin.coroutines.test
-    testImplementation libs.mockk
+    testImplementation libs.mockito.inline
+    testImplementation libs.mockito.kotlin
 }
