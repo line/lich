@@ -23,11 +23,6 @@ import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.linecorp.lich.sample.model.entity.Counter
 import com.linecorp.lich.savedstate.createSavedStateHandleForTesting
-import io.mockk.coVerify
-import io.mockk.confirmVerified
-import io.mockk.every
-import io.mockk.mockk
-import io.mockk.verify
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -39,6 +34,11 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.verify
+import org.mockito.kotlin.verifyBlocking
+import org.mockito.kotlin.verifyNoMoreInteractions
 
 @ExperimentalCoroutinesApi // For UnconfinedTestDispatcher, etc.
 @RunWith(AndroidJUnit4::class)
@@ -62,9 +62,9 @@ class SampleViewModelTest {
 
         mockLiveCounter = MutableLiveData(null)
         mockIsLoading = MutableLiveData(false)
-        mockCounterUseCase = mockk(relaxUnitFun = true) {
-            every { liveCounter } returns mockLiveCounter
-            every { isLoading } returns mockIsLoading
+        mockCounterUseCase = mock {
+            on { liveCounter } doReturn mockLiveCounter
+            on { isLoading } doReturn mockIsLoading
         }
 
         val savedState = createSavedStateHandleForTesting(
@@ -82,26 +82,26 @@ class SampleViewModelTest {
     fun testLiveData() = runTest {
         mockIsLoading.value = true
 
-        val counterTextObserver = sampleViewModel.counterText.observeWithMockk()
-        val isOperationEnabledObserver = sampleViewModel.isOperationEnabled.observeWithMockk()
-        val isLoadingObserver = sampleViewModel.isLoading.observeWithMockk()
+        val counterTextObserver = sampleViewModel.counterText.observeWithMock()
+        val isOperationEnabledObserver = sampleViewModel.isOperationEnabled.observeWithMock()
+        val isLoadingObserver = sampleViewModel.isLoading.observeWithMock()
 
-        verify(exactly = 1) { counterTextObserver.onChanged("No value.") }
-        verify(exactly = 1) { isOperationEnabledObserver.onChanged(false) }
-        verify(exactly = 1) { isLoadingObserver.onChanged(true) }
-        confirmVerified(counterTextObserver, isOperationEnabledObserver, isLoadingObserver)
+        verify(counterTextObserver).onChanged("No value.")
+        verify(isOperationEnabledObserver).onChanged(false)
+        verify(isLoadingObserver).onChanged(true)
+        verifyNoMoreInteractions(counterTextObserver, isOperationEnabledObserver, isLoadingObserver)
 
         mockLiveCounter.value = Counter("foo", 42)
         mockIsLoading.value = false
 
-        verify(exactly = 1) { counterTextObserver.onChanged("42") }
-        verify(exactly = 1) { isOperationEnabledObserver.onChanged(true) }
-        verify(exactly = 1) { isLoadingObserver.onChanged(false) }
-        confirmVerified(counterTextObserver, isOperationEnabledObserver, isLoadingObserver)
+        verify(counterTextObserver).onChanged("42")
+        verify(isOperationEnabledObserver).onChanged(true)
+        verify(isLoadingObserver).onChanged(false)
+        verifyNoMoreInteractions(counterTextObserver, isOperationEnabledObserver, isLoadingObserver)
     }
 
-    private fun <T> LiveData<T>.observeWithMockk(): Observer<T> =
-        mockk<Observer<T>>(relaxUnitFun = true).also {
+    private fun <T> LiveData<T>.observeWithMock(): Observer<T> =
+        mock<Observer<T>>().also {
             this.observeForever(it)
         }
 
@@ -110,7 +110,7 @@ class SampleViewModelTest {
         sampleViewModel.loadData()
         runCurrent()
 
-        coVerify { mockCounterUseCase.loadCounter("foo") }
+        verifyBlocking(mockCounterUseCase) { loadCounter("foo") }
     }
 
     @Test
@@ -118,7 +118,7 @@ class SampleViewModelTest {
         sampleViewModel.countUp()
         runCurrent()
 
-        coVerify { mockCounterUseCase.changeCounterValue(1) }
+        verifyBlocking(mockCounterUseCase) { changeCounterValue(1) }
     }
 
     @Test
@@ -126,7 +126,7 @@ class SampleViewModelTest {
         sampleViewModel.countDown()
         runCurrent()
 
-        coVerify { mockCounterUseCase.changeCounterValue(-1) }
+        verifyBlocking(mockCounterUseCase) { changeCounterValue(-1) }
     }
 
     @Test
@@ -134,6 +134,6 @@ class SampleViewModelTest {
         sampleViewModel.deleteCounter()
         runCurrent()
 
-        coVerify { mockCounterUseCase.deleteCounter() }
+        verifyBlocking(mockCounterUseCase) { deleteCounter() }
     }
 }

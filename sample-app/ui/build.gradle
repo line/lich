@@ -37,10 +37,11 @@ dependencies {
     implementation libs.androidx.constraintlayout
     implementation libs.androidx.lifecycle.livedata.ktx
 
-    testImplementation project(':component-test-mockk')
-    testImplementation project(':viewmodel-test-mockk')
+    testImplementation project(':component-test-mockitokotlin')
+    testImplementation project(':viewmodel-test-mockitokotlin')
     testImplementation libs.bundles.test.robolectric
     testImplementation libs.kotlin.coroutines.test
     testImplementation libs.androidx.test.espresso.core
-    testImplementation libs.mockk
+    testImplementation libs.mockito.inline
+    testImplementation libs.mockito.kotlin
 }
