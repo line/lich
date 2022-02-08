@@ -39,10 +39,6 @@ class ThriftRequestBody<T : TServiceClient>(
     private val sendFunction: T.() -> Unit,
     private val mediaType: MediaType = DefaultMediaType
 ) : RequestBody() {
-    // This is only for binary compatibility. Will be removed in the next release.
-    @Deprecated(message = "For binary compatibility.", level = DeprecationLevel.HIDDEN)
-    constructor(thriftClientFactory: ThriftClientFactory<T>, sendFunction: T.() -> Unit) :
-        this(thriftClientFactory, sendFunction, DefaultMediaType)
 
     internal val okioTransport: OkioTransport = OkioTransport()
 
