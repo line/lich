@@ -30,6 +30,5 @@ dependencies {
     kspAndroidTest project(':savedstate-compiler')
     androidTestImplementation libs.bundles.test.instrumentation
     androidTestImplementation libs.androidx.fragment.ktx
-    androidTestImplementation libs.androidx.lifecycle.viewmodel.ktx // https://github.com/line/lich/issues/114
     androidTestImplementation libs.mockk.android
 }
