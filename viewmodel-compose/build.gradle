@@ -1,0 +1,42 @@
+plugins {
+    id 'com.android.library'
+    id 'org.jetbrains.kotlin.android'
+    id 'lich-library-android'
+}
+
+lichLibrary {
+    version = VERSION_NAME_VIEWMODEL
+    name = 'Lich ViewModel (for Jetpack Compose)'
+    description = 'Lightweight framework for managing ViewModels.'
+    url = 'https://github.com/line/lich/tree/master/viewmodel'
+}
+
+android {
+    compileSdk libs.versions.compileSdk.get().toInteger()
+
+    defaultConfig {
+        minSdk 21
+        targetSdk libs.versions.targetSdk.get().toInteger()
+        testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
+    }
+
+    buildFeatures {
+        compose true
+    }
+
+    composeOptions {
+        kotlinCompilerExtensionVersion libs.versions.compose.get()
+    }
+}
+
+dependencies {
+    api project(':viewmodel')
+    implementation libs.compose.ui
+    implementation libs.androidx.lifecycle.viewmodel.compose
+
+    androidTestImplementation project(':savedstate')
+    androidTestImplementation libs.bundles.test.instrumentation
+    androidTestImplementation libs.compose.material
+    androidTestImplementation libs.compose.ui.test.junit4
+    androidTestImplementation libs.androidx.navigation.compose
+}
