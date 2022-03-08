@@ -1,0 +1,8 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.linecorp.lich.component.compose">
+
+    <application>
+        <activity android:name=".LichComponentTest$TestActivity" />
+    </application>
+
+</manifest>

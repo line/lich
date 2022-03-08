@@ -15,6 +15,7 @@ dependencyResolutionManagement {
 }
 rootProject.name = "Lich"
 include ':component'
+include ':component-compose'
 include ':component-debug'
 include ':component-test'
 include ':component-test-mockitokotlin'
