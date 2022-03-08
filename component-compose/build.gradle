@@ -1,0 +1,42 @@
+plugins {
+    id 'com.android.library'
+    id 'org.jetbrains.kotlin.android'
+    id 'lich-library-android'
+}
+
+lichLibrary {
+    version = VERSION_NAME_COMPONENT
+    name = 'Lich Component (for Jetpack Compose)'
+    description = 'Lightweight framework for managing singleton components on Android apps.'
+    url = 'https://github.com/line/lich/tree/master/component'
+}
+
+android {
+    compileSdk libs.versions.compileSdk.get().toInteger()
+
+    defaultConfig {
+        minSdk 21
+        targetSdk libs.versions.targetSdk.get().toInteger()
+        testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
+    }
+
+    buildFeatures {
+        compose true
+    }
+
+    composeOptions {
+        kotlinCompilerExtensionVersion libs.versions.compose.get()
+    }
+}
+
+dependencies {
+    api project(':component')
+    implementation libs.compose.ui
+
+    androidTestImplementation libs.bundles.test.instrumentation
+    androidTestImplementation libs.compose.material
+    androidTestImplementation libs.compose.ui.test.junit4
+    // Workaround for https://github.com/Kotlin/kotlinx.coroutines/blob/master/kotlinx-coroutines-debug/README.md#build-failures-due-to-duplicate-resource-files
+    // This issue seems to be fixed in Kotlin Coroutines 1.6.
+    androidTestImplementation libs.kotlin.coroutines.test
+}
