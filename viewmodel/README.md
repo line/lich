@@ -18,6 +18,8 @@ Add the following entries to your `build.gradle` file.
 ```groovy
 dependencies {
     implementation 'com.linecorp.lich:viewmodel:x.x.x'
+    // For Jetpack Compose
+    implementation 'com.linecorp.lich:viewmodel-compose:x.x.x'
 
     testImplementation 'com.linecorp.lich:viewmodel-test-mockk:x.x.x'
     testImplementation 'androidx.test:runner:x.x.x'
@@ -38,6 +40,8 @@ If you prefer [Mockito-Kotlin](https://github.com/mockito/mockito-kotlin) over M
 ```groovy
 dependencies {
     implementation 'com.linecorp.lich:viewmodel:x.x.x'
+    // For Jetpack Compose
+    implementation 'com.linecorp.lich:viewmodel-compose:x.x.x'
 
     testImplementation 'com.linecorp.lich:viewmodel-test-mockitokotlin:x.x.x'
     testImplementation 'androidx.test:runner:x.x.x'
@@ -125,6 +129,16 @@ class FooFragment : Fragment() {
     private val fooNavGraphViewModel by navGraphViewModel(FooViewModel, R.id.foo_nav_graph)
 
     // snip...
+}
+```
+
+You can also use Lich ViewModels in Jetpack Compose via
+[lichViewModel](../viewmodel-compose/src/main/java/com/linecorp/lich/viewmodel/compose/LichViewModel.kt).
+
+```kotlin
+@Composable
+fun FooScreen(fooViewModel: FooViewModel = lichViewModel(FooViewModel)) {
+    // Use fooViewModel here.
 }
 ```
 
