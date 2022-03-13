@@ -15,7 +15,6 @@ dependencies {
     api libs.okhttp
     api(libs.libthrift) {
         exclude group: 'org.apache.httpcomponents'
-        exclude group: 'org.slf4j'
     }
 
     testImplementation project(':sample_thrift')

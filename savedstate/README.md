@@ -11,22 +11,12 @@ This library provides the following features.
 
 ## Set up
 
-This library officially supports [KSP](https://github.com/google/ksp).
-Please add the following entries to your `settings.gradle` and `build.gradle` files.
+This library officially supports [KSP](https://kotlinlang.org/docs/ksp-overview.html).
+Please add the following entries to your `build.gradle` file.
 
 ```groovy
-// settings.gradle
-pluginManagement {
-    plugins {
-        id 'com.google.devtools.ksp' version '1.5.31-1.0.0'
-    }
-}
-```
-
-```groovy
-// build.gradle
 plugins {
-    id 'com.google.devtools.ksp'
+    id 'com.google.devtools.ksp' version 'x.x.x-x.x.x'
 }
 
 dependencies {
@@ -39,7 +29,6 @@ Alternatively, you can use [kapt](https://kotlinlang.org/docs/kapt.html) instead
 In that case, change `build.gradle` as follows.
 
 ```groovy
-// build.gradle
 plugins {
     id 'org.jetbrains.kotlin.kapt'
 }
