@@ -44,9 +44,10 @@ import kotlin.coroutines.CoroutineContext
  * The following code is an example of using [AutoResetLifecycleScope] to collect a `Flow` safely.
  *
  * ```
- * class FooActivity : AppCompatActivity() {
+ * class FooFragment : Fragment() {
  *
- *     // Any coroutines launched from this scope are automatically cancelled when FooActivity is STOPPED.
+ *     // Any coroutines launched from this scope are automatically cancelled when FooFragment is STOPPED.
+ *     // NOTE: Don't use `viewLifecycleOwner` here.
  *     private val autoResetLifecycleScope: CoroutineScope = AutoResetLifecycleScope(this)
  *
  *     // A repository that provides some data as a Flow.
@@ -56,7 +57,7 @@ import kotlin.coroutines.CoroutineContext
  *         super.onStart()
  *
  *         // It is SAFE to collect a flow with AutoResetLifecycleScope.
- *         // The coroutine launched here will be automatically cancelled just before `FooActivity.onStop()`.
+ *         // The coroutine launched here will be automatically cancelled just before `FooFragment.onStop()`.
  *         autoResetLifecycleScope.launch {
  *             fooRepository.dataFlow().collect { value ->
  *                 textView.text = value
