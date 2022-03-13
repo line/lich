@@ -37,6 +37,8 @@ First, add the following entries to your `build.gradle` file.
 ```groovy
 dependencies {
     implementation 'com.linecorp.lich:component:x.x.x'
+    // For Jetpack Compose
+    implementation 'com.linecorp.lich:component-compose:x.x.x'
 
     // Optional: Enables diagnostic features for debug builds.
     debugRuntimeOnly 'com.linecorp.lich:component-debug:x.x.x'
@@ -137,6 +139,16 @@ class FooFragment : Fragment() {
     private val fooComponent by component(FooComponent)
 
     // snip...
+}
+```
+
+You can also use Lich components in Jetpack Compose via
+[lichComponent](../component-compose/src/main/java/com/linecorp/lich/component/compose/LichComponent.kt).
+
+```kotlin
+@Composable
+fun FooScreen(fooComponent: FooComponent = lichComponent(FooComponent)) {
+    // Use fooComponent here.
 }
 ```
 

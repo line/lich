@@ -33,9 +33,10 @@ The following code is an example of using [AutoResetLifecycleScope](src/main/jav
 to collect a `Flow` safely.
 
 ```kotlin
-class FooActivity : AppCompatActivity() {
+class FooFragment : Fragment() {
 
-    // Any coroutines launched from this scope are automatically cancelled when FooActivity is STOPPED.
+    // Any coroutines launched from this scope are automatically cancelled when FooFragment is STOPPED.
+    // NOTE: Don't use `viewLifecycleOwner` here.
     private val autoResetLifecycleScope: CoroutineScope = AutoResetLifecycleScope(this)
 
     // A repository that provides some data as a Flow.
@@ -45,7 +46,7 @@ class FooActivity : AppCompatActivity() {
         super.onStart()
 
         // It is SAFE to collect a flow with AutoResetLifecycleScope.
-        // The coroutine launched here will be automatically cancelled just before `FooActivity.onStop()`.
+        // The coroutine launched here will be automatically cancelled just before `FooFragment.onStop()`.
         autoResetLifecycleScope.launch {
             fooRepository.dataFlow().collect { value ->
                 textView.text = value
