@@ -17,6 +17,7 @@ package com.linecorp.lich.thrift
 
 import okio.BufferedSink
 import okio.BufferedSource
+import org.apache.thrift.TConfiguration
 import org.apache.thrift.transport.TTransport
 import java.io.EOFException
 
@@ -71,4 +72,12 @@ class OkioTransport(
     override fun open() = Unit
 
     override fun close() = Unit
+
+    // To keep binary compatibility with libthrift 0.13.0 or lower,
+    // we provide empty implementations for the following methods.
+    override fun getConfiguration(): TConfiguration = TConfiguration.DEFAULT
+
+    override fun checkReadBytesAvailable(numBytes: Long) = Unit
+
+    override fun updateKnownMessageSize(size: Long) = Unit
 }
