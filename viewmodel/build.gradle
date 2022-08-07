@@ -25,15 +25,10 @@ android {
 dependencies {
     api libs.kotlin.coroutines.android
     api libs.androidx.lifecycle.viewmodel.savedstate
+    implementation libs.androidx.activity
     compileOnly libs.androidx.fragment
     compileOnly libs.androidx.navigation.fragment
     lintPublish project(':static-analysis')
-    // https://github.com/line/lich/issues/114
-    constraints {
-        implementation(libs.androidx.lifecycle.viewmodel.ktx) {
-            because 'lifecycle-viewmodel-ktx:2.3 conflicts with lifecycle-viewmodel:2.4+'
-        }
-    }
 
     androidTestImplementation project(':savedstate')
     kspAndroidTest project(':savedstate-compiler')
