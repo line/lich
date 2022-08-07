@@ -26,6 +26,7 @@ jobs:
         run: ./gradlew assemble test
 
   android-test:
+    if: ${{ false }}  # Disable for now: https://github.com/line/lich/issues/131
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v2
