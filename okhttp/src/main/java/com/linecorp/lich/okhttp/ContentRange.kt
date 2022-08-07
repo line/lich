@@ -18,9 +18,9 @@ package com.linecorp.lich.okhttp
 import okhttp3.Response
 
 /**
- * A *valid* value of a `Content-Range` header field.
+ * A *valid* (not "unsatisfied") value of a `Content-Range` header field.
  *
- * Specification: [RFC 7233, section 4.2](https://tools.ietf.org/html/rfc7233#section-4.2)
+ * Specification: [RFC 9110, Section 14.4](https://www.rfc-editor.org/rfc/rfc9110.html#section-14.4)
  *
  * @property start the offset of the first byte in the content range.
  * @property endInclusive the offset of the last byte in the content range.
@@ -44,14 +44,14 @@ class ContentRange(val start: Long, val endInclusive: Long, val totalLength: Lon
          * Returns the [ContentRange] of a `206 Partial Content` response transferring a single part.
          * If the response doesn't have a valid `Content-Range` header field, returns `null`.
          *
-         * Specification: [RFC 7233, section 4.1](https://tools.ietf.org/html/rfc7233#section-4.1)
+         * Specification: [RFC 9110, Section 14.4](https://www.rfc-editor.org/rfc/rfc9110.html#section-14.4)
          */
         fun Response.mayGetSinglePartContentRange(): ContentRange? {
             // A single-part partial content response must have a Content-Range header field.
             val headerValue = header("Content-Range") ?: return null
 
             // Parse the Content-Range header value.
-            // cf. https://tools.ietf.org/html/rfc7233#section-4.2
+            // cf. https://www.rfc-editor.org/rfc/rfc9110.html#section-14.4
             val result = validRangeRegex.matchEntire(headerValue) ?: return null
             val start = result.groupValues[1].toLongOrNull()?.takeIf { it >= 0 } ?: return null
             val end = result.groupValues[2].toLongOrNull()?.takeIf { it >= start } ?: return null
@@ -67,7 +67,7 @@ class ContentRange(val start: Long, val endInclusive: Long, val totalLength: Lon
          * a `416 Range Not Satisfiable` response.
          * If the response doesn't have an unsatisfied `Content-Range` header field, returns `null`.
          *
-         * Specification: [RFC 7233, section 4.4](https://tools.ietf.org/html/rfc7233#section-4.4)
+         * Specification: [RFC 9110, Section 14.4](https://www.rfc-editor.org/rfc/rfc9110.html#section-14.4)
          */
         fun Response.mayGetTotalLengthOfUnsatisfiedRange(): Long? {
             // A "416 Range Not Satisfiable" response should have a Content-Range header field
@@ -75,7 +75,7 @@ class ContentRange(val start: Long, val endInclusive: Long, val totalLength: Lon
             val headerValue = header("Content-Range") ?: return null
 
             // Parse the Content-Range header value.
-            // cf. https://tools.ietf.org/html/rfc7233#section-4.2
+            // cf. https://www.rfc-editor.org/rfc/rfc9110.html#section-14.4
             val result = unsatisfiedRangeRegex.matchEntire(headerValue) ?: return null
             return result.groupValues[1].toLongOrNull()?.takeIf { it >= 0 }
         }

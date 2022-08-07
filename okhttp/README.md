@@ -11,13 +11,15 @@ dependencies {
 }
 ```
 
-- [OkHttpClient.call()](src/main/java/com/linecorp/lich/okhttp/Call.kt) - A suspending
-function to send an HTTP request and receive its response.
+- [OkHttpClient.call()](src/main/java/com/linecorp/lich/okhttp/Call.kt) - A suspending function to
+send an HTTP request and receive its response.
+- [Response.saveBodyToFileAtomically()](src/main/java/com/linecorp/lich/okhttp/AtomicDownload.kt) -
+Saves an HTTP response body to a file *atomically*.
 - [OkHttpClient.callWithCounting()](src/main/java/com/linecorp/lich/okhttp/CallWithCounting.kt) -
 Creates a `Flow` that executes an HTTP call with counting the number of bytes transferred in its
 request and response body.
 - [Response.saveToResourceWithSupportingResumption()](src/main/java/com/linecorp/lich/okhttp/ResumableDownload.kt) -
-Performs a *resumable download* using the HTTP semantics defined in [RFC 7233](https://tools.ietf.org/html/rfc7233).
+Performs a *resumable download* using the HTTP semantics defined in [RFC 9110, Section 14](https://www.rfc-editor.org/rfc/rfc9110.html#section-14).
 
 ## Simple HTTP call
 
@@ -55,11 +57,36 @@ NOTE: You *don't* need to use `withContext(Dispatchers.IO) { ... }` in the above
 The `response` handler of the `call` function is always executed on OkHttp's background threads,
 and the caller thread is never blocked.
 
-## File upload
+## Download to file atomically
 
-This is a sample code that sends the content of `fileToUpload` as an HTTP POST method.
+This is a sample code that downloads the content of `url` using an HTTP GET method, and saves it to
+`fileToSave`. This download is performed *atomically*. That is, `fileToSave` is updated if and only
+if the entire response body has been successfully downloaded.
 ```kotlin
-suspend fun performUpload(url: HttpUrl, fileToUpload: File) {
+suspend fun performDownloadAtomically(url: HttpUrl, fileToSave: File): Boolean {
+    val request = Request.Builder().url(url).build()
+    return try {
+        okHttpClient.call(request) { response ->
+            if (response.code != StatusCode.OK) {
+                throw ResponseStatusException(response.code)
+            }
+            response.saveBodyToFileAtomically(fileToSave)
+        }
+        // At this point, `fileToSave` contains the complete response body downloaded.
+        true
+    } catch (e: IOException) {
+        println("Failed to download: $e")
+        // At this point, `fileToSave` is not modified at all.
+        false
+    }
+}
+```
+
+## Upload with progress monitoring
+
+This is a sample code that uploads the content of `fileToUpload` with monitoring its progress.
+```kotlin
+suspend fun performUploadWithProgress(url: HttpUrl, fileToUpload: File) {
     val request = Request.Builder()
         .url(url)
         .post(fileToUpload.asRequestBody("application/octet-stream".toMediaType()))
@@ -83,19 +110,17 @@ suspend fun performUpload(url: HttpUrl, fileToUpload: File) {
 }
 ```
 
-## File download
+## Download with progress monitoring
 
-This is a sample code that downloads the content of `url` using an HTTP GET method, and saves it to `fileToSave`.
+This is a sample code that downloads the content of `url` to `fileToSave` with monitoring its progress.
 ```kotlin
-suspend fun performDownload(url: HttpUrl, fileToSave: File) {
+suspend fun performDownloadWithProgress(url: HttpUrl, fileToSave: File) {
     val request = Request.Builder().url(url).build()
-    okHttpClient.callWithCounting<Unit>(request) { response ->
+    okHttpClient.callWithCounting(request) { response ->
         if (response.code != StatusCode.OK) {
             throw ResponseStatusException(response.code)
         }
-        fileToSave.sink().use {
-            checkNotNull(response.body).source().readAll(it)
-        }
+        response.saveBodyToFileAtomically(fileToSave)
     }.collect { state ->
         when (state) {
             is Uploading -> Unit
@@ -113,9 +138,11 @@ suspend fun performDownload(url: HttpUrl, fileToSave: File) {
 
 ## Resumable download
 
-This is a sample code that performs a resumable download using Range requests defined in RFC 7233.
+This is similar to the example above, but if it fails in the middle of the download, `fileToSave`
+will still contain what has been downloaded up to that point. Then, when it is run again, the
+download will resume from the continuation.
 ```kotlin
-suspend fun performResumableDownload(url: HttpUrl, fileToSave: File) {
+suspend fun performResumableDownloadWithProgress(url: HttpUrl, fileToSave: File) {
     val resourceToSave = fileToSave.asWritableResource()
     val request = Request.Builder()
         .url(url)

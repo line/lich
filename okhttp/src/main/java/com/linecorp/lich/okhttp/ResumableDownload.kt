@@ -24,12 +24,12 @@ import java.io.IOException
 
 /**
  * Saves the response body to the given [WritableResource] with handling a single-part partial
- * response defined in [RFC 7233](https://tools.ietf.org/html/rfc7233).
+ * response defined in [RFC 9110, Section 14](https://www.rfc-editor.org/rfc/rfc9110.html#section-14).
  *
  * This is a sample code that performs a *resumable download* using Range requests defined in
- * RFC 7233.
+ * RFC 9110, Section 14.
  * ```
- * suspend fun performResumableDownload(url: HttpUrl, fileToSave: File) {
+ * suspend fun performResumableDownloadWithProgress(url: HttpUrl, fileToSave: File) {
  *     val resourceToSave = fileToSave.asWritableResource()
  *     val request = Request.Builder()
  *         .url(url)
@@ -77,6 +77,7 @@ fun Response.saveToResourceWithSupportingResumption(resourceToSave: WritableReso
             isLastPart = true
         }
         StatusCode.PARTIAL_CONTENT -> {
+            // cf. https://www.rfc-editor.org/rfc/rfc9110.html#section-15.3.7
             val contentRange = mayGetSinglePartContentRange()
                 ?: throw InconsistentContentRangeException("No valid Content-Range header in the `Partial Content` response.")
             if (contentRange.start != resourceToSave.length) {
@@ -87,6 +88,7 @@ fun Response.saveToResourceWithSupportingResumption(resourceToSave: WritableReso
             isLastPart = contentRange.isLastPart
         }
         StatusCode.RANGE_NOT_SATISFIABLE -> {
+            // cf. https://www.rfc-editor.org/rfc/rfc9110.html#section-15.5.17
             val totalLength = mayGetTotalLengthOfUnsatisfiedRange()
                 ?: throw InconsistentContentRangeException("No unsatisfied Content-Range header in the `Range Not Satisfiable` response.")
             if (totalLength != resourceToSave.length) {
@@ -106,7 +108,7 @@ fun Response.saveToResourceWithSupportingResumption(resourceToSave: WritableReso
 /**
  * Sets a single-part `Range` header with the given [start] offset.
  *
- * Specification: [RFC 7233, section 3.1](https://tools.ietf.org/html/rfc7233#section-3.1)
+ * Specification: [RFC 9110, Section 14.2](https://www.rfc-editor.org/rfc/rfc9110.html#section-14.2)
  */
 fun Request.Builder.setRangeHeader(start: Long): Request.Builder {
     require(start >= 0) { "The start position must not be less than zero." }
@@ -116,7 +118,7 @@ fun Request.Builder.setRangeHeader(start: Long): Request.Builder {
 /**
  * Sets a single-part `Range` header with the given [start] and [endInclusive] offset.
  *
- * Specification: [RFC 7233, section 3.1](https://tools.ietf.org/html/rfc7233#section-3.1)
+ * Specification: [RFC 9110, Section 14.2](https://www.rfc-editor.org/rfc/rfc9110.html#section-14.2)
  */
 fun Request.Builder.setRangeHeader(start: Long, endInclusive: Long): Request.Builder {
     require(start >= 0) { "The start position must not be less than zero." }
@@ -127,7 +129,7 @@ fun Request.Builder.setRangeHeader(start: Long, endInclusive: Long): Request.Bui
 /**
  * Sets a single-part `Range` header with the given [suffixLength].
  *
- * Specification: [RFC 7233, section 3.1](https://tools.ietf.org/html/rfc7233#section-3.1)
+ * Specification: [RFC 9110, Section 14.2](https://www.rfc-editor.org/rfc/rfc9110.html#section-14.2)
  */
 fun Request.Builder.setSuffixRangeHeader(suffixLength: Long): Request.Builder {
     require(suffixLength > 0) { "The suffix length must be greater than zero." }
