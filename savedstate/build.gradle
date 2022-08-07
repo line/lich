@@ -24,6 +24,7 @@ android {
 
 dependencies {
     api libs.androidx.lifecycle.viewmodel.savedstate
+    implementation libs.androidx.activity
     compileOnly libs.androidx.fragment
     lintPublish project(':static-analysis')
 
