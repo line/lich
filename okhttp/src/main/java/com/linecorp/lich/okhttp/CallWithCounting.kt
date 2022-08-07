@@ -47,7 +47,7 @@ import java.io.IOException
  *
  * This is a sample code that sends the content of `fileToUpload` as an HTTP POST method.
  * ```
- * suspend fun performUpload(url: HttpUrl, fileToUpload: File) {
+ * suspend fun performUploadWithProgress(url: HttpUrl, fileToUpload: File) {
  *     val request = Request.Builder()
  *         .url(url)
  *         .post(fileToUpload.asRequestBody("application/octet-stream".toMediaType()))
@@ -74,15 +74,13 @@ import java.io.IOException
  * This is a sample code that downloads the content of `url` using an HTTP GET method, and saves it
  * to `fileToSave`.
  * ```
- * suspend fun performDownload(url: HttpUrl, fileToSave: File) {
+ * suspend fun performDownloadWithProgress(url: HttpUrl, fileToSave: File) {
  *     val request = Request.Builder().url(url).build()
- *     okHttpClient.callWithCounting<Unit>(request) { response ->
+ *     okHttpClient.callWithCounting(request) { response ->
  *         if (response.code != StatusCode.OK) {
  *             throw ResponseStatusException(response.code)
  *         }
- *         fileToSave.sink().use {
- *             checkNotNull(response.body).source().readAll(it)
- *         }
+ *         response.saveBodyToFileAtomically(fileToSave)
  *     }.collect { state ->
  *         when (state) {
  *             is Uploading -> Unit
@@ -109,6 +107,7 @@ import java.io.IOException
  * closed automatically after the function call. This function is called from a background thread of
  * OkHttp's thread pool.
  * @return A [Flow] that emits the progress of the HTTP call.
+ * @see Response.saveBodyToFileAtomically
  * @see Response.saveToResourceWithSupportingResumption
  */
 fun <T> OkHttpClient.callWithCounting(

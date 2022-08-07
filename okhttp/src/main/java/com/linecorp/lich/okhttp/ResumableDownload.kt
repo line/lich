@@ -29,7 +29,7 @@ import java.io.IOException
  * This is a sample code that performs a *resumable download* using Range requests defined in
  * RFC 7233.
  * ```
- * suspend fun performResumableDownload(url: HttpUrl, fileToSave: File) {
+ * suspend fun performResumableDownloadWithProgress(url: HttpUrl, fileToSave: File) {
  *     val resourceToSave = fileToSave.asWritableResource()
  *     val request = Request.Builder()
  *         .url(url)
