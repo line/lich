@@ -19,7 +19,7 @@ Saves an HTTP response body to a file *atomically*.
 Creates a `Flow` that executes an HTTP call with counting the number of bytes transferred in its
 request and response body.
 - [Response.saveToResourceWithSupportingResumption()](src/main/java/com/linecorp/lich/okhttp/ResumableDownload.kt) -
-Performs a *resumable download* using the HTTP semantics defined in [RFC 7233](https://tools.ietf.org/html/rfc7233).
+Performs a *resumable download* using the HTTP semantics defined in [RFC 9110, Section 14](https://www.rfc-editor.org/rfc/rfc9110.html#section-14).
 
 ## Simple HTTP call
 
